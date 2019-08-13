@@ -525,7 +525,7 @@ if not UBLOXoutFile.writable(): outputHandler("unable to create UBLOX output fil
 # load lines from the files simultaneously
 lineCnt = 0
 for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile):
-    lineCnt = +1
+    lineCnt += 1
 
     # separate values in lines
     lineLLh = [x.strip() for x in lineLLh.split(' ')]
