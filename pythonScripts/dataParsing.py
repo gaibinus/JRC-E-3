@@ -2,12 +2,13 @@ from commonFunctions import *
 import os  # file exploring
 import math  # isnan()
 import time  # execution time measurement
+import csv
 
 # DEFINITIONS ----------------------------------------------------------------------------------------------------------
 CONFIG_LINES = 8
 GRAVITY = 9.80581295200000
 DECIMAL = 6
-DELTAGPSUTC = 315964782
+DELTAGPSUTC = 315964782  # current update for data after Jan 1 2017
 
 
 # CLASSES --------------------------------------------------------------------------------------------------------------
@@ -54,6 +55,7 @@ class proc:
     lastPacketMT = None
     lastSampleMT = None
     lastSampleUBX = None
+    lastTimeUBX = 0
 
 
 class timeStamps:
@@ -138,12 +140,12 @@ direc.config = direc.folder + "\\config.txt"
 direc.MT.mtb = direc.folder + "\\raw_data\\" + sys.argv[4] + ".mtb"
 direc.MT.input = direc.folder + "\\raw_data\\" + sys.argv[4] + ".txt"
 direc.MT.tmp = direc.folder + "\\parsed_data\\MT_tmp.txt"
-direc.MT.output = direc.folder + "\\parsed_data\\MT_proc.txt"
+direc.MT.output = direc.folder + "\\parsed_data\\MT_proc.csv"
 direc.MT.raw = direc.folder + "\\raw_data\\MT_raw.txt"
 
 direc.UBLOX.ubx = direc.folder + "\\raw_data\\" + sys.argv[6] + ".ubx"
 direc.UBLOX.input = direc.folder + "\\raw_data\\" + sys.argv[6]
-direc.UBLOX.output = direc.folder + "\\parsed_data\\UBOX_proc.txt"
+direc.UBLOX.output = direc.folder + "\\parsed_data\\UBOX_proc.csv"
 direc.UBLOX.Llh = direc.folder + "\\raw_data\\UBOX_Llh.txt"
 direc.UBLOX.Sol = direc.folder + "\\raw_data\\UBOX_Sol.txt"
 direc.UBLOX.VNed = direc.folder + "\\raw_data\\UBOX_VNed.txt"
@@ -282,9 +284,6 @@ else:
 
 # compute period in ms from frequency
 proc.period = 1 / conf.sampleRate * 1000
-
-# change MT parsed file name according to frequency
-direc.MT.output = direc.folder + "\\parsed_data\\MT_proc_NOresampling_" + str(conf.sampleRate) + ".txt"
 
 # print execution time of actual segment
 outputHandler("initial phase executed in: " + str(round(time.time() - timeStamps.start, 4)) + " seconds", han.info)
@@ -440,8 +439,13 @@ if not MTtmpFile.readable(): outputHandler("unable to read MT tmp file", han.err
 MToutFile = open(direc.MT.output, 'w')
 if not MToutFile.writable(): outputHandler("unable to create MT output file", han.err)
 
+# create MT out CSV writer
+header = ["time", "acc_X", "acc_Y", "acc_Z", "gyr_X", "gyr_Y", "gyr_Z", "mag_X", "mag_Y", "mag_Z", "pressure"]
+MToutFileWriter = csv.writer(MToutFile, delimiter=',')
+MToutFileWriter.writerow(header)
+
 # line format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
-# data format: Time Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
+# data format: time acc_X acc_Y acc_Z gyr_X gyr_Y gyr_Z mag_X mag_Y mag_Z pressure
 for lineCnt, line in enumerate(MTtmpFile, start=1):
     # separate values in line
     line = [x.strip() for x in line.split(' ')]
@@ -454,8 +458,8 @@ for lineCnt, line in enumerate(MTtmpFile, start=1):
     dataOut = 11 * [float('nan')]
     lineOut: [str] = 11 * [""]
 
-    # time in ms
-    dataOut[0] = (lineCnt - 1) * proc.period
+    # time in s
+    dataOut[0] = ((lineCnt - 1) * proc.period) / 1000
 
     # accelerometer - divide with gravity constant
     for i in range(3):
@@ -474,11 +478,11 @@ for lineCnt, line in enumerate(MTtmpFile, start=1):
 
     # convert to string and round
     for i in range(len(dataOut)):
-        data = round(strToFloat(dataOut[i]), DECIMAL)
+        data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
 
     # write processed line into output file
-    MToutFile.write(' '.join(lineOut) + '\n')
+    MToutFileWriter.writerow(lineOut)
 
 MTtmpFile.close()
 MToutFile.close()
@@ -497,8 +501,6 @@ outputHandler("MT final-processing executed in: " + str(round(time.time() - time
 outputHandler("starting UBLOX processing", han.info)
 timeStamps.UBOX = time.time()
 
-# output file: latNum lonNum height tow gpsFix satNum posDOP horAcc verAcc head speed lat lon utc sampleDuration
-
 # open UBLOX Llh file
 UBLOXllhFile = open(direc.UBLOX.Llh, 'r')
 if not UBLOXllhFile.readable(): outputHandler("unable to read UBLOX Llh file", han.err)
@@ -515,7 +517,12 @@ if not UBLOXvnedFile.readable(): outputHandler("unable to read UBLOX VNed file",
 UBLOXoutFile = open(direc.UBLOX.output, 'w')
 if not UBLOXoutFile.writable(): outputHandler("unable to create UBLOX output file", han.err)
 
-# out  data: latNum lonNum height tow gpsFix satNum posDOP horAcc verAcc head speed lat lon utc sampleDuration Llh
+# create MT out CSV writer
+header = ["time", "utc", "latNum", "lonNum", "height", "tow", "gpsFix", "satNum", "posDOP", "horAcc", "verAcc", "head",
+          "speed", "lat", "lon"]
+UBLOXoutFileWriter = csv.writer(UBLOXoutFile, delimiter=',')
+UBLOXoutFileWriter.writerow(header)
+
 # data: tow lat lon height (meanSeaLevel) horAcc verAcc Sol  data: iTow (fTow) weekNum gpsFix satNum (ecefX) (ecefY)
 # (ecefZ) (ecefVX) (ecefVY) (ecefVZ) (posAccuracy) (speedAccuracy) posDop VNed data: towNum (vN) (vE) (vD) speed
 # groundSpeed heading (speedAcc) (headingAcc) bracket means we do not use those data
@@ -523,9 +530,7 @@ if not UBLOXoutFile.writable(): outputHandler("unable to create UBLOX output fil
 # no need to check format, sequence and continuity of data - UBLOX binary parser already did it
 
 # load lines from the files simultaneously
-lineCnt = 0
 for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile):
-    lineCnt += 1
 
     # separate values in lines
     lineLLh = [x.strip() for x in lineLLh.split(' ')]
@@ -541,67 +546,66 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
         lineVNed[i] = strToFloat(lineVNed[i])
 
     # prepare output array
-    dataOut = 16 * [float('nan')]
-    lineOut: [str] = 16 * [""]
+    dataOut = 15 * [float('nan')]
+    lineOut: [str] = 15 * [""]
+
+    # compute GPS time
+    tmpGPS = lineSol[2] * 7 * 24 * 60 * 60 + lineLLh[0] / 1000
+    # compute UTC time
+    dataOut[1] = tmpGPS + DELTAGPSUTC
+
+    # compute time in ms
+    if proc.lastSampleUBX is None:
+        dataOut[0] = 0
+    else:
+        dataOut[0] = proc.lastTimeUBX + (dataOut[1] - proc.lastSampleUBX)
+    proc.lastTimeUBX = dataOut[0]
+    proc.lastSampleUBX = dataOut[1]
 
     # compute latitude degrees
     tmpDMS = decToDMS(lineLLh[1])
-    dataOut[0] = tmpDMS[0] * 100 + tmpDMS[1] + round(tmpDMS[2] / 100, DECIMAL)
+    dataOut[2] = tmpDMS[0] * 100 + tmpDMS[1] + round(tmpDMS[2] / 100, DECIMAL)
 
     # compute longitude degrees
     tmpDMS = decToDMS(lineLLh[2])
-    dataOut[1] = tmpDMS[0] * 100 + tmpDMS[1] + round(tmpDMS[2] / 100, DECIMAL)
+    dataOut[3] = tmpDMS[0] * 100 + tmpDMS[1] + round(tmpDMS[2] / 100, DECIMAL)
 
     # copy height
-    dataOut[2] = lineLLh[3]
+    dataOut[4] = lineLLh[3]
 
     # copy time of the week
-    dataOut[3] = lineLLh[0]
+    dataOut[5] = lineLLh[0]
 
     # copy GPS fix
-    dataOut[4] = lineSol[3]
+    dataOut[6] = lineSol[3]
 
     # copy number of used satellites
-    dataOut[5] = lineSol[4]
+    dataOut[7] = lineSol[4]
 
     # position DOP divide by 100
-    dataOut[6] = lineSol[13] / 100
+    dataOut[8] = lineSol[13] / 100
 
     # copy horizontal and vertical accuracy
-    dataOut[7] = lineLLh[5]
-    dataOut[8] = lineLLh[6]
+    dataOut[9] = lineLLh[5]
+    dataOut[10] = lineLLh[6]
 
     # copy heading
-    dataOut[9] = lineVNed[6]
+    dataOut[11] = lineVNed[6]
 
     # speed from k/hod to m/s
-    dataOut[10] = lineVNed[4] * 3.6
+    dataOut[12] = lineVNed[4] * 3.6
 
     # copy decimal latitude and longitude
-    dataOut[11] = lineLLh[1]
-    dataOut[12] = lineLLh[2]
-
-    # line number
-    dataOut[13] = lineCnt
-
-    # compute GPS time
-    tmpGPS = lineSol[2] * 7 * 24 * 60 * 60 + lineLLh[0] / 100
-    dataOut[14] = tmpGPS + DELTAGPSUTC
-
-    # compute sample duration
-    if proc.lastSampleUBX is None:
-        dataOut[15] = 0
-    else:
-        dataOut[15] = dataOut[14] - proc.lastSampleUBX
-    proc.lastSampleUBX = dataOut[14]
+    dataOut[13] = lineLLh[1]
+    dataOut[14] = lineLLh[2]
 
     # convert to string and round
     for i in range(len(dataOut)):
-        data = round(strToFloat(dataOut[i]), DECIMAL)
+        data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
 
     # write processed line into output file
-    UBLOXoutFile.write(' '.join(lineOut) + '\n')
+    UBLOXoutFileWriter.writerow(lineOut)
 
 UBLOXllhFile.close()
 UBLOXsolFile.close()
