@@ -481,6 +481,9 @@ for lineCnt, line in enumerate(MTtmpFile, start=1):
         data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
 
+    # add 'sec' tp time
+    lineOut[0] += " sec"
+
     # write processed line into output file
     MToutFileWriter.writerow(lineOut)
 
@@ -554,7 +557,7 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
     # compute UTC time
     dataOut[1] = tmpGPS + DELTAGPSUTC
 
-    # compute time in ms
+    # compute time in s
     if proc.lastSampleUBX is None:
         dataOut[0] = 0
     else:
@@ -603,6 +606,9 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
     for i in range(len(dataOut)):
         data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
+
+    # add 'sec' tp time
+    lineOut[0] += " sec"
 
     # write processed line into output file
     UBLOXoutFileWriter.writerow(lineOut)
