@@ -1,4 +1,4 @@
-function [timeTable] = Data2Timetable(filePath)
+function [timeTable] = data2timetable(filePath)
 
 % check if file exists
 if exist(filePath, 'file') == 0
