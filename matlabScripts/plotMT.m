@@ -1,29 +1,33 @@
-function plotMT(file)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+function plotMT(filePath)
 
-opts = detectImportOptions(file);
-[time, acc_X, acc_Y, acc_Z, gyr_X, gyr_Y, gyr_Z, mag_X, mag_Y, mag_Z] = readvars(file,opts);
+% load data to time table
+timeTable = Data2Timetable(filePath);
 
-figure('Name','MT sensor data','NumberTitle','off','units','normalized','outerposition',[0 0 1 1]);
+% create figure and set it up
+fig = figure();
+fig.Name = 'MT sensor data';
+fig.NumberTitle = 'off';
+fig.Units = 'normalized';
+fig.OuterPosition = [0 0 1 1];
 
-subplot(3,1,1);
-plot(time,acc_X,time,acc_Y,time,acc_Z)
-title('Accelerometer')
-xlabel('time [s]')
-legend({'X axis','y axis','Z axis'},'Location','eastoutside')
+% create stacked plot
+statPlot = stackedplot(timeTable);
 
-subplot(3,1,2);
-plot(time,gyr_X,time,gyr_Y,time,gyr_Z)
-title('Gyroscope')
-xlabel('time [s]')
-legend({'X axis','y axis','Z axis'},'Location','eastoutside')
+% set up stacked plot parameters
+statPlot.DisplayVariables = {
+    {'acc_X','acc_Y','acc_Z'}
+    {'gyr_X','gyr_Y','gyr_Z'}
+    {'mag_X','mag_Y','mag_Z'}};
+statPlot.DisplayLabels = {'Acceleration','Rotation','Magnetic field'};
+statPlot.GridVisible = 'off';
+statPlot.XLabel = 'Time [s]';
 
-subplot(3,1,3);
-plot(time,mag_X,time,mag_Y,time,mag_Z)
-title('Magnetometer')
-xlabel('time [s]')
-legend({'X axis','y axis','Z axis'},'Location','eastoutside')
+% set up parameters for every 'sub plot'
+for i = 1:3
+    statPlot.AxesProperties(i).LegendVisible = 'on';
+    statPlot.AxesProperties(i).LegendLocation = 'northeast';
+    statPlot.AxesProperties(i).LegendLabels = {'X axis', 'Y axis', 'Z axis'};
+end
 
 end
 

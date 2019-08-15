@@ -1,5 +1,8 @@
-
 close all; clear; clc;
 
-file = "C:\Users\geibfil\Desktop\MT_proc.csv";
-table = readtable(file);
+file = "/home/filip/CVUT/intership/JRC/work/MT_proc.csv";
+data = readtable(file);
+time = seconds(table2array(data(1:end,1)));
+data = table2timetable(data(:,2:end),'RowTimes',time);
+
+
