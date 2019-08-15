@@ -156,15 +156,18 @@ if not os.access(direc.MT.input, os.R_OK): outputHandler("input MT file is not r
 
 # check if the UBLOX Llh exists and is readable
 if not os.path.isfile(direc.UBLOX.input.with_suffix(".Llh")): outputHandler("input UBLOX Llh does not exist", han.err)
-if not os.access(direc.UBLOX.input.with_suffix(".Llh"), os.R_OK): outputHandler("input UBLOX Llh is not readable", han.err)
+if not os.access(direc.UBLOX.input.with_suffix(".Llh"), os.R_OK): outputHandler("input UBLOX Llh is not readable",
+                                                                                han.err)
 
 # check if the UBLOX Llh exists and is readable
 if not os.path.isfile(direc.UBLOX.input.with_suffix(".Sol")): outputHandler("input UBLOX Sol does not exist", han.err)
-if not os.access(direc.UBLOX.input.with_suffix(".Sol"), os.R_OK): outputHandler("input UBLOX Sol is not readable", han.err)
+if not os.access(direc.UBLOX.input.with_suffix(".Sol"), os.R_OK): outputHandler("input UBLOX Sol is not readable",
+                                                                                han.err)
 
 # check if the UBLOX Llh exists and is readable
 if not os.path.isfile(direc.UBLOX.input.with_suffix(".VNed")): outputHandler("input UBLOX VNed does not exist", han.err)
-if not os.access(direc.UBLOX.input.with_suffix(".VNed"), os.R_OK): outputHandler("input UBLOX VNed is not readable", han.err)
+if not os.access(direc.UBLOX.input.with_suffix(".VNed"), os.R_OK): outputHandler("input UBLOX VNed is not readable",
+                                                                                 han.err)
 
 # check if config file exists and is readable
 if not os.path.isfile(direc.config): outputHandler("config file does not exist", han.err)
@@ -477,9 +480,6 @@ for lineCnt, line in enumerate(MTtmpFile, start=1):
         data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
 
-    # add 'sec' tp time
-    lineOut[0] += " sec"
-
     # write processed line into output file
     MToutFileWriter.writerow(lineOut)
 
@@ -602,9 +602,6 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
     for i in range(len(dataOut)):
         data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
-
-    # add 'sec' tp time
-    lineOut[0] += " sec"
 
     # write processed line into output file
     UBLOXoutFileWriter.writerow(lineOut)
