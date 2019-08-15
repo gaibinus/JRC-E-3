@@ -1,7 +1,7 @@
 function plotMT(filePath)
 
 % load data to time table
-timeTable = Data2Timetable(filePath);
+timeTable = data2timetable(filePath);
 
 % create figure and set it up
 fig = figure();
