@@ -7,18 +7,16 @@ timeTable = data2timetable(filePath);
 fig = figure();
 fig.Name = 'MT sensor data';
 fig.NumberTitle = 'off';
-fig.Units = 'normalized';
-fig.OuterPosition = [0 0 1 1];
 
 % create stacked plot
 statPlot = stackedplot(timeTable);
 
 % set up stacked plot parameters
 statPlot.DisplayVariables = {
-    {'acc_X','acc_Y','acc_Z'}
-    {'gyr_X','gyr_Y','gyr_Z'}
-    {'mag_X','mag_Y','mag_Z'}};
-statPlot.DisplayLabels = {'Acceleration','Rotation','Magnetic field'};
+    {'AccX','AccY','AccZ'}
+    {'GyrX','GyrY','GyrZ'}
+    {'MagX','MagY','MagZ'}};
+statPlot.DisplayLabels = {'Acc','Gyr','Mag'};
 statPlot.GridVisible = 'off';
 statPlot.XLabel = 'Time [s]';
 

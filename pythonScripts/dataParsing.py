@@ -439,7 +439,7 @@ MToutFile = open(direc.MT.output, 'w')
 if not MToutFile.writable(): outputHandler("unable to create MT output file", han.err)
 
 # create MT out CSV writer
-header = ["time", "acc_X", "acc_Y", "acc_Z", "gyr_X", "gyr_Y", "gyr_Z", "mag_X", "mag_Y", "mag_Z", "pressure"]
+header = ["Time", "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "MagX", "MagY", "MagZ", "Pres"]
 MToutFileWriter = csv.writer(MToutFile, delimiter=',')
 MToutFileWriter.writerow(header)
 
