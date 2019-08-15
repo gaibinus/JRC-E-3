@@ -1,4 +1,4 @@
-.m~
+*.m~
 pythonScripts/__pycache__/
 pythonScripts/.idea/
 experiments/
