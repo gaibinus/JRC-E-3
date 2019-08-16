@@ -1,4 +1,4 @@
-function resampleMT(inFile, outFile, freq, metod)
+function ret = resampleMT(inFile, outFile, freq, metod)
 
 % load data to time table
 table = data2timetable(inFile);
@@ -14,5 +14,8 @@ table = convertvars(table,'Time','seconds');
 
 % export table to desired csv file
 writetable(table, outFile);
+
+% if okay, return true
+ret = true;
 
 end
