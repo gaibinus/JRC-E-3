@@ -1,4 +1,5 @@
 from commonFunctions import *
+from pathlib import Path
 import os  # file exploring
 import math  # isnan()
 import time  # execution time measurement
@@ -128,27 +129,22 @@ if sys.argv[1] != "-o": outputHandler("first marker should be -o", han.err)
 if sys.argv[3] != "-m": outputHandler("second marker should be -m", han.err)
 if sys.argv[5] != "-u": outputHandler("third marker should be -u", han.err)
 
-# save folder, MT and UBLOX file names
-# MTname = sys.argv[2][sys.argv[2].rfind('\\') + 1: -4]
-# UBOXname = sys.argv[4][sys.argv[4].rfind('\\') + 1: -4]
-folderName = sys.argv[2][sys.argv[2].rfind('\\') + 1:]
-
 # compute directories
 direc.folder = sys.argv[2]
-direc.config = direc.folder + "\\config.txt"
+direc.config = Path(direc.folder + "/config.txt")
 
-direc.MT.mtb = direc.folder + "\\raw_data\\" + sys.argv[4] + ".mtb"
-direc.MT.input = direc.folder + "\\raw_data\\" + sys.argv[4] + ".txt"
-direc.MT.tmp = direc.folder + "\\parsed_data\\MT_tmp.txt"
-direc.MT.output = direc.folder + "\\parsed_data\\MT_proc.csv"
-direc.MT.raw = direc.folder + "\\raw_data\\MT_raw.txt"
+direc.MT.mtb = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".mtb")
+direc.MT.input = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".txt")
+direc.MT.tmp = Path(direc.folder + "/parsed_data/MT_tmp.txt")
+direc.MT.output = Path(direc.folder + "/parsed_data/MT_proc.csv")
+direc.MT.raw = Path(direc.folder + "/raw_data/MT_raw.txt")
 
-direc.UBLOX.ubx = direc.folder + "\\raw_data\\" + sys.argv[6] + ".ubx"
-direc.UBLOX.input = direc.folder + "\\raw_data\\" + sys.argv[6]
-direc.UBLOX.output = direc.folder + "\\parsed_data\\UBOX_proc.csv"
-direc.UBLOX.Llh = direc.folder + "\\raw_data\\UBOX_Llh.txt"
-direc.UBLOX.Sol = direc.folder + "\\raw_data\\UBOX_Sol.txt"
-direc.UBLOX.VNed = direc.folder + "\\raw_data\\UBOX_VNed.txt"
+direc.UBLOX.ubx = Path(direc.folder + "/raw_data/" + sys.argv[6] + ".ubx")
+direc.UBLOX.input = Path(direc.folder + "/raw_data/" + sys.argv[6])
+direc.UBLOX.output = Path(direc.folder + "/parsed_data/UBOX_proc.csv")
+direc.UBLOX.Llh = Path(direc.folder + "/raw_data/UBOX_Llh.txt")
+direc.UBLOX.Sol = Path(direc.folder + "/raw_data/UBOX_Sol.txt")
+direc.UBLOX.VNed = Path(direc.folder + "/raw_data/UBOX_VNed.txt")
 
 # check if the MT mtb exists and is readable
 if not os.path.isfile(direc.MT.mtb): outputHandler("mtb MT file does not exist", han.err)
@@ -159,16 +155,19 @@ if not os.path.isfile(direc.MT.input): outputHandler("input MT file does not exi
 if not os.access(direc.MT.input, os.R_OK): outputHandler("input MT file is not readable", han.err)
 
 # check if the UBLOX Llh exists and is readable
-if not os.path.isfile(direc.UBLOX.input + ".Llh"): outputHandler("input UBLOX Llh does not exist", han.err)
-if not os.access(direc.UBLOX.input + ".Llh", os.R_OK): outputHandler("input UBLOX Llh is not readable", han.err)
+if not os.path.isfile(direc.UBLOX.input.with_suffix(".Llh")): outputHandler("input UBLOX Llh does not exist", han.err)
+if not os.access(direc.UBLOX.input.with_suffix(".Llh"), os.R_OK): outputHandler("input UBLOX Llh is not readable",
+                                                                                han.err)
 
 # check if the UBLOX Llh exists and is readable
-if not os.path.isfile(direc.UBLOX.input + ".Sol"): outputHandler("input UBLOX Sol does not exist", han.err)
-if not os.access(direc.UBLOX.input + ".Sol", os.R_OK): outputHandler("input UBLOX Sol is not readable", han.err)
+if not os.path.isfile(direc.UBLOX.input.with_suffix(".Sol")): outputHandler("input UBLOX Sol does not exist", han.err)
+if not os.access(direc.UBLOX.input.with_suffix(".Sol"), os.R_OK): outputHandler("input UBLOX Sol is not readable",
+                                                                                han.err)
 
 # check if the UBLOX Llh exists and is readable
-if not os.path.isfile(direc.UBLOX.input + ".VNed"): outputHandler("input UBLOX VNed does not exist", han.err)
-if not os.access(direc.UBLOX.input + ".VNed", os.R_OK): outputHandler("input UBLOX VNed is not readable", han.err)
+if not os.path.isfile(direc.UBLOX.input.with_suffix(".VNed")): outputHandler("input UBLOX VNed does not exist", han.err)
+if not os.access(direc.UBLOX.input.with_suffix(".VNed"), os.R_OK): outputHandler("input UBLOX VNed is not readable",
+                                                                                 han.err)
 
 # check if config file exists and is readable
 if not os.path.isfile(direc.config): outputHandler("config file does not exist", han.err)
@@ -179,7 +178,7 @@ if not os.access(direc.folder, os.W_OK): outputHandler("output experiment direct
 
 # rename MT and UBLOX input files
 try:
-    os.rename(direc.MT.mtb, direc.folder + "\\raw_data\\MT.mtb")
+    os.rename(direc.MT.mtb, Path(direc.folder + "/raw_data/MT.mtb"))
 except (OSError, IOError):
     outputHandler("unable to rename MT mtb file", han.err)
 try:
@@ -188,19 +187,19 @@ except (OSError, IOError):
     outputHandler("unable to rename MT raw file", han.err)
 
 try:
-    os.rename(direc.UBLOX.ubx, direc.folder + "\\raw_data\\UBOX.ubx")
+    os.rename(direc.UBLOX.ubx, Path(direc.folder + "/raw_data/UBOX.ubx"))
 except (OSError, IOError):
     outputHandler("unable to rename UBLOX ubx file", han.err)
 try:
-    os.rename(direc.UBLOX.input + ".Llh", direc.UBLOX.Llh)
+    os.rename(direc.UBLOX.input.with_suffix(".Llh"), direc.UBLOX.Llh)
 except (OSError, IOError):
     outputHandler("unable to rename UBLOX Llh file", han.err)
 try:
-    os.rename(direc.UBLOX.input + ".Sol", direc.UBLOX.Sol)
+    os.rename(direc.UBLOX.input.with_suffix(".Sol"), direc.UBLOX.Sol)
 except (OSError, IOError):
     outputHandler("unable to rename UBLOX Sol file", han.err)
 try:
-    os.rename(direc.UBLOX.input + ".VNed", direc.UBLOX.VNed)
+    os.rename(direc.UBLOX.input.with_suffix(".VNed"), direc.UBLOX.VNed)
 except (OSError, IOError):
     outputHandler("unable to rename UBLOX VNed file", han.err)
 
@@ -440,7 +439,7 @@ MToutFile = open(direc.MT.output, 'w')
 if not MToutFile.writable(): outputHandler("unable to create MT output file", han.err)
 
 # create MT out CSV writer
-header = ["time", "acc_X", "acc_Y", "acc_Z", "gyr_X", "gyr_Y", "gyr_Z", "mag_X", "mag_Y", "mag_Z", "pressure"]
+header = ["Time", "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "MagX", "MagY", "MagZ", "Pres"]
 MToutFileWriter = csv.writer(MToutFile, delimiter=',')
 MToutFileWriter.writerow(header)
 
@@ -480,9 +479,6 @@ for lineCnt, line in enumerate(MTtmpFile, start=1):
     for i in range(len(dataOut)):
         data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
-
-    # add 'sec' tp time
-    lineOut[0] += " sec"
 
     # write processed line into output file
     MToutFileWriter.writerow(lineOut)
@@ -606,9 +602,6 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
     for i in range(len(dataOut)):
         data = round(dataOut[i], DECIMAL)
         lineOut[i] = str(data)
-
-    # add 'sec' tp time
-    lineOut[0] += " sec"
 
     # write processed line into output file
     UBLOXoutFileWriter.writerow(lineOut)
