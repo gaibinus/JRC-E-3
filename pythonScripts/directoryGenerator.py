@@ -10,6 +10,7 @@ class direc:
     rawData = None
     parsedData = None
     photos = None
+    resampledData = None
 
 
 class files:
@@ -43,7 +44,7 @@ def processInput(normalName, unit, typeExpect):
 # FOLDER AND FILES HANDLING --------------------------------------------------------------------------------------------
 
 # check number of parameters and marking
-if len(sys.argv) != 3: outputHandler("2 parameters expected, got " + str(len(sys.argv)), han.err)
+if len(sys.argv) != 3: outputHandler("2 parameters expected, got " + str(len(sys.argv)-1), han.err)
 if sys.argv[1] != "-o": outputHandler("third marker should be -o", han.err)
 
 # compute folder name
@@ -54,6 +55,7 @@ direc.main = sys.argv[2]
 direc.rawData = Path(direc.main + "/raw_data")
 direc.parsedData = Path(direc.main + "/parsed_data")
 direc.photos = Path(direc.main + "/photo")
+direc.resampledData = Path(direc.main + "/resampled_data")
 
 # compute file names
 files.config = Path(direc.main + "/config.txt")
@@ -87,6 +89,12 @@ try:
     os.makedirs(direc.photos)
 except OSError:
     outputHandler("unable to create photos directory", han.err)
+
+# create resampled data directory
+try:
+    os.makedirs(direc.resampledData)
+except OSError:
+    outputHandler("unable to create resampled data directory", han.err)
 
 # create config file
 configFile = open(files.config, 'w')

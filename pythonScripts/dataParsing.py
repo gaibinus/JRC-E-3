@@ -4,6 +4,7 @@ import os  # file exploring
 import math  # isnan()
 import time  # execution time measurement
 import csv
+import sys
 
 # DEFINITIONS ----------------------------------------------------------------------------------------------------------
 CONFIG_LINES = 8
@@ -124,7 +125,7 @@ timeStamps.start = time.time()
 # input format: main -m <MT file> -u <UBLOX file> -o <output folder>
 
 # check number of parameters and marking
-if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv)), han.err)
+if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv)-1), han.err)
 if sys.argv[1] != "-o": outputHandler("first marker should be -o", han.err)
 if sys.argv[3] != "-m": outputHandler("second marker should be -m", han.err)
 if sys.argv[5] != "-u": outputHandler("third marker should be -u", han.err)
