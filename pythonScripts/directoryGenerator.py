@@ -1,4 +1,6 @@
 from commonFunctions import *
+from pathlib import Path
+import sys
 import os
 
 
@@ -49,13 +51,13 @@ folderName = sys.argv[2][sys.argv[2].rfind('\\') + 1:]
 
 # compute directories
 direc.main = sys.argv[2]
-direc.rawData = direc.main + "\\raw_data"
-direc.parsedData = direc.main + "\\parsed_data"
-direc.photos = direc.main + "\\photo"
+direc.rawData = Path(direc.main + "/raw_data")
+direc.parsedData = Path(direc.main + "/parsed_data")
+direc.photos = Path(direc.main + "/photo")
 
 # compute file names
-files.config = direc.main + "\\config.txt"
-files.report = direc.main + "\\report.txt"
+files.config = Path(direc.main + "/config.txt")
+files.report = Path(direc.main + "/report.txt")
 
 # check if experiment folder exists then create it
 if not os.path.exists(direc.main):
