@@ -44,6 +44,9 @@ if not os.access(inFile, os.R_OK): outputHandler("input MT file is not readable"
 # check if the MT output file exists and is readable
 if os.path.isfile(outFile): outputHandler("output MT file already exist", han.err)
 
+# inform about current stage
+outputHandler("checks completed, starting matlab engine", han.info)
+
 # start matlab engine
 eng = matlab.engine.start_matlab()
 

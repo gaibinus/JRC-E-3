@@ -4,7 +4,7 @@
 
 clear; close all; clc;
 
-file = "C:\Users\geibfil\Desktop\UBOX_proc.txt"
+file = "C:\Users\geibfil\Desktop\JRC-E-3\experiments\1308-01\parsed_data\UBOX_proc.csv"
 
 opts = detectImportOptions(file);
 [time, utc, latNum, lonNum, height, tow, gpsFix, satNum, posDOP, horAcc, verAcc, head, speed, lat, lon,] = readvars(file,opts);

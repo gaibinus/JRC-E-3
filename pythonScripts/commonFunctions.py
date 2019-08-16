@@ -1,6 +1,5 @@
-import sys
 from enum import Enum
-
+import sys
 
 # CLASSES AND OBJECTS---------------------------------------------------------------------------------------------------
 class han(Enum):
