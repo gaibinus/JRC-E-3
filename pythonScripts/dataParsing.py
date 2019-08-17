@@ -518,8 +518,8 @@ UBLOXoutFile = open(direc.UBLOX.output, 'w')
 if not UBLOXoutFile.writable(): outputHandler("unable to create UBLOX output file", han.err)
 
 # create MT out CSV writer
-header = ["time", "utc", "latNum", "lonNum", "height", "gpsFix", "satNum", "posDOP", "horAcc", "verAcc", "head",
-          "speed", "lat", "lon"]
+header = ["Time", "UTC", "LatNum", "LonNum", "Height", "GPSfix", "SatNum", "PosDOP", "HorAcc", "VerAcc", "Head",
+          "Speed", "Lat", "Lon"]
 UBLOXoutFileWriter = csv.writer(UBLOXoutFile, delimiter=',')
 UBLOXoutFileWriter.writerow(header)
 
