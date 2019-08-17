@@ -1,4 +1,4 @@
-function ret = resampleMT(inFile, outFile, freq, metod)
+function ret = resampleIMU(inFile, outFile, freq, metod)
 
 % load data to time table
 table = data2timetable(inFile);
