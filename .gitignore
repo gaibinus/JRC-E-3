@@ -1,4 +1,5 @@
 *.m~
+*venv/
 pythonScripts/__pycache__/
 pythonScripts/.idea/
 experiments/
