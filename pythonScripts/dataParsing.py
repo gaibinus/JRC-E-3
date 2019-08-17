@@ -125,7 +125,7 @@ timeStamps.start = time.time()
 # input format: main -m <MT file> -u <UBLOX file> -o <output folder>
 
 # check number of parameters and marking
-if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv)-1), han.err)
+if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv) - 1), han.err)
 if sys.argv[1] != "-o": outputHandler("first marker should be -o", han.err)
 if sys.argv[3] != "-m": outputHandler("second marker should be -m", han.err)
 if sys.argv[5] != "-u": outputHandler("third marker should be -u", han.err)
@@ -137,12 +137,12 @@ direc.config = Path(direc.folder + "/config.txt")
 direc.MT.mtb = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".mtb")
 direc.MT.input = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".txt")
 direc.MT.tmp = Path(direc.folder + "/parsed_data/MT_tmp.txt")
-direc.MT.output = Path(direc.folder + "/parsed_data/MT_proc.csv")
+direc.MT.output = Path(direc.folder + "/parsed_data/MT_parsed.csv")
 direc.MT.raw = Path(direc.folder + "/raw_data/MT_raw.txt")
 
 direc.UBLOX.ubx = Path(direc.folder + "/raw_data/" + sys.argv[6] + ".ubx")
 direc.UBLOX.input = Path(direc.folder + "/raw_data/" + sys.argv[6])
-direc.UBLOX.output = Path(direc.folder + "/parsed_data/UBOX_proc.csv")
+direc.UBLOX.output = Path(direc.folder + "/parsed_data/UBOX_parsed.csv")
 direc.UBLOX.Llh = Path(direc.folder + "/raw_data/UBOX_Llh.txt")
 direc.UBLOX.Sol = Path(direc.folder + "/raw_data/UBOX_Sol.txt")
 direc.UBLOX.VNed = Path(direc.folder + "/raw_data/UBOX_VNed.txt")

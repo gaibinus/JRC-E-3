@@ -10,7 +10,7 @@ class direc:
     rawData = None
     parsedData = None
     photos = None
-    resampledData = None
+    processedData = None
 
 
 class files:
@@ -55,7 +55,7 @@ direc.main = sys.argv[2]
 direc.rawData = Path(direc.main + "/raw_data")
 direc.parsedData = Path(direc.main + "/parsed_data")
 direc.photos = Path(direc.main + "/photo")
-direc.resampledData = Path(direc.main + "/resampled_data")
+direc.processedData = Path(direc.main + "/processed_data")
 
 # compute file names
 files.config = Path(direc.main + "/config.txt")
@@ -78,11 +78,11 @@ try:
 except OSError:
     outputHandler("unable to create raw data directory", han.err)
 
-# create parsed data directory
+# create processed data directory
 try:
     os.makedirs(direc.parsedData)
 except OSError:
-    outputHandler("unable to create parsed data directory", han.err)
+    outputHandler("unable to create processed data directory", han.err)
 
 # create photos directory
 try:
@@ -92,7 +92,7 @@ except OSError:
 
 # create resampled data directory
 try:
-    os.makedirs(direc.resampledData)
+    os.makedirs(direc.processedData)
 except OSError:
     outputHandler("unable to create resampled data directory", han.err)
 
