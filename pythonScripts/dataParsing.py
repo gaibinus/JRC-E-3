@@ -16,13 +16,13 @@ DELTAGPSUTC = 315964782  # current update for data after Jan 1 2017
 # CLASSES --------------------------------------------------------------------------------------------------------------
 class direc:
     def __index__(self, folder):
-        self.MT = self.MT()
+        self.IMU = self.IMU()
         self.UBLOX = self.UBLOX()
         self.folder = None
         self.config = None
 
-    class MT:
-        mtb = None
+    class IMU:
+        IMUb = None
         input = None
         output = None
         tmp = None
@@ -49,21 +49,21 @@ class conf:
 
 
 class proc:
-    timeStepMT = 0
+    timeStepIMU = 0
     period = 0
     magMax = 3 * [float('nan')]
     magMin = 3 * [float('nan')]
     magMean = 3 * [float('nan')]
-    lastPacketMT = None
-    lastSampleMT = None
+    lastPacketIMU = None
+    lastSampleIMU = None
     lastSampleUBX = None
     lastTimeUBX = 0
 
 
 class timeStamps:
     start = None
-    MTpre = None
-    MTfinal = None
+    IMUpre = None
+    IMUfinal = None
     UBOX = None
 
 
@@ -122,7 +122,7 @@ def decToDMS(degrees):
 timeStamps.start = time.time()
 
 # INPUT FILES HANDLING -------------------------------------------------------------------------------------------------
-# input format: main -m <MT file> -u <UBLOX file> -o <output folder>
+# input format: main -m <IMU file> -u <UBLOX file> -o <output folder>
 
 # check number of parameters and marking
 if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv) - 1), han.err)
@@ -134,11 +134,11 @@ if sys.argv[5] != "-u": outputHandler("third marker should be -u", han.err)
 direc.folder = sys.argv[2]
 direc.config = Path(direc.folder + "/config.txt")
 
-direc.MT.mtb = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".mtb")
-direc.MT.input = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".txt")
-direc.MT.tmp = Path(direc.folder + "/parsed_data/MT_tmp.txt")
-direc.MT.output = Path(direc.folder + "/parsed_data/MT_parsed.csv")
-direc.MT.raw = Path(direc.folder + "/raw_data/MT_raw.txt")
+direc.IMU.mtb = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".mtb")
+direc.IMU.input = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".txt")
+direc.IMU.tmp = Path(direc.folder + "/parsed_data/IMU_tmp.txt")
+direc.IMU.output = Path(direc.folder + "/parsed_data/IMU_parsed.csv")
+direc.IMU.raw = Path(direc.folder + "/raw_data/IMU_raw.txt")
 
 direc.UBLOX.ubx = Path(direc.folder + "/raw_data/" + sys.argv[6] + ".ubx")
 direc.UBLOX.input = Path(direc.folder + "/raw_data/" + sys.argv[6])
@@ -147,13 +147,13 @@ direc.UBLOX.Llh = Path(direc.folder + "/raw_data/UBOX_Llh.txt")
 direc.UBLOX.Sol = Path(direc.folder + "/raw_data/UBOX_Sol.txt")
 direc.UBLOX.VNed = Path(direc.folder + "/raw_data/UBOX_VNed.txt")
 
-# check if the MT mtb exists and is readable
-if not os.path.isfile(direc.MT.mtb): outputHandler("mtb MT file does not exist", han.err)
-if not os.access(direc.MT.mtb, os.R_OK): outputHandler("mtb MT file is not readable", han.err)
+# check if the IMU mtb exists and is readable
+if not os.path.isfile(direc.IMU.mtb): outputHandler("mtb IMU file does not exist", han.err)
+if not os.access(direc.IMU.mtb, os.R_OK): outputHandler("mtb IMU file is not readable", han.err)
 
-# check if the MT file exists and is readable
-if not os.path.isfile(direc.MT.input): outputHandler("input MT file does not exist", han.err)
-if not os.access(direc.MT.input, os.R_OK): outputHandler("input MT file is not readable", han.err)
+# check if the IMU file exists and is readable
+if not os.path.isfile(direc.IMU.input): outputHandler("input IMU file does not exist", han.err)
+if not os.access(direc.IMU.input, os.R_OK): outputHandler("input IMU file is not readable", han.err)
 
 # check if the UBLOX Llh exists and is readable
 if not os.path.isfile(direc.UBLOX.input.with_suffix(".Llh")): outputHandler("input UBLOX Llh does not exist", han.err)
@@ -177,15 +177,15 @@ if not os.access(direc.config, os.R_OK): outputHandler("config file is not reada
 # check if experiment directory is writable
 if not os.access(direc.folder, os.W_OK): outputHandler("output experiment directory is not writable", han.err)
 
-# rename MT and UBLOX input files
+# rename IMU and UBLOX input files
 try:
-    os.rename(direc.MT.mtb, Path(direc.folder + "/raw_data/MT.mtb"))
+    os.rename(direc.IMU.mtb, Path(direc.folder + "/raw_data/IMU.mtb"))
 except (OSError, IOError):
-    outputHandler("unable to rename MT mtb file", han.err)
+    outputHandler("unable to rename IMU mtb file", han.err)
 try:
-    os.rename(direc.MT.input, direc.MT.raw)
+    os.rename(direc.IMU.input, direc.IMU.raw)
 except (OSError, IOError):
-    outputHandler("unable to rename MT raw file", han.err)
+    outputHandler("unable to rename IMU raw file", han.err)
 
 try:
     os.rename(direc.UBLOX.ubx, Path(direc.folder + "/raw_data/UBOX.ubx"))
@@ -275,12 +275,12 @@ elif conf.magStop is None:
 if lineCnt != CONFIG_LINES: outputHandler("corrupted config file (# lines check)", han.err)
 
 # compute time per step from frequency
-proc.timeStepMT = 1 / conf.sampleRate * 10000
+proc.timeStepIMU = 1 / conf.sampleRate * 10000
 # check if it is a whole number
-if proc.timeStepMT.is_integer():
-    proc.timeStepMT = int(proc.timeStepMT)
+if proc.timeStepIMU.is_integer():
+    proc.timeStepIMU = int(proc.timeStepIMU)
 else:
-    outputHandler("computed time step is: " + str(proc.timeStepMT) + " - not an integer", han.err)
+    outputHandler("computed time step is: " + str(proc.timeStepIMU) + " - not an integer", han.err)
 
 # compute period in ms from frequency
 proc.period = 1 / conf.sampleRate * 1000
@@ -288,18 +288,18 @@ proc.period = 1 / conf.sampleRate * 1000
 # print execution time of actual segment
 outputHandler("initial phase executed in: " + str(round(time.time() - timeStamps.start, 4)) + " seconds", han.info)
 
-# MT DATA PREPROCESSING ------------------------------------------------------------------------------------------------
-outputHandler("starting MT pre-processing", han.info)
-timeStamps.MTpre = time.time()
+# IMU DATA PREPROCESSING ------------------------------------------------------------------------------------------------
+outputHandler("starting IMU pre-processing", han.info)
+timeStamps.IMUpre = time.time()
 # data format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
 
-# create tmp MT txt file
-MTtmpFile = open(direc.MT.tmp, 'w')
-if not MTtmpFile.writable(): outputHandler("unable to create MT tmp file", han.err)
+# create tmp IMU txt file
+IMUtmpFile = open(direc.IMU.tmp, 'w')
+if not IMUtmpFile.writable(): outputHandler("unable to create IMU tmp file", han.err)
 
-# open input MT txt file
-MTinFile = open(direc.MT.raw, 'r')
-if not MTinFile.readable(): outputHandler("unable to read MT input file", han.err)
+# open input IMU txt file
+IMUinFile = open(direc.IMU.raw, 'r')
+if not IMUinFile.readable(): outputHandler("unable to read IMU input file", han.err)
 
 wantedData = ["PacketCounter", "SampleTimeFine", "Acc_X", "Acc_Y", "Acc_Z", "Gyr_X", "Gyr_Y", "Gyr_Z", "Mag_X", "Mag_Y",
               "Mag_Z", "Pressure"]
@@ -309,7 +309,7 @@ rawDataHeader = ""
 # track if header was already loaded
 headerFlag = False
 
-for lineCnt, line in enumerate(MTinFile, start=1):
+for lineCnt, line in enumerate(IMUinFile, start=1):
     # fix missing nan markers
     line = fixNaN(line)
 
@@ -336,10 +336,10 @@ for lineCnt, line in enumerate(MTinFile, start=1):
         if cnt == 0:
             pass
         elif cnt == 1 and wantedDataID[-1] is None:
-            outputHandler("pressure not presented in MT raw file", han.warn, lineCnt)
+            outputHandler("pressure not presented in IMU raw file", han.warn, lineCnt)
         else:
             # artificial error print due to printing its information
-            print("ERROR: MT raw file does not contain following data, line no: " + str(lineCnt))
+            print("ERROR: IMU raw file does not contain following data, line no: " + str(lineCnt))
             for i in range(len(wantedDataID)):
                 if wantedDataID[i] is None: print("- " + wantedData[i])
             sys.exit(-1)
@@ -372,26 +372,26 @@ for lineCnt, line in enumerate(MTinFile, start=1):
         currSampleTimeFine = strToFloat(line[wantedDataID[1]])
 
         # check if PacketCounter is continuous, it will overflow after 65535
-        if proc.lastPacketMT is None:
-            proc.lastPacketMT = currPacketCounter
+        if proc.lastPacketIMU is None:
+            proc.lastPacketIMU = currPacketCounter
         else:
             # new value must be greater than old value by exactly one
-            if proc.lastPacketMT + 1 != currPacketCounter:
+            if proc.lastPacketIMU + 1 != currPacketCounter:
                 # it might be jus overflow
-                if proc.lastPacketMT != 65535 and currPacketCounter != 0:
+                if proc.lastPacketIMU != 65535 and currPacketCounter != 0:
                     outputHandler("discontinuity detected in PacketCounter", han.err, lineCnt)
             # update old value
-            proc.lastPacketMT = currPacketCounter
+            proc.lastPacketIMU = currPacketCounter
 
         # check if SampleTimeFine is continuous
-        if proc.lastSampleMT is None:
-            proc.lastSampleMT = currSampleTimeFine
+        if proc.lastSampleIMU is None:
+            proc.lastSampleIMU = currSampleTimeFine
         else:
             # old != new-timeStep
-            if proc.lastSampleMT + proc.timeStepMT != currSampleTimeFine:
+            if proc.lastSampleIMU + proc.timeStepIMU != currSampleTimeFine:
                 outputHandler("discontinuity detected in SampleTimeFine", han.err, lineCnt)
             # update old value
-            proc.lastSampleMT = currSampleTimeFine
+            proc.lastSampleIMU = currSampleTimeFine
 
         # everything was fine so far, update mag extremes for future processing
         if isNanArray(proc.magMax) or isNanArray(proc.magMin):
@@ -415,38 +415,38 @@ for lineCnt, line in enumerate(MTinFile, start=1):
 
         # write processed line into output file
         outLine = ' '.join(outLine) + '\n'
-        MTtmpFile.write(outLine)
+        IMUtmpFile.write(outLine)
 
-MTinFile.close()
-MTtmpFile.close()
+IMUinFile.close()
+IMUtmpFile.close()
 
 # compute means for magnetometer
 for i in range(3):
     proc.magMean[i] = 0.5 * (proc.magMax[i] + proc.magMin[i])
 
 # print execution time of actual segment
-outputHandler("MT pre-processing executed in: " + str(round(time.time() - timeStamps.MTpre, 4)) + " seconds", han.info)
+outputHandler("IMU pre-processing executed in: " + str(round(time.time() - timeStamps.IMUpre, 4)) + " seconds", han.info)
 
-# MT DATA FINAL PROCESS ------------------------------------------------------------------------------------------------
-outputHandler("starting MT final-processing", han.info)
-timeStamps.MTfinal = time.time()
+# IMU DATA FINAL PROCESS ------------------------------------------------------------------------------------------------
+outputHandler("starting IMU final-processing", han.info)
+timeStamps.IMUfinal = time.time()
 
-# reopen MT tmp file
-MTtmpFile = open(direc.MT.tmp, 'r')
-if not MTtmpFile.readable(): outputHandler("unable to read MT tmp file", han.err)
+# reopen IMU tmp file
+IMUtmpFile = open(direc.IMU.tmp, 'r')
+if not IMUtmpFile.readable(): outputHandler("unable to read IMU tmp file", han.err)
 
-# create MT out file
-MToutFile = open(direc.MT.output, 'w')
-if not MToutFile.writable(): outputHandler("unable to create MT output file", han.err)
+# create IMU out file
+IMUoutFile = open(direc.IMU.output, 'w')
+if not IMUoutFile.writable(): outputHandler("unable to create IMU output file", han.err)
 
-# create MT out CSV writer
+# create IMU out CSV writer
 header = ["Time", "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "MagX", "MagY", "MagZ", "Pres"]
-MToutFileWriter = csv.writer(MToutFile, delimiter=',')
-MToutFileWriter.writerow(header)
+IMUoutFileWriter = csv.writer(IMUoutFile, delimiter=',')
+IMUoutFileWriter.writerow(header)
 
 # line format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
 # data format: time acc_X acc_Y acc_Z gyr_X gyr_Y gyr_Z mag_X mag_Y mag_Z pressure
-for lineCnt, line in enumerate(MTtmpFile, start=1):
+for lineCnt, line in enumerate(IMUtmpFile, start=1):
     # separate values in line
     line = [x.strip() for x in line.split(' ')]
 
@@ -482,19 +482,19 @@ for lineCnt, line in enumerate(MTtmpFile, start=1):
         lineOut[i] = str(data)
 
     # write processed line into output file
-    MToutFileWriter.writerow(lineOut)
+    IMUoutFileWriter.writerow(lineOut)
 
-MTtmpFile.close()
-MToutFile.close()
+IMUtmpFile.close()
+IMUoutFile.close()
 
-# remove no longer needed MT temporary file
+# remove no longer needed IMU temporary file
 try:
-    os.remove(direc.MT.tmp)
+    os.remove(direc.IMU.tmp)
 except (OSError, IOError):
-    outputHandler("unable to remove MT tmp file", han.warn)
+    outputHandler("unable to remove IMU tmp file", han.warn)
 
 # print execution time of actual segment
-outputHandler("MT final-processing executed in: " + str(round(time.time() - timeStamps.MTfinal, 4)) + " seconds",
+outputHandler("IMU final-processing executed in: " + str(round(time.time() - timeStamps.IMUfinal, 4)) + " seconds",
               han.info)
 
 # UBLOX DATA PROCESS ---------------------------------------------------------------------------------------------------
@@ -517,7 +517,7 @@ if not UBLOXvnedFile.readable(): outputHandler("unable to read UBLOX VNed file",
 UBLOXoutFile = open(direc.UBLOX.output, 'w')
 if not UBLOXoutFile.writable(): outputHandler("unable to create UBLOX output file", han.err)
 
-# create MT out CSV writer
+# create IMU out CSV writer
 header = ["Time", "UTC", "LatNum", "LonNum", "Height", "GPSfix", "SatNum", "PosDOP", "HorAcc", "VerAcc", "Head",
           "Speed", "Lat", "Lon"]
 UBLOXoutFileWriter = csv.writer(UBLOXoutFile, delimiter=',')

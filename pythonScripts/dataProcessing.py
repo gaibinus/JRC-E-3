@@ -34,15 +34,15 @@ if freq <= 0:
     outputHandler("selected frequency is <= zero", han.err)
 
 # calculate input and output file path
-inFile = Path(sys.argv[2] + '/parsed_data/MT_proc.csv')
-outFile = Path(sys.argv[2] + '/resampled_data/MT_' + metod + '_' + str(freq) + '.csv')
+inFile = Path(sys.argv[2] + '/parsed_data/IMU_proc.csv')
+outFile = Path(sys.argv[2] + '/resampled_data/IMU_' + metod + '_' + str(freq) + '.csv')
 
-# check if the MT input file exists and is readable
-if not os.path.isfile(inFile): outputHandler("input MT file does not exist", han.err)
-if not os.access(inFile, os.R_OK): outputHandler("input MT file is not readable", han.err)
+# check if the IMU input file exists and is readable
+if not os.path.isfile(inFile): outputHandler("input IMU file does not exist", han.err)
+if not os.access(inFile, os.R_OK): outputHandler("input IMU file is not readable", han.err)
 
-# check if the MT output file exists and is readable
-if os.path.isfile(outFile): outputHandler("output MT file already exist", han.err)
+# check if the IMU output file exists and is readable
+if os.path.isfile(outFile): outputHandler("output IMU file already exist", han.err)
 
 # inform about current stage
 outputHandler("checks completed, starting matlab engine", han.info)
@@ -56,7 +56,7 @@ matlabDir = matlabDir.replace('pythonScripts', 'matlabScripts')
 eng.cd(matlabDir)
 
 # matlab resample function
-ret = eng.resampleMT(str(inFile), str(outFile), float(freq), metod)
+ret = eng.resampleIMU(str(inFile), str(outFile), float(freq), metod)
 if ret is True:
     outputHandler("file successfully downsampled", han.info)
 else:
