@@ -78,11 +78,11 @@ try:
 except OSError:
     outputHandler("unable to create raw data directory", han.err)
 
-# create processed data directory
+# create parsed data directory
 try:
     os.makedirs(direc.parsedData)
 except OSError:
-    outputHandler("unable to create processed data directory", han.err)
+    outputHandler("unable to create parsed data directory", han.err)
 
 # create photos directory
 try:
@@ -90,11 +90,11 @@ try:
 except OSError:
     outputHandler("unable to create photos directory", han.err)
 
-# create resampled data directory
+# create processed data directory
 try:
     os.makedirs(direc.processedData)
 except OSError:
-    outputHandler("unable to create resampled data directory", han.err)
+    outputHandler("unable to create processed data directory", han.err)
 
 # create config file
 configFile = open(files.config, 'w')
