@@ -518,7 +518,7 @@ UBLOXoutFile = open(direc.UBLOX.output, 'w')
 if not UBLOXoutFile.writable(): outputHandler("unable to create UBLOX output file", han.err)
 
 # create MT out CSV writer
-header = ["time", "utc", "latNum", "lonNum", "height", "tow", "gpsFix", "satNum", "posDOP", "horAcc", "verAcc", "head",
+header = ["time", "utc", "latNum", "lonNum", "height", "gpsFix", "satNum", "posDOP", "horAcc", "verAcc", "head",
           "speed", "lat", "lon"]
 UBLOXoutFileWriter = csv.writer(UBLOXoutFile, delimiter=',')
 UBLOXoutFileWriter.writerow(header)
@@ -546,8 +546,8 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
         lineVNed[i] = strToFloat(lineVNed[i])
 
     # prepare output array
-    dataOut = 15 * [float('nan')]
-    lineOut: [str] = 15 * [""]
+    dataOut = len(header) * [float('nan')]
+    lineOut: [str] = len(header) * [""]
 
     # compute GPS time
     tmpGPS = lineSol[2] * 7 * 24 * 60 * 60 + lineLLh[0] / 1000
@@ -573,31 +573,28 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
     # copy height
     dataOut[4] = lineLLh[3]
 
-    # copy time of the week
-    dataOut[5] = lineLLh[0]
-
     # copy GPS fix
-    dataOut[6] = lineSol[3]
+    dataOut[5] = lineSol[3]
 
     # copy number of used satellites
-    dataOut[7] = lineSol[4]
+    dataOut[6] = lineSol[4]
 
     # position DOP divide by 100
-    dataOut[8] = lineSol[13] / 100
+    dataOut[7] = lineSol[13] / 100
 
     # copy horizontal and vertical accuracy
-    dataOut[9] = lineLLh[5]
-    dataOut[10] = lineLLh[6]
+    dataOut[8] = lineLLh[5]
+    dataOut[9] = lineLLh[6]
 
     # copy heading
-    dataOut[11] = lineVNed[6]
+    dataOut[10] = lineVNed[6]
 
     # speed from k/hod to m/s
-    dataOut[12] = lineVNed[4] * 3.6
+    dataOut[11] = lineVNed[4] * 3.6
 
     # copy decimal latitude and longitude
-    dataOut[13] = lineLLh[1]
-    dataOut[14] = lineLLh[2]
+    dataOut[12] = lineLLh[1]
+    dataOut[13] = lineLLh[2]
 
     # convert to string and round
     for i in range(len(dataOut)):
