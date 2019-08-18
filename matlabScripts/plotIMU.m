@@ -1,4 +1,4 @@
-function plotMT(filePath)
+function plotIMU(filePath)
 
 % load data to time table
 timeTable = data2timetable(filePath);
