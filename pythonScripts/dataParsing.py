@@ -1,10 +1,11 @@
 from commonFunctions import *
 from pathlib import Path
-import os  # file exploring
-import math  # isnan()
-import time  # execution time measurement
+
+import math     # isnan()
+import os       # file exploring
+import time     # execution time measurement
 import csv
-import sys
+
 
 # DEFINITIONS ----------------------------------------------------------------------------------------------------------
 CONFIG_LINES = 8
@@ -17,7 +18,7 @@ DELTAGPSUTC = 315964782  # current update for data after Jan 1 2017
 class direc:
     def __index__(self, folder):
         self.IMU = self.IMU()
-        self.UBLOX = self.UBLOX()
+        self.GPS = self.GPS()
         self.folder = None
         self.config = None
 
@@ -28,7 +29,7 @@ class direc:
         tmp = None
         raw = None
 
-    class UBLOX:
+    class GPS:
         ubx = None
         input = None
         output = None
@@ -39,13 +40,6 @@ class direc:
 
 class conf:
     sampleRate = None
-    movementStart = None
-    accStart = None
-    accStop = None
-    gyroStart = None
-    gyroStop = None
-    magStart = None
-    magStop = None
 
 
 class proc:
@@ -61,10 +55,9 @@ class proc:
 
 
 class timeStamps:
-    start = None
     IMUpre = None
     IMUfinal = None
-    UBOX = None
+    GPS = None
 
 
 # FUNCTIONS ------------------------------------------------------------------------------------------------------------
@@ -118,11 +111,8 @@ def decToDMS(degrees):
 
 # MAIN------------------------------------------------------------------------------------------------------------------
 
-# save starting time for execution time computing
-timeStamps.start = time.time()
-
 # INPUT FILES HANDLING -------------------------------------------------------------------------------------------------
-# input format: main -m <IMU file> -u <UBLOX file> -o <output folder>
+# input format: main -m <IMU file> -u <GPS file> -o <output folder>
 
 # check number of parameters and marking
 if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv) - 1), han.err)
@@ -140,12 +130,12 @@ direc.IMU.tmp = Path(direc.folder + "/parsed_data/IMU_tmp.txt")
 direc.IMU.output = Path(direc.folder + "/parsed_data/IMU_parsed.csv")
 direc.IMU.raw = Path(direc.folder + "/raw_data/IMU_raw.txt")
 
-direc.UBLOX.ubx = Path(direc.folder + "/raw_data/" + sys.argv[6] + ".ubx")
-direc.UBLOX.input = Path(direc.folder + "/raw_data/" + sys.argv[6])
-direc.UBLOX.output = Path(direc.folder + "/parsed_data/UBOX_parsed.csv")
-direc.UBLOX.Llh = Path(direc.folder + "/raw_data/UBOX_Llh.txt")
-direc.UBLOX.Sol = Path(direc.folder + "/raw_data/UBOX_Sol.txt")
-direc.UBLOX.VNed = Path(direc.folder + "/raw_data/UBOX_VNed.txt")
+direc.GPS.ubx = Path(direc.folder + "/raw_data/" + sys.argv[6] + ".ubx")
+direc.GPS.input = Path(direc.folder + "/raw_data/" + sys.argv[6])
+direc.GPS.output = Path(direc.folder + "/parsed_data/GPS_parsed.csv")
+direc.GPS.Llh = Path(direc.folder + "/raw_data/GPS_Llh.txt")
+direc.GPS.Sol = Path(direc.folder + "/raw_data/GPS_Sol.txt")
+direc.GPS.VNed = Path(direc.folder + "/raw_data/GPS_VNed.txt")
 
 # check if the IMU mtb exists and is readable
 if not os.path.isfile(direc.IMU.mtb): outputHandler("mtb IMU file does not exist", han.err)
@@ -155,19 +145,19 @@ if not os.access(direc.IMU.mtb, os.R_OK): outputHandler("mtb IMU file is not rea
 if not os.path.isfile(direc.IMU.input): outputHandler("input IMU file does not exist", han.err)
 if not os.access(direc.IMU.input, os.R_OK): outputHandler("input IMU file is not readable", han.err)
 
-# check if the UBLOX Llh exists and is readable
-if not os.path.isfile(direc.UBLOX.input.with_suffix(".Llh")): outputHandler("input UBLOX Llh does not exist", han.err)
-if not os.access(direc.UBLOX.input.with_suffix(".Llh"), os.R_OK): outputHandler("input UBLOX Llh is not readable",
+# check if the GPS Llh exists and is readable
+if not os.path.isfile(direc.GPS.input.with_suffix(".Llh")): outputHandler("input GPS Llh does not exist", han.err)
+if not os.access(direc.GPS.input.with_suffix(".Llh"), os.R_OK): outputHandler("input GPS Llh is not readable",
                                                                                 han.err)
 
-# check if the UBLOX Llh exists and is readable
-if not os.path.isfile(direc.UBLOX.input.with_suffix(".Sol")): outputHandler("input UBLOX Sol does not exist", han.err)
-if not os.access(direc.UBLOX.input.with_suffix(".Sol"), os.R_OK): outputHandler("input UBLOX Sol is not readable",
+# check if the GPS Llh exists and is readable
+if not os.path.isfile(direc.GPS.input.with_suffix(".Sol")): outputHandler("input GPS Sol does not exist", han.err)
+if not os.access(direc.GPS.input.with_suffix(".Sol"), os.R_OK): outputHandler("input GPS Sol is not readable",
                                                                                 han.err)
 
-# check if the UBLOX Llh exists and is readable
-if not os.path.isfile(direc.UBLOX.input.with_suffix(".VNed")): outputHandler("input UBLOX VNed does not exist", han.err)
-if not os.access(direc.UBLOX.input.with_suffix(".VNed"), os.R_OK): outputHandler("input UBLOX VNed is not readable",
+# check if the GPS Llh exists and is readable
+if not os.path.isfile(direc.GPS.input.with_suffix(".VNed")): outputHandler("input GPS VNed does not exist", han.err)
+if not os.access(direc.GPS.input.with_suffix(".VNed"), os.R_OK): outputHandler("input GPS VNed is not readable",
                                                                                  han.err)
 
 # check if config file exists and is readable
@@ -177,7 +167,30 @@ if not os.access(direc.config, os.R_OK): outputHandler("config file is not reada
 # check if experiment directory is writable
 if not os.access(direc.folder, os.W_OK): outputHandler("output experiment directory is not writable", han.err)
 
-# rename IMU and UBLOX input files
+
+# LOAD DATA FROM CONFIG FILE AND RENAME FILES --------------------------------------------------------------------------
+
+# load sample rate from config file
+conf.sampleRate = readConfig(direc.config, 'sample_rate')
+
+# check if is valid
+if math.isnan(conf.sampleRate):
+    outputHandler("loaded sample rate is NaN value", han.err)
+
+# compute time per step from frequency
+proc.timeStepIMU = 1 / conf.sampleRate * 10000
+
+# check if it is a whole number
+if proc.timeStepIMU.is_integer():
+    proc.timeStepIMU = int(proc.timeStepIMU)
+else:
+    outputHandler("computed time step is: " + str(proc.timeStepIMU) + " - not an integer", han.err)
+
+# compute period in ms from frequency
+proc.period = 1 / conf.sampleRate * 1000
+
+
+# rename IMU and GPS input files
 try:
     os.rename(direc.IMU.mtb, Path(direc.folder + "/raw_data/IMU.mtb"))
 except (OSError, IOError):
@@ -188,105 +201,24 @@ except (OSError, IOError):
     outputHandler("unable to rename IMU raw file", han.err)
 
 try:
-    os.rename(direc.UBLOX.ubx, Path(direc.folder + "/raw_data/UBOX.ubx"))
+    os.rename(direc.GPS.ubx, Path(direc.folder + "/raw_data/GPS.ubx"))
 except (OSError, IOError):
-    outputHandler("unable to rename UBLOX ubx file", han.err)
+    outputHandler("unable to rename GPS ubx file", han.err)
 try:
-    os.rename(direc.UBLOX.input.with_suffix(".Llh"), direc.UBLOX.Llh)
+    os.rename(direc.GPS.input.with_suffix(".Llh"), direc.GPS.Llh)
 except (OSError, IOError):
-    outputHandler("unable to rename UBLOX Llh file", han.err)
+    outputHandler("unable to rename GPS Llh file", han.err)
 try:
-    os.rename(direc.UBLOX.input.with_suffix(".Sol"), direc.UBLOX.Sol)
+    os.rename(direc.GPS.input.with_suffix(".Sol"), direc.GPS.Sol)
 except (OSError, IOError):
-    outputHandler("unable to rename UBLOX Sol file", han.err)
+    outputHandler("unable to rename GPS Sol file", han.err)
 try:
-    os.rename(direc.UBLOX.input.with_suffix(".VNed"), direc.UBLOX.VNed)
+    os.rename(direc.GPS.input.with_suffix(".VNed"), direc.GPS.VNed)
 except (OSError, IOError):
-    outputHandler("unable to rename UBLOX VNed file", han.err)
+    outputHandler("unable to rename GPS VNed file", han.err)
 
 outputHandler("all files loaded successfully", han.info)
 
-# LOAD DATA FROM CONFIG FILE -------------------------------------------------------------------------------------------
-# open config file
-configFile = open(direc.config, 'r')
-if not configFile.readable(): outputHandler("unable to read config file", han.err)
-
-# process every line from file, count them for check
-lineCnt = 0
-for line in configFile:
-    lineCnt = lineCnt + 1
-    line = line.replace(' ', '')
-
-    confName = None
-    confVal = None
-    # extract data name
-    try:
-        confName = line[:line.index("=")]
-    except ValueError:
-        outputHandler("corrupted config file ('=' check)", han.err)
-    # extract data value
-    try:
-        confVal = line[line.index("=") + 1:]
-    except ValueError:
-        outputHandler("corrupted config file ('=' check)", han.err)
-    # format to integer
-    try:
-        confVal = int(confVal)
-    except ValueError:
-        outputHandler("corrupted config file (int check)", han.err)
-
-    # based on extracted data name, match value with data class
-    if confName == "sampleRate":
-        conf.sampleRate = confVal
-    elif confName == "movementStart":
-        conf.movementStart = confVal
-    elif confName == "accStart":
-        conf.accStart = confVal
-    elif confName == "accStop":
-        conf.accStop = confVal
-    elif confName == "gyroStart":
-        conf.gyroStart = confVal
-    elif confName == "gyroStop":
-        conf.gyroStop = confVal
-    elif confName == "magStart":
-        conf.magStart = confVal
-    elif confName == "magStop":
-        conf.magStop = confVal
-
-# check if any value in data class remained as None
-if conf.sampleRate is None:
-    outputHandler("corrupted config file (None check 1)", han.err)
-elif conf.movementStart is None:
-    outputHandler("corrupted config file (None check 2)", han.err)
-elif conf.accStart is None:
-    outputHandler("corrupted config file (None check 3)", han.err)
-elif conf.accStop is None:
-    outputHandler("corrupted config file (None check 4)", han.err)
-elif conf.gyroStart is None:
-    outputHandler("corrupted config file (None check 5)", han.err)
-elif conf.gyroStop is None:
-    outputHandler("corrupted config file (None check 6)", han.err)
-elif conf.magStart is None:
-    outputHandler("corrupted config file (None check 7)", han.err)
-elif conf.magStop is None:
-    outputHandler("corrupted config file (None check 8)", han.err)
-
-# check if config file has correct number of lines
-if lineCnt != CONFIG_LINES: outputHandler("corrupted config file (# lines check)", han.err)
-
-# compute time per step from frequency
-proc.timeStepIMU = 1 / conf.sampleRate * 10000
-# check if it is a whole number
-if proc.timeStepIMU.is_integer():
-    proc.timeStepIMU = int(proc.timeStepIMU)
-else:
-    outputHandler("computed time step is: " + str(proc.timeStepIMU) + " - not an integer", han.err)
-
-# compute period in ms from frequency
-proc.period = 1 / conf.sampleRate * 1000
-
-# print execution time of actual segment
-outputHandler("initial phase executed in: " + str(round(time.time() - timeStamps.start, 4)) + " seconds", han.info)
 
 # IMU DATA PREPROCESSING ------------------------------------------------------------------------------------------------
 outputHandler("starting IMU pre-processing", han.info)
@@ -497,40 +429,40 @@ except (OSError, IOError):
 outputHandler("IMU final-processing executed in: " + str(round(time.time() - timeStamps.IMUfinal, 4)) + " seconds",
               han.info)
 
-# UBLOX DATA PROCESS ---------------------------------------------------------------------------------------------------
-outputHandler("starting UBLOX processing", han.info)
-timeStamps.UBOX = time.time()
+# GPS DATA PROCESS ---------------------------------------------------------------------------------------------------
+outputHandler("starting GPS processing", han.info)
+timeStamps.GPS = time.time()
 
-# open UBLOX Llh file
-UBLOXllhFile = open(direc.UBLOX.Llh, 'r')
-if not UBLOXllhFile.readable(): outputHandler("unable to read UBLOX Llh file", han.err)
+# open GPS Llh file
+GPSllhFile = open(direc.GPS.Llh, 'r')
+if not GPSllhFile.readable(): outputHandler("unable to read GPS Llh file", han.err)
 
-# open UBLOX Sol file
-UBLOXsolFile = open(direc.UBLOX.Sol, 'r')
-if not UBLOXsolFile.readable(): outputHandler("unable to read UBLOX Sol file", han.err)
+# open GPS Sol file
+GPSsolFile = open(direc.GPS.Sol, 'r')
+if not GPSsolFile.readable(): outputHandler("unable to read GPS Sol file", han.err)
 
-# open UBLOX VNed file
-UBLOXvnedFile = open(direc.UBLOX.VNed, 'r')
-if not UBLOXvnedFile.readable(): outputHandler("unable to read UBLOX VNed file", han.err)
+# open GPS VNed file
+GPSvnedFile = open(direc.GPS.VNed, 'r')
+if not GPSvnedFile.readable(): outputHandler("unable to read GPS VNed file", han.err)
 
-# create UBLOX out file
-UBLOXoutFile = open(direc.UBLOX.output, 'w')
-if not UBLOXoutFile.writable(): outputHandler("unable to create UBLOX output file", han.err)
+# create GPS out file
+GPSoutFile = open(direc.GPS.output, 'w')
+if not GPSoutFile.writable(): outputHandler("unable to create GPS output file", han.err)
 
 # create IMU out CSV writer
 header = ["Time", "UTC", "LatNum", "LonNum", "Height", "GPSfix", "SatNum", "PosDOP", "HorAcc", "VerAcc", "Head",
           "Speed", "Lat", "Lon"]
-UBLOXoutFileWriter = csv.writer(UBLOXoutFile, delimiter=',')
-UBLOXoutFileWriter.writerow(header)
+GPSoutFileWriter = csv.writer(GPSoutFile, delimiter=',')
+GPSoutFileWriter.writerow(header)
 
 # data: tow lat lon height (meanSeaLevel) horAcc verAcc Sol  data: iTow (fTow) weekNum gpsFix satNum (ecefX) (ecefY)
 # (ecefZ) (ecefVX) (ecefVY) (ecefVZ) (posAccuracy) (speedAccuracy) posDop VNed data: towNum (vN) (vE) (vD) speed
 # groundSpeed heading (speedAcc) (headingAcc) bracket means we do not use those data
 
-# no need to check format, sequence and continuity of data - UBLOX binary parser already did it
+# no need to check format, sequence and continuity of data - GPS binary parser already did it
 
 # load lines from the files simultaneously
-for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile):
+for lineLLh, lineSol, lineVNed in zip(GPSllhFile, GPSsolFile, GPSvnedFile):
 
     # separate values in lines
     lineLLh = [x.strip() for x in lineLLh.split(' ')]
@@ -602,15 +534,15 @@ for lineLLh, lineSol, lineVNed in zip(UBLOXllhFile, UBLOXsolFile, UBLOXvnedFile)
         lineOut[i] = str(data)
 
     # write processed line into output file
-    UBLOXoutFileWriter.writerow(lineOut)
+    GPSoutFileWriter.writerow(lineOut)
 
-UBLOXllhFile.close()
-UBLOXsolFile.close()
-UBLOXvnedFile.close()
-UBLOXoutFile.close()
+GPSllhFile.close()
+GPSsolFile.close()
+GPSvnedFile.close()
+GPSoutFile.close()
 
 # print execution time of actual segment
-outputHandler("UBOX processing executed in: " + str(round(time.time() - timeStamps.UBOX, 4)) + " seconds", han.info)
+outputHandler("GPS processing executed in: " + str(round(time.time() - timeStamps.GPS, 4)) + " seconds", han.info)
 
 # CODE END -------------------------------------------------------------------------------------------------------------
-outputHandler("Overall script execution time: " + str(round(time.time() - timeStamps.start, 4)) + " seconds", han.info)
+outputHandler("overall script execution time: " + str(round(time.time() - timeStamps.start, 4)) + " seconds", han.info)
