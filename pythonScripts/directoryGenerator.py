@@ -1,6 +1,6 @@
 from commonFunctions import *
 from pathlib import Path
-import sys
+from shutil import copyfile
 import os
 
 
@@ -14,30 +14,10 @@ class direc:
 
 
 class files:
-    config = None
-    report = None
-
-
-# FUNCTIONS ------------------------------------------------------------------------------------------------------------
-# process input of specified value with unit and check format
-def processInput(normalName, unit, typeExpect):
-    # repeat while not valid input
-    while True:
-        dataInput = input("Insert " + normalName + " [" + unit + "] (" + typeExpect + "): ")
-        # check for a type
-        try:
-            if typeExpect == "integer":
-                dataInput = int(dataInput)
-            elif typeExpect == "float":
-                dataInput = float(dataInput)
-            else:
-                outputHandler("unchecked input type", han.warn)
-        except ValueError:
-            outputHandler("entered value is not " + typeExpect + ", try again", han.warn)
-            continue
-        break
-    # return rav, not a string
-    return dataInput
+    configSource = None
+    configTarget = None
+    reportSource = None
+    reportTarget = None
 
 
 # MAIN -----------------------------------------------------------------------------------------------------------------
@@ -58,8 +38,14 @@ direc.photos = Path(direc.main + "/photo")
 direc.processedData = Path(direc.main + "/processed_data")
 
 # compute file names
-files.config = Path(direc.main + "/config.txt")
-files.report = Path(direc.main + "/report.txt")
+files.configSource = Path(os.getcwd() + "/txtTemplates/configTemplate.txt")
+files.configTarget = Path(direc.main + "/config.txt")
+files.reportSource = Path(os.getcwd() + "/txtTemplates/reportTemplate.txt")
+files.reportTarget = Path(direc.main + "/report.txt")
+
+# check if txt template file exists
+if not os.path.isfile(files.configSource): outputHandler("config template txt file does not exist", han.err)
+if not os.path.isfile(files.reportSource): outputHandler("report template txt file does not exist", han.err)
 
 # check if experiment folder exists then create it
 if not os.path.exists(direc.main):
@@ -97,86 +83,13 @@ except OSError:
     outputHandler("unable to create processed data directory", han.err)
 
 # create config file
-configFile = open(files.config, 'w')
-if not configFile.writable(): outputHandler("unable to create config file", han.err)
-
-# write config file headers
-configFile.write("sampleRate = \n"
-                 "movementStart = \n"
-                 "accStart = \n"
-                 "accStop = \n"
-                 "gyroStart = \n"
-                 "gyroStop = \n"
-                 "magStart = \n"
-                 "magStop = \n")
-configFile.close()
+try:
+    copyfile(files.configSource, files.configTarget)
+except IOError:
+    outputHandler("unable to copy config template txt", han.err)
 
 # create report file
-reportFile = open(files.report, 'w')
-if not reportFile.writable(): outputHandler("unable to create report file", han.err)
-
-# write config file headers
-reportFile.write("experiment name = " + folderName + "\n"
-                 "experiment date = \n"
-                 "car number = \n"
-                 "car brand = \n"
-                 "car type = \n"
-                 "car license plate = \n"
-                 "dist. GPS to front = \n"
-                 "dist. IMU to front = \n"
-                 "number of loops = \n"
-                 "notes = \n"
-                 )
-reportFile.close()
-
-# MAYBE LATER
-# file format: sampleRate = data \n movementStart = data \n data \n accStart = data \n accStop = data \n ...
-# ... gyroStart = data \n gyroStop = data \n magStart = data /n magStop = data
-#
-#
-# # sampleRate
-# data = processInput("sample rate", "Hz", "integer")
-# configFile.write("sampleRate = " + str(data) + '\n')
-#
-# # movementStart
-# data = processInput("start of movement", "line no.", "integer")
-# configFile.write("movementStart = " + str(data) + '\n')
-#
-# # accStart/Stop
-# while True:
-#     dataA = processInput("START of accelerometer", "line no.", "integer")
-#     dataB = processInput("STOP  of accelerometer", "line no.", "integer")
-#     # check validity of data
-#     if dataB < dataA:
-#         outputHandler("START line no. is bigger than STOP line no. , repeat the process", han.warn)
-#         continue
-#     # write data to config
-#     configFile.write("accStart = " + str(dataA) + '\n')
-#     configFile.write("accStop = " + str(dataB) + '\n')
-#     break
-#
-# # gyroStart/Stop
-# while True:
-#     dataA = processInput("START of gyroscope", "line no.", "integer")
-#     dataB = processInput("STOP  of gyroscope", "line no.", "integer")
-#     # check validity of data
-#     if dataB < dataA:
-#         outputHandler("START line no. is bigger than STOP line no. , repeat the process", han.warn)
-#         continue
-#     # write data to config
-#     configFile.write("gyroStart = " + str(dataA) + '\n')
-#     configFile.write("gyroStop = " + str(dataB) + '\n')
-#     break
-#
-# # magStart/Stop
-# while True:
-#     dataA = processInput("START of magnetometer", "line no.", "integer")
-#     dataB = processInput("STOP  of magnetometer", "line no.", "integer")
-#     # check validity of data
-#     if dataB < dataA:
-#         outputHandler("START line no. is bigger than STOP line no. , repeat the process", han.warn)
-#         continue
-#     # write data to config
-#     configFile.write("magStart = " + str(dataA) + '\n')
-#     configFile.write("magStop = " + str(dataB) + '\n')
-#     break
+try:
+    copyfile(files.reportSource, files.reportTarget)
+except IOError as e:
+    outputHandler("unable to copy report template txt", han.err)

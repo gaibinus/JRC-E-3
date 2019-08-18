@@ -1,0 +1,10 @@
+experiment name =
+experiment date =
+car number =
+car brand =
+car type =
+car license plate =
+dist. GPS to front =
+dist. IMU to front =
+number of loops =
+notes =
