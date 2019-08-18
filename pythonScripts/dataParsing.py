@@ -55,6 +55,7 @@ class proc:
 
 
 class timeStamps:
+    start = None
     IMUpre = None
     IMUfinal = None
     GPS = None
@@ -110,6 +111,7 @@ def decToDMS(degrees):
 
 
 # MAIN------------------------------------------------------------------------------------------------------------------
+timeStamps.start = time.time()
 
 # INPUT FILES HANDLING -------------------------------------------------------------------------------------------------
 # input format: main -m <IMU file> -u <GPS file> -o <output folder>
