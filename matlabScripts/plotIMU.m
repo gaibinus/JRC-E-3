@@ -12,10 +12,9 @@ fig.NumberTitle = 'off';
 statPlot = stackedplot(timeTable);
 
 % set up stacked plot parameters
-statPlot.DisplayVariables = {
-    {'AccX','AccY','AccZ'}
-    {'GyrX','GyrY','GyrZ'}
-    {'MagX','MagY','MagZ'}};
+statPlot.DisplayVariables = {{'AccX','AccY','AccZ'}
+                             {'GyrX','GyrY','GyrZ'}
+                             {'MagX','MagY','MagZ'}};
 statPlot.DisplayLabels = {'Acc','Gyr','Mag'};
 statPlot.GridVisible = 'off';
 statPlot.XLabel = 'Time [s]';
