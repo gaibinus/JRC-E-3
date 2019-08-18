@@ -56,7 +56,7 @@ def readConfig(filePath, dataName):
     for lineCnt, line in enumerate(file, start=1):
 
         # ignore human comment lines and empty lines
-        if line.find("#") != -1 or line in ['\n', '\r\n']:
+        if line[0] == '#' or line in ['\n', '\r\n']:
             pass
         else:
             line = line.replace(' ', '')
@@ -115,7 +115,7 @@ def writeConfig(filePath, dataName, dataVal):
         line = data[i]
 
         # ignore human comment lines and empty lines
-        if line.find("#") != -1 or line in ['\n', '\r\n']:
+        if line[0] == '#' or line in ['\n', '\r\n']:
             pass
         else:
             line = line.replace(' ', '')
@@ -138,8 +138,7 @@ def writeConfig(filePath, dataName, dataVal):
                 break
 
     # check if data was modified
-    if flagWrited is False:
-        outputHandler("config file was not changed", han.confErr)
+    if flagWrited is False: outputHandler("config file was not changed", han.confErr)
 
     # open config file
     file = open(filePath, 'w')
@@ -150,5 +149,8 @@ def writeConfig(filePath, dataName, dataVal):
 
     # close file
     file.close()
+
+    # return true as success
+    return True
 
 # ----------------------------------------------------------------------------------------------------------------------
