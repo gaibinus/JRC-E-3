@@ -1,43 +1,31 @@
 function ret = computeIMUvelo(fileIn, fileOut)
 
-% check if file exists
-if exist(fileIn, 'file') == 0
-    error("Path does not exists");
-end
-
-% load header from CSV
-fid = fopen(fileIn, 'r');
-csvHeader = strsplit(fgetl(fid), ',');
-fclose(fid);
-
-% add results names to csv header
-csvHeader = [csvHeader 'VeloX' 'VeloY' 'VeloZ' 'VeloNorm'];
-
-% load data as matrix
-data = readmatrix(fileIn);
+% load data as table
+data = readtable(fileIn);
 
 % compute sample frequency
-freq = 1 / (data(2,1) - data(1,1));
+freq = 1 / (data{2,'Time'} - data{1,'Time'});
 
 % create filter
 FUSE = ahrsfilter();
 FUSE.SampleRate = freq;
 
 % compute velocity and orientation
-[~, velocity] = FUSE(data(:,2:4),data(:,5:7),data(:,8:10));
+[~, velo] = FUSE([data{:,'AccX'}, data{:,'AccY'}, data{:,'AccZ'}], ...
+                 [data{:,'GyrX'}, data{:,'GyrY'}, data{:,'GyrZ'}], ...
+                 [data{:,'MagX'}, data{:,'MagY'}, data{:,'MagZ'}]);
 
 % compute size of velocity vector
-velocityNorm = sqrt(sum(velocity.^2,2));
+veloNorm = sqrt(sum(velo.^2,2));
 
 % merge data with new computed data
-data = [data velocity velocityNorm];
+data = addvars(data, velo(:,1), velo(:,2),velo(:,3), veloNorm, ...
+               'NewVariableNames',{'VeloX' 'VeloY' 'VeloZ' 'VeloNorm'});
 
 % convert matrix to table and write to CSV
-table = array2table(data, 'VariableNames', csvHeader);
-writetable(table, fileOut);
+writetable(data, fileOut);
 
 % if okay, return true
 ret = true;
 
 end
-

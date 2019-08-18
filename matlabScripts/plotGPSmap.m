@@ -1,17 +1,14 @@
-%function plotUBLOXmap(file)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+function plotGPSmap(file)
 
-clear; close all; clc;
+% load data as table
+data = readtable(file);
 
-file = "C:\Users\geibfil\Desktop\JRC-E-3\experiments\1308-01\parsed_data\UBOX_proc.csv"
+% create figure and set it up
+fig = figure();
+fig.Name = 'GPS points deviation map';
+fig.NumberTitle = 'off';
 
-opts = detectImportOptions(file);
-[time, utc, latNum, lonNum, height, tow, gpsFix, satNum, posDOP, horAcc, verAcc, head, speed, lat, lon,] = readvars(file,opts);
+% create geo map
+geoshow(data{:,'Lat'}, data{:,'Lon'}, 'DisplayType', 'Point', 'Marker', '+', 'Color', 'red');
 
-figure('Name','UBLOX GPS points','NumberTitle','off','units','normalized','outerposition',[0 0 1 1]);
-
-geoshow(lat, lon, 'DisplayType', 'Point', 'Marker', '+', 'Color', 'red');
-
-%end
-
+end
