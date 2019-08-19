@@ -1,11 +1,14 @@
 # general settings
 sample_rate = nan
+resample_rate = nan
+resample_mode = nas
 
 # background noise window
+bnw_size = nan
 bnw_start = nan
 bnw_stop = nan
 
-# variant in bnw
+# variant in bnw (NO resample)
 vari_acc_x = nan
 vari_acc_y = nan
 vari_acc_z = nan
@@ -15,3 +18,9 @@ vari_gyr_z = nan
 vari_mag_x = nan
 vari_mag_y = nan
 vari_mag_z = nan
+
+# standard deviation in bnw (resampled)
+stdev_velo = nan
+stdev_velo_x = nan
+stdev_velo_y = nan
+stdev_velo_z = nan
