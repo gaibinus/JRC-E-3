@@ -1,12 +1,12 @@
-function [timeTable] = data2timetable(filePath, rows)
+function [data] = data2timetable(pathFile, rows)
 
 % check if file exists
-if exist(filePath, 'file') == 0
+if exist(pathFile, 'file') == 0
     error("Path does not exists");
 end
 
 % recognise options for csv loading
-opts = detectImportOptions(filePath);
+opts = detectImportOptions(pathFile);
 
 % check if number of rows was specified,
 if exist('rows','var')
@@ -15,13 +15,13 @@ if exist('rows','var')
 end
 
 % load data file
-timeTable = readtable(filePath, opts);
+data = readtable(pathFile, opts);
 
 % convert first column to time vector
-time = seconds(table2array(timeTable(1:end,1)));
+time = seconds(table2array(data(1:end,1)));
 
 % convert table to timetable using converted time vector
-timeTable = table2timetable(timeTable(:,2:end),'RowTimes',time);
+data = table2timetable(data(:,2:end),'RowTimes',time);
 
 end
 

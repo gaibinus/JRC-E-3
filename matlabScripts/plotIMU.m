@@ -14,11 +14,11 @@ if exist('plotTime','var')
     rows = plotTime / period;
     
     % load data to time table
-    timeTable = data2timetable(pathFile, rows);
+    data = data2timetable(pathFile, rows);
     
 else
     % load data to time table
-    timeTable = data2timetable(pathFile);
+    data = data2timetable(pathFile);
 end
 
 % create figure and set it up
@@ -27,7 +27,7 @@ fig.Name = 'MT sensor data';
 fig.NumberTitle = 'off';
 
 % create stacked plot
-statPlot = stackedplot(timeTable);
+statPlot = stackedplot(data);
 
 % set up stacked plot parameters
 statPlot.DisplayVariables = {{'AccX','AccY','AccZ'}

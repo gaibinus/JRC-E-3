@@ -1,7 +1,7 @@
-function plotGPSmap(file)
+function plotGPSmap(pathFile)
 
 % load data as table
-data = readtable(file);
+data = readtable(pathFile);
 
 % create figure and set it up
 fig = figure();
