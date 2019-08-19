@@ -1,11 +1,11 @@
-function plotIMU(filePath, plotTime)
+function plotIMU(pathFile, plotTime)
 
 % check if time frame was specified,
 if exist('plotTime','var')
     % read file as table but only first two lines
-    opts = detectImportOptions(filePath);
+    opts = detectImportOptions(pathFile);
     opts.DataLines = [2 3];
-    table = readtable(filePath, opts);
+    table = readtable(pathFile, opts);
     
     % compute lenght between two measurements
     period = abs(table{1,1} - table{2,1});
@@ -14,11 +14,11 @@ if exist('plotTime','var')
     rows = plotTime / period;
     
     % load data to time table
-    timeTable = data2timetable(filePath, rows);
+    timeTable = data2timetable(pathFile, rows);
     
 else
     % load data to time table
-    timeTable = data2timetable(filePath);
+    timeTable = data2timetable(pathFile);
 end
 
 % create figure and set it up
