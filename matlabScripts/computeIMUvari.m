@@ -25,12 +25,12 @@ lastLine = stopTime / (1/sampleRate) + 1;
 % load data as matrix but only in speciefied range
 opts = detectImportOptions(pathFile);
 opts.DataLines = [firstLine+1 lastLine+1];
-table = readtable(pathFile, opts);
+data = readtable(pathFile, opts);
 
 % compute variation vector for every IMU unit
-accVari = var([table{:,'AccX'} table{:,'AccY'} table{:,'AccZ'}]);
-gyrVari = var([table{:,'GyrX'} table{:,'GyrY'} table{:,'GyrZ'}]);
-magVari = var([table{:,'MagX'} table{:,'MagY'} table{:,'MagZ'}]);
+accVari = var([data{:,'AccX'} data{:,'AccY'} data{:,'AccZ'}]);
+gyrVari = var([data{:,'GyrX'} data{:,'GyrY'} data{:,'GyrZ'}]);
+magVari = var([data{:,'MagX'} data{:,'MagY'} data{:,'MagZ'}]);
 
 % write variation to config file
 py.commonFunctions.writeConfig(pathConfig, 'vari_acc_x', accVari(1));
