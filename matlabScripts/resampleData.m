@@ -1,19 +1,19 @@
-function ret = resampleIMU(inFile, outFile, freq, metod)
+function ret = resampleData(pathIn, pathOot, frequency, mode)
 
 % load data to time table
-table = data2timetable(inFile);
+data = data2timetable(pathIn);
 
 % resample time table to desired frequency with metod
-table = retime(table, 'regular', metod, 'SampleRate', freq);
+data = retime(data, 'regular', mode, 'SampleRate', frequency);
 
 % export newly sampled time table to desired csv file
-table = timetable2table(table);
+data = timetable2table(data);
 
 % change to table and exclude ' sec' from time column
-table = convertvars(table,'Time','seconds');
+data = convertvars(data,'Time','seconds');
 
 % export table to desired csv file
-writetable(table, outFile);
+writetable(data, pathOot);
 
 % if okay, return true
 ret = true;
