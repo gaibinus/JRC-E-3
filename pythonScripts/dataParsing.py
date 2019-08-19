@@ -375,7 +375,7 @@ if not IMUoutFile.writable(): outputHandler("unable to create IMU output file", 
 
 # create IMU out CSV writer
 header = ["Time", "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "MagX", "MagY", "MagZ", "Pres"]
-IMUoutFileWriter = csv.writer(IMUoutFile, delimiter=',')
+IMUoutFileWriter = csv.writer(IMUoutFile, delimiter=',', lineterminator='\n')
 IMUoutFileWriter.writerow(header)
 
 # line format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
@@ -454,7 +454,7 @@ if not GPSoutFile.writable(): outputHandler("unable to create GPS output file", 
 # create IMU out CSV writer
 header = ["Time", "UTC", "LatNum", "LonNum", "Height", "GPSfix", "SatNum", "PosDOP", "HorAcc", "VerAcc", "Head",
           "Speed", "Lat", "Lon"]
-GPSoutFileWriter = csv.writer(GPSoutFile, delimiter=',')
+GPSoutFileWriter = csv.writer(GPSoutFile, delimiter=',', lineterminator='\n')
 GPSoutFileWriter.writerow(header)
 
 # data: tow lat lon height (meanSeaLevel) horAcc verAcc Sol  data: iTow (fTow) weekNum gpsFix satNum (ecefX) (ecefY)
