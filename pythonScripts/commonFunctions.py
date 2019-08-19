@@ -133,7 +133,7 @@ def writeConfig(filePath, dataName, dataVal):
             # check if data name is wanted
             if confName == dataName:
                 # rewrite line in data
-                data[i] = dataName + " = " + str(dataVal)
+                data[i] = dataName + " = " + str(dataVal) + "\n"
 
                 # found and rewrote, exit function
                 flagWriten = True
