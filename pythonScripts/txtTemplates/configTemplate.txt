@@ -6,15 +6,12 @@ bnw_start = nan
 bnw_stop = nan
 
 # variant in bnw
-var_acc = nan
-var_gyr = nan
-var_mag = nan
-var_acc_x = nan
-var_acc_y = nan
-var_acc_z = nan
-var_gyr_x = nan
-var_gyr_y = nan
-var_gyr_z = nan
-var_mag_x = nan
-var_mag_y = nan
-var_mag_z = nan
+vari_acc_x = nan
+vari_acc_y = nan
+vari_acc_z = nan
+vari_gyr_x = nan
+vari_gyr_y = nan
+vari_gyr_z = nan
+vari_mag_x = nan
+vari_mag_y = nan
+vari_mag_z = nan
