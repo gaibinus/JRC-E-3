@@ -1,5 +1,8 @@
+
+*.asv
 *.m~
 *venv/
 *__pycache__/
 pythonScripts/.idea/
+pythonScripts/testing.py
 experiments/
