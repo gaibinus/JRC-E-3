@@ -76,11 +76,11 @@ def readConfig(filePath, dataName):
                 # extract data value
                 confVal = line[line.index("=") + 1:]
 
-                # convert it to float
+                # convert it to float, or leave as string
                 try:
                     confVal = float(confVal)
                 except ValueError:
-                    outputHandler("ret value is not a float", han.confErr, lineCnt)
+                    pass
 
                 # found and checked, exit function
                 break
@@ -132,8 +132,12 @@ def writeConfig(filePath, dataName, dataVal):
 
             # check if data name is wanted
             if confName == dataName:
+                # if not string, convert to string
+                if not isinstance(dataVal, str):
+                    dataVal = str(dataVal)
+
                 # rewrite line in data
-                data[i] = dataName + " = " + str(dataVal) + "\n"
+                data[i] = dataName + " = " + dataVal + "\n"
 
                 # found and rewrote, exit function
                 flagWriten = True
