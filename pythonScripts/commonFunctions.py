@@ -2,6 +2,7 @@ from enum import Enum
 import os
 import sys
 
+
 # CLASSES AND OBJECTS---------------------------------------------------------------------------------------------------
 class han(Enum):
     err = 0
@@ -38,6 +39,7 @@ def outputHandler(message, typeOut, lineNO=DEFAULT):
         elif typeOut == han.confErr:
             print("ERROR: config handler : " + message + ", line no: " + str(lineNO))
             sys.exit(-1),
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -90,7 +92,8 @@ def readConfig(filePath, dataName):
     if confVal is not None:
         return confVal
     else:
-        outputHandler("value '" + confVal + "' not found", han.confErr)
+        outputHandler("value '" + dataName + "' not found", han.confErr)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -107,8 +110,8 @@ def writeConfig(filePath, dataName, dataVal):
     data = file.readlines()
     file.close()
 
-    # use flag for sucess tracking
-    flagWrited = False
+    # use flag for success tracking
+    flagWriten = False
 
     # loop thru data, find and edit specified value
     for i in range(len(data)):
@@ -129,16 +132,15 @@ def writeConfig(filePath, dataName, dataVal):
 
             # check if data name is wanted
             if confName == dataName:
-
                 # rewrite line in data
                 data[i] = dataName + " = " + str(dataVal)
 
                 # found and rewrote, exit function
-                flagWrited = True
+                flagWriten = True
                 break
 
     # check if data was modified
-    if flagWrited is False: outputHandler("config file was not changed", han.confErr)
+    if flagWriten is False: outputHandler("config file was not changed", han.confErr)
 
     # open config file
     file = open(filePath, 'w')
