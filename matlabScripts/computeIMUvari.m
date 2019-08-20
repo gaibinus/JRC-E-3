@@ -19,8 +19,8 @@ if sum(isnan([sampleRate startTime stopTime])) > 0
 end
 
 % compute first and last line of data
-firstLine = startTime / (1/sampleRate);
-lastLine = stopTime / (1/sampleRate) + 1;
+firstLine = round(startTime / (1/sampleRate)) + 1;
+lastLine = round(stopTime / (1/sampleRate)) + 1;
 
 % load data as matrix but only in speciefied range
 opts = detectImportOptions(pathFile);

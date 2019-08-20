@@ -8,8 +8,10 @@ py_addpath(pathPython);
 pyModule = py.importlib.import_module('commonFunctions');
 py.importlib.reload(pyModule);
 
-% load freqency and variation from config file
-frequency = py.commonFunctions.readConfig(pathConfig, 'resample_rate');
+% load freqency, window time and variation from config file
+sampleRate = py.commonFunctions.readConfig(pathConfig, 'resample_rate');
+startTime = py.commonFunctions.readConfig(pathConfig, 'bnw_start');
+stopTime = py.commonFunctions.readConfig(pathConfig, 'bnw_stop');
 accVari(1) = py.commonFunctions.readConfig(pathConfig, 'vari_acc_x');
 accVari(2) = py.commonFunctions.readConfig(pathConfig, 'vari_acc_y');
 accVari(3) = py.commonFunctions.readConfig(pathConfig, 'vari_acc_z');
@@ -21,7 +23,8 @@ magVari(2) = py.commonFunctions.readConfig(pathConfig, 'vari_mag_y');
 magVari(3) = py.commonFunctions.readConfig(pathConfig, 'vari_mag_z');
 
 % check if loaded values contains any 'nan'
-if sum(sum(isnan([accVari gyrVari magVari]))) > 0
+if sum(sum(isnan([sampleRate startTime stopTime ...
+                 accVari gyrVari magVari]))) > 0
    error("Uncomplete config file"); 
 end
 
@@ -30,7 +33,7 @@ data = readtable(pathIn);
 
 % create filter
 FUSE = ahrsfilter();
-FUSE.SampleRate = frequency;
+FUSE.SampleRate = sampleRate;
 FUSE.AccelerometerNoise = max(accVari);
 FUSE.GyroscopeNoise = max(gyrVari);
 FUSE.MagnetometerNoise = max(magVari);
@@ -47,8 +50,32 @@ veloNorm = sqrt(sum(velo.^2,2));
 data = table(data{:,'Time'}, velo(:,1), velo(:,2),velo(:,3), veloNorm, ...
                'VariableNames',{'Time' 'VeloX' 'VeloY' 'VeloZ' 'VeloNorm'});
 
-% convert matrix to table and write to CSV
+% write table to CSV
 writetable(data, pathOut);
+
+% compute first and last line of data in BNW
+firstLine = round(startTime / (1/sampleRate)) + 1;
+lastLine = round(stopTime / (1/sampleRate)) + 1;
+
+% compute standard deviations in BNW
+stdAxial = std(velo(firstLine:lastLine,:));
+stdNorm = std(veloNorm(firstLine:lastLine));
+
+% write standard deviation to config file
+py.commonFunctions.writeConfig(pathConfig, 'velo_std_x', stdAxial(1));
+py.commonFunctions.writeConfig(pathConfig, 'velo_std_y', stdAxial(2));
+py.commonFunctions.writeConfig(pathConfig, 'velo_std_z', stdAxial(3));
+py.commonFunctions.writeConfig(pathConfig, 'velo_std', stdNorm);
+
+% compute mean in BNW
+meanAxial = mean(velo(firstLine:lastLine,:));
+meanNorm = mean(veloNorm(firstLine:lastLine));
+
+% write mean to config file
+py.commonFunctions.writeConfig(pathConfig, 'velo_mean_x', meanAxial(1));
+py.commonFunctions.writeConfig(pathConfig, 'velo_mean_y', meanAxial(2));
+py.commonFunctions.writeConfig(pathConfig, 'velo_mean_z', meanAxial(3));
+py.commonFunctions.writeConfig(pathConfig, 'velo_mean', meanNorm);
 
 % if okay, return true
 ret = true;
