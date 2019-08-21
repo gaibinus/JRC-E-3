@@ -1,11 +1,10 @@
 from commonFunctions import *
 from pathlib import Path
 
-import math     # isnan()
-import os       # file exploring
-import time     # execution time measurement
+import math  # isnan()
+import os  # file exploring
+import time  # execution time measurement
 import csv
-
 
 # DEFINITIONS ----------------------------------------------------------------------------------------------------------
 CONFIG_LINES = 8
@@ -150,17 +149,17 @@ if not os.access(direc.IMU.input, os.R_OK): outputHandler("input IMU file is not
 # check if the GPS Llh exists and is readable
 if not os.path.isfile(direc.GPS.input.with_suffix(".Llh")): outputHandler("input GPS Llh does not exist", han.err)
 if not os.access(direc.GPS.input.with_suffix(".Llh"), os.R_OK): outputHandler("input GPS Llh is not readable",
-                                                                                han.err)
+                                                                              han.err)
 
 # check if the GPS Llh exists and is readable
 if not os.path.isfile(direc.GPS.input.with_suffix(".Sol")): outputHandler("input GPS Sol does not exist", han.err)
 if not os.access(direc.GPS.input.with_suffix(".Sol"), os.R_OK): outputHandler("input GPS Sol is not readable",
-                                                                                han.err)
+                                                                              han.err)
 
 # check if the GPS Llh exists and is readable
 if not os.path.isfile(direc.GPS.input.with_suffix(".VNed")): outputHandler("input GPS VNed does not exist", han.err)
 if not os.access(direc.GPS.input.with_suffix(".VNed"), os.R_OK): outputHandler("input GPS VNed is not readable",
-                                                                                 han.err)
+                                                                               han.err)
 
 # check if config file exists and is readable
 if not os.path.isfile(direc.config): outputHandler("config file does not exist", han.err)
@@ -168,7 +167,6 @@ if not os.access(direc.config, os.R_OK): outputHandler("config file is not reada
 
 # check if experiment directory is writable
 if not os.access(direc.folder, os.W_OK): outputHandler("output experiment directory is not writable", han.err)
-
 
 # LOAD DATA FROM CONFIG FILE AND RENAME FILES --------------------------------------------------------------------------
 
@@ -190,7 +188,6 @@ else:
 
 # compute period in ms from frequency
 proc.period = 1 / conf.sampleRate * 1000
-
 
 # rename IMU and GPS input files
 try:
@@ -221,8 +218,7 @@ except (OSError, IOError):
 
 outputHandler("all files loaded successfully", han.info)
 
-
-# IMU DATA PREPROCESSING ------------------------------------------------------------------------------------------------
+# IMU DATA PREPROCESSING -----------------------------------------------------------------------------------------------
 outputHandler("starting IMU pre-processing", han.info)
 timeStamps.IMUpre = time.time()
 # data format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
@@ -359,9 +355,10 @@ for i in range(3):
     proc.magMean[i] = 0.5 * (proc.magMax[i] + proc.magMin[i])
 
 # print execution time of actual segment
-outputHandler("IMU pre-processing executed in: " + str(round(time.time() - timeStamps.IMUpre, 4)) + " seconds", han.info)
+outputHandler("IMU pre-processing executed in: " + str(round(time.time() - timeStamps.IMUpre, 4)) + " seconds",
+              han.info)
 
-# IMU DATA FINAL PROCESS ------------------------------------------------------------------------------------------------
+# IMU DATA FINAL PROCESS -----------------------------------------------------------------------------------------------
 outputHandler("starting IMU final-processing", han.info)
 timeStamps.IMUfinal = time.time()
 
