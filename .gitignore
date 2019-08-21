@@ -1,8 +1,17 @@
+# JRC box
+*._sync_*
+.owncloudsync.log
+Desktop.ini
 
+# matlab
 *.asv
 *.m~
+
+#  pycharm
 *venv/
 *__pycache__/
 pythonScripts/.idea/
 pythonScripts/testing.py
+
+# too big
 experiments/
