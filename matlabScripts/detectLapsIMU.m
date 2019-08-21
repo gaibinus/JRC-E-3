@@ -1,5 +1,6 @@
-function ret = detectLapsIMU(pathIn, pathOut, pathConfig)
+function ret = detectLapsIMU(pathIn, pathBound, pathLaps, pathConfig)
 
+%% PYTHON IN MATLAB WORKAROUND
 % load folder with python scripts
 pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
 py_addpath(pathPython);
@@ -8,7 +9,7 @@ py_addpath(pathPython);
 pyModule = py.importlib.import_module('commonFunctions');
 py.importlib.reload(pyModule);
 
-% load all necessary data from config file
+%% LOAD DATA FROM CONFIG FILE
 frequency = py.commonFunctions.readConfig(pathConfig, 'resample_rate');
 bnwSize = py.commonFunctions.readConfig(pathConfig, 'bnw_size');
 veloStd = py.commonFunctions.readConfig(pathConfig, 'velo_std');
@@ -19,8 +20,9 @@ if sum(sum(isnan([frequency bnwSize veloStd veloMean]))) > 0
    error("Uncomplete config file"); 
 end
 
+%% LOAD CONVOLUTED DATA AND DETECT WINDOWS WHEN CAR IS STATIONAR
 % load data as table
-data = readtable(pathIn);
+dataBound = readtable(pathIn);
 
 % calculate upper and lower treshold
 veloMean = veloMean * (frequency * bnwSize);
@@ -28,34 +30,63 @@ upperTreshold = veloMean + veloStd * (frequency * bnwSize);
 lowerTreshold = 0;
 
 % create binary vector of possible loop boundaries
-bound = data{:,'ConvNorm'} < upperTreshold  & ...
-        data{:,'ConvNorm'} > lowerTreshold;
+bound = dataBound{:,'ConvNorm'} < upperTreshold  & ...
+        dataBound{:,'ConvNorm'} > lowerTreshold;
 
+%% CHANGE BINARY VECTOR OF WINDOWS TO ACTUAL START AND END OF LOOP
 % check if bound(1) == true, (must be, we are starting with engine off)
 if bound(1) == 0
     errot("Movement at start of the file detected")
 end
 
 % prealocate new vector
-boundCalc = nan(size(bound,1),1);
+laps = nan(size(bound,1),1);
 
 % calculate new vector as follows: 1 = start of lap, 0 = end of lap
 for i = 2:size(bound)
     % end of lap in I
     if bound(i-1)==0 && bound(i)==1
-        boundCalc(i) = 0;
+        laps(i) = 0;
     % start of lap in I-1
     elseif bound(i-1)==1 && bound(i)==0
-        boundCalc(i-1) = 1;
+        laps(i-1) = 1;
     end
 end
-     
-% rewrite table with new data        
-data = table(data{:,'Time'}, boundCalc, 'VariableNames',{'Time' 'Bound'});
-  
-% write table to CSV
-writetable(data, pathOut);
 
+% bound no longer needed
+clear bound;
+  
+% rewrite table with new data - boundaries   
+dataBound = table(dataBound{:,'Time'}, laps, ...
+                 'VariableNames',{'Time' 'Bound'});
+  
+% write boundarties table to CSV
+writetable(dataBound, pathBound);
+
+%% CREATE CSV FILE WITH SUMMARIZATION OF LAP START AND END TIME
+%create matrix for laps
+dataLaps = zeros(nansum(laps),4);
+
+lapCnt = 1; timeTmp = 0;
+% loop thru all boundCalc vector
+for i = 1:size(laps)
+    if laps(i) == 1
+        timeTmp = dataBound{i,'Time'};
+    elseif laps(i) == 0
+        dataLaps(lapCnt,:) = [lapCnt, timeTmp, dataBound{i,'Time'}, ...
+                              dataBound{i,'Time'} - timeTmp];
+        lapCnt = lapCnt +1;
+    end
+end
+
+% reformat matrix to table
+dataLaps = array2table(dataLaps, 'VariableNames', ...
+                      {'LapNo','StartTime','EndTime','LapDur'});
+
+% write laps table to CSV
+writetable(dataLaps, pathLaps);
+
+%% END OF SCRIPT
 % if okay, return true
 ret = true;
 
