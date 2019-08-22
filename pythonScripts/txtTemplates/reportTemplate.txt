@@ -9,6 +9,6 @@ car fuel type =
 
 dist. GPS to front = 
 dist. IMU to front = 
-number of loops = 
+number of laps = 
 
 notes = 

@@ -4,6 +4,7 @@ resample_rate = nan
 resample_mode = nas
 
 # background noise window - BNW
+bnw_search = nan
 bnw_size = nan
 bnw_start = nan
 bnw_stop = nan
