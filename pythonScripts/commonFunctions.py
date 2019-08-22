@@ -43,6 +43,26 @@ def outputHandler(message, typeOut, lineNO=DEFAULT):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+def checkAccess(filePath, accessType):
+    # check if file exists
+    if not os.path.exists(filePath):
+        outputHandler("file/folder does not exists:\n" + str(filePath), han.err)
+
+    # check specified access type
+
+    if accessType == "r" or accessType == "R":
+        if not os.access(filePath, os.R_OK):
+            outputHandler("file/folder is not readable:\n" + str(filePath), han.err)
+
+    elif accessType == "w" or accessType == "W":
+        if not os.access(filePath, os.W_OK):
+            outputHandler("file/folder is not writable:\n" + str(filePath), han.err)
+
+    else:
+        outputHandler("file/folder access type unrecognised", han.err)
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 def readConfig(filePath, dataName):
     # check if config file exists and is readable
     if not os.path.isfile(filePath): outputHandler("config file does not exist", han.confErr)
@@ -73,8 +93,8 @@ def readConfig(filePath, dataName):
             # check if data name is wanted
             if confName == dataName:
 
-                # extract data value
-                confVal = line[line.index("=") + 1:]
+                # extract data value and remove newline
+                confVal = line[line.index("=") + 1: -1]
 
                 # convert it to float, or leave as string
                 try:
