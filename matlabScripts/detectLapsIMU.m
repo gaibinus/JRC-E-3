@@ -49,7 +49,7 @@ for i = 2:size(bound)
         laps(i) = 0;
     % start of lap in I-1
     elseif bound(i-1)==1 && bound(i)==0
-        laps(i-1) = 1;
+        laps(i-1) = 1; 
     end
 end
 
@@ -77,6 +77,13 @@ for i = 1:size(laps)
                               dataBound{i,'Time'} - timeTmp];
         lapCnt = lapCnt +1;
     end
+end
+
+% check if times makes sense
+for i = 1:size(dataLaps)
+   if dataLaps(i,2) >= dataLaps(i,3)
+      warning("In lap " + int2str(i) + " is start >= end time!") 
+   end
 end
 
 % reformat matrix to table
