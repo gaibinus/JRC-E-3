@@ -14,22 +14,22 @@ DELTAGPSUTC = 315964782  # current update for data after Jan 1 2017
 
 
 # CLASSES --------------------------------------------------------------------------------------------------------------
-class direc:
+class path:
     def __index__(self, folder):
         self.IMU = self.IMU()
         self.GPS = self.GPS()
-        self.folder = None
+        self.experiment = None
         self.config = None
 
     class IMU:
-        IMUb = None
+        IMU = None
         input = None
         output = None
         tmp = None
         raw = None
 
     class GPS:
-        ubx = None
+        GPS = None
         input = None
         output = None
         Llh = None
@@ -113,7 +113,7 @@ def decToDMS(degrees):
 timeStamps.start = time.time()
 
 # INPUT FILES HANDLING -------------------------------------------------------------------------------------------------
-# input format: main -m <IMU file> -u <GPS file> -o <output folder>
+# input format: main -o <experiment folder> -m <IMU name> -u <GPS name>
 
 # check number of parameters and marking
 if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv) - 1), han.err)
@@ -122,56 +122,56 @@ if sys.argv[3] != "-m": outputHandler("second marker should be -m", han.err)
 if sys.argv[5] != "-u": outputHandler("third marker should be -u", han.err)
 
 # compute directories
-direc.folder = sys.argv[2]
-direc.config = Path(direc.folder + "/config.txt")
+path.experiment = sys.argv[2]
+path.config = Path(path.experiment + "/config.txt")
 
-direc.IMU.mtb = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".mtb")
-direc.IMU.input = Path(direc.folder + "/raw_data/" + sys.argv[4] + ".txt")
-direc.IMU.tmp = Path(direc.folder + "/parsed_data/IMU_tmp.txt")
-direc.IMU.output = Path(direc.folder + "/parsed_data/IMU_parsed.csv")
-direc.IMU.raw = Path(direc.folder + "/raw_data/IMU_raw.txt")
+path.IMU.mtb = Path(path.experiment + "/raw_data/" + sys.argv[4] + ".mtb")
+path.IMU.input = Path(path.experiment + "/raw_data/" + sys.argv[4] + ".txt")
+path.IMU.tmp = Path(path.experiment + "/parsed_data/IMU_tmp.txt")
+path.IMU.output = Path(path.experiment + "/parsed_data/IMU_parsed.csv")
+path.IMU.raw = Path(path.experiment + "/raw_data/IMU_raw.txt")
 
-direc.GPS.ubx = Path(direc.folder + "/raw_data/" + sys.argv[6] + ".ubx")
-direc.GPS.input = Path(direc.folder + "/raw_data/" + sys.argv[6])
-direc.GPS.output = Path(direc.folder + "/parsed_data/GPS_parsed.csv")
-direc.GPS.Llh = Path(direc.folder + "/raw_data/GPS_Llh.txt")
-direc.GPS.Sol = Path(direc.folder + "/raw_data/GPS_Sol.txt")
-direc.GPS.VNed = Path(direc.folder + "/raw_data/GPS_VNed.txt")
+path.GPS.GPS = Path(path.experiment + "/raw_data/" + sys.argv[6] + ".ubx")
+path.GPS.input = Path(path.experiment + "/raw_data/" + sys.argv[6])
+path.GPS.output = Path(path.experiment + "/parsed_data/GPS_parsed.csv")
+path.GPS.Llh = Path(path.experiment + "/raw_data/GPS_Llh.txt")
+path.GPS.Sol = Path(path.experiment + "/raw_data/GPS_Sol.txt")
+path.GPS.VNed = Path(path.experiment + "/raw_data/GPS_VNed.txt")
 
 # check if the IMU mtb exists and is readable
-if not os.path.isfile(direc.IMU.mtb): outputHandler("mtb IMU file does not exist", han.err)
-if not os.access(direc.IMU.mtb, os.R_OK): outputHandler("mtb IMU file is not readable", han.err)
+if not os.path.isfile(path.IMU.mtb): outputHandler("mtb IMU file does not exist", han.err)
+if not os.access(path.IMU.mtb, os.R_OK): outputHandler("mtb IMU file is not readable", han.err)
 
 # check if the IMU file exists and is readable
-if not os.path.isfile(direc.IMU.input): outputHandler("input IMU file does not exist", han.err)
-if not os.access(direc.IMU.input, os.R_OK): outputHandler("input IMU file is not readable", han.err)
+if not os.path.isfile(path.IMU.input): outputHandler("input IMU file does not exist", han.err)
+if not os.access(path.IMU.input, os.R_OK): outputHandler("input IMU file is not readable", han.err)
 
 # check if the GPS Llh exists and is readable
-if not os.path.isfile(direc.GPS.input.with_suffix(".Llh")): outputHandler("input GPS Llh does not exist", han.err)
-if not os.access(direc.GPS.input.with_suffix(".Llh"), os.R_OK): outputHandler("input GPS Llh is not readable",
+if not os.path.isfile(path.GPS.input.with_suffix(".Llh")): outputHandler("input GPS Llh does not exist", han.err)
+if not os.access(path.GPS.input.with_suffix(".Llh"), os.R_OK): outputHandler("input GPS Llh is not readable",
+                                                                             han.err)
+
+# check if the GPS Llh exists and is readable
+if not os.path.isfile(path.GPS.input.with_suffix(".Sol")): outputHandler("input GPS Sol does not exist", han.err)
+if not os.access(path.GPS.input.with_suffix(".Sol"), os.R_OK): outputHandler("input GPS Sol is not readable",
+                                                                             han.err)
+
+# check if the GPS Llh exists and is readable
+if not os.path.isfile(path.GPS.input.with_suffix(".VNed")): outputHandler("input GPS VNed does not exist", han.err)
+if not os.access(path.GPS.input.with_suffix(".VNed"), os.R_OK): outputHandler("input GPS VNed is not readable",
                                                                               han.err)
-
-# check if the GPS Llh exists and is readable
-if not os.path.isfile(direc.GPS.input.with_suffix(".Sol")): outputHandler("input GPS Sol does not exist", han.err)
-if not os.access(direc.GPS.input.with_suffix(".Sol"), os.R_OK): outputHandler("input GPS Sol is not readable",
-                                                                              han.err)
-
-# check if the GPS Llh exists and is readable
-if not os.path.isfile(direc.GPS.input.with_suffix(".VNed")): outputHandler("input GPS VNed does not exist", han.err)
-if not os.access(direc.GPS.input.with_suffix(".VNed"), os.R_OK): outputHandler("input GPS VNed is not readable",
-                                                                               han.err)
 
 # check if config file exists and is readable
-if not os.path.isfile(direc.config): outputHandler("config file does not exist", han.err)
-if not os.access(direc.config, os.R_OK): outputHandler("config file is not readable", han.err)
+if not os.path.isfile(path.config): outputHandler("config file does not exist", han.err)
+if not os.access(path.config, os.R_OK): outputHandler("config file is not readable", han.err)
 
 # check if experiment directory is writable
-if not os.access(direc.folder, os.W_OK): outputHandler("output experiment directory is not writable", han.err)
+if not os.access(path.experiment, os.W_OK): outputHandler("output experiment directory is not writable", han.err)
 
 # LOAD DATA FROM CONFIG FILE AND RENAME FILES --------------------------------------------------------------------------
 
 # load sample rate from config file
-conf.sampleRate = readConfig(direc.config, 'sample_rate')
+conf.sampleRate = readConfig(path.config, 'sample_rate')
 
 # check if is valid
 if math.isnan(conf.sampleRate):
@@ -191,28 +191,28 @@ proc.period = 1 / conf.sampleRate * 1000
 
 # rename IMU and GPS input files
 try:
-    os.rename(direc.IMU.mtb, Path(direc.folder + "/raw_data/IMU.mtb"))
+    os.rename(path.IMU.mtb, Path(path.experiment + "/raw_data/IMU.mtb"))
 except (OSError, IOError):
     outputHandler("unable to rename IMU mtb file", han.err)
 try:
-    os.rename(direc.IMU.input, direc.IMU.raw)
+    os.rename(path.IMU.input, path.IMU.raw)
 except (OSError, IOError):
     outputHandler("unable to rename IMU raw file", han.err)
 
 try:
-    os.rename(direc.GPS.ubx, Path(direc.folder + "/raw_data/GPS.ubx"))
+    os.rename(path.GPS.GPS, Path(path.experiment + "/raw_data/GPS.ubx"))
 except (OSError, IOError):
     outputHandler("unable to rename GPS ubx file", han.err)
 try:
-    os.rename(direc.GPS.input.with_suffix(".Llh"), direc.GPS.Llh)
+    os.rename(path.GPS.input.with_suffix(".Llh"), path.GPS.Llh)
 except (OSError, IOError):
     outputHandler("unable to rename GPS Llh file", han.err)
 try:
-    os.rename(direc.GPS.input.with_suffix(".Sol"), direc.GPS.Sol)
+    os.rename(path.GPS.input.with_suffix(".Sol"), path.GPS.Sol)
 except (OSError, IOError):
     outputHandler("unable to rename GPS Sol file", han.err)
 try:
-    os.rename(direc.GPS.input.with_suffix(".VNed"), direc.GPS.VNed)
+    os.rename(path.GPS.input.with_suffix(".VNed"), path.GPS.VNed)
 except (OSError, IOError):
     outputHandler("unable to rename GPS VNed file", han.err)
 
@@ -224,11 +224,11 @@ timeStamps.IMUpre = time.time()
 # data format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
 
 # create tmp IMU txt file
-IMUtmpFile = open(direc.IMU.tmp, 'w')
+IMUtmpFile = open(path.IMU.tmp, 'w')
 if not IMUtmpFile.writable(): outputHandler("unable to create IMU tmp file", han.err)
 
 # open input IMU txt file
-IMUinFile = open(direc.IMU.raw, 'r')
+IMUinFile = open(path.IMU.raw, 'r')
 if not IMUinFile.readable(): outputHandler("unable to read IMU input file", han.err)
 
 wantedData = ["PacketCounter", "SampleTimeFine", "Acc_X", "Acc_Y", "Acc_Z", "Gyr_X", "Gyr_Y", "Gyr_Z", "Mag_X", "Mag_Y",
@@ -363,11 +363,11 @@ outputHandler("starting IMU final-processing", han.info)
 timeStamps.IMUfinal = time.time()
 
 # reopen IMU tmp file
-IMUtmpFile = open(direc.IMU.tmp, 'r')
+IMUtmpFile = open(path.IMU.tmp, 'r')
 if not IMUtmpFile.readable(): outputHandler("unable to read IMU tmp file", han.err)
 
 # create IMU out file
-IMUoutFile = open(direc.IMU.output, 'w')
+IMUoutFile = open(path.IMU.output, 'w')
 if not IMUoutFile.writable(): outputHandler("unable to create IMU output file", han.err)
 
 # create IMU out CSV writer
@@ -420,7 +420,7 @@ IMUoutFile.close()
 
 # remove no longer needed IMU temporary file
 try:
-    os.remove(direc.IMU.tmp)
+    os.remove(path.IMU.tmp)
 except (OSError, IOError):
     outputHandler("unable to remove IMU tmp file", han.warn)
 
@@ -433,19 +433,19 @@ outputHandler("starting GPS processing", han.info)
 timeStamps.GPS = time.time()
 
 # open GPS Llh file
-GPSllhFile = open(direc.GPS.Llh, 'r')
+GPSllhFile = open(path.GPS.Llh, 'r')
 if not GPSllhFile.readable(): outputHandler("unable to read GPS Llh file", han.err)
 
 # open GPS Sol file
-GPSsolFile = open(direc.GPS.Sol, 'r')
+GPSsolFile = open(path.GPS.Sol, 'r')
 if not GPSsolFile.readable(): outputHandler("unable to read GPS Sol file", han.err)
 
 # open GPS VNed file
-GPSvnedFile = open(direc.GPS.VNed, 'r')
+GPSvnedFile = open(path.GPS.VNed, 'r')
 if not GPSvnedFile.readable(): outputHandler("unable to read GPS VNed file", han.err)
 
 # create GPS out file
-GPSoutFile = open(direc.GPS.output, 'w')
+GPSoutFile = open(path.GPS.output, 'w')
 if not GPSoutFile.writable(): outputHandler("unable to create GPS output file", han.err)
 
 # create IMU out CSV writer
