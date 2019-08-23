@@ -1,10 +1,10 @@
 # general settings
-sample_rate = nan
-resample_rate = nan
-resample_mode = nas
+sample_rate = 2000
+resample_rate = 20
+resample_mode = mean
 
 # background noise window - BNW
-bnw_search = nan
+bnw_search = 60
 bnw_size = nan
 bnw_start = nan
 bnw_stop = nan
@@ -25,9 +25,13 @@ velo_std_x = nan
 velo_std_y = nan
 velo_std_z = nan
 velo_std = nan
+velo_std_norm = nan
+velo_std_delt = nan
 
 # mean of velocity in BNW
 velo_mean_x = nan
 velo_mean_y = nan
 velo_mean_z = nan
 velo_mean = nan
+velo_mean_norm = nan
+velo_mean_delt = nan
