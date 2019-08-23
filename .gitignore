@@ -1,6 +1,6 @@
 # JRC box
 *._sync_*
-.owncloudsync.log
+.owncloudsync.log*
 Desktop.ini
 
 # matlab
