@@ -140,4 +140,8 @@ for i, row in enumerate(reader):
             else:
                 break
 
+# close files
+dataFile.close()
+currentFile.close()
+
 # CODE END -------------------------------------------------------------------------------------------------------------

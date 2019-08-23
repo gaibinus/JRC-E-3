@@ -1,4 +1,4 @@
-function ret = computeIMUvari(pathFile, pathConfig)
+function ret = computeVariant(pathFile, pathConfig)
 
 % load folder with python scripts
 pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');

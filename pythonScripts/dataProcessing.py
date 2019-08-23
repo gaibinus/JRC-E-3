@@ -73,7 +73,7 @@ timeStamps.start = time.time()
 # input format: main -o <experiment file>
 
 # check number of parameters and marking
-if len(sys.argv) != 3: outputHandler("6 parameters expected, got " + str(len(sys.argv) - 1), han.err)
+if len(sys.argv) != 3: outputHandler("2 parameters expected, got " + str(len(sys.argv) - 1), han.err)
 if sys.argv[1] != "-o": outputHandler("first marker should be -o", han.err)
 
 # compute directories
@@ -164,7 +164,7 @@ eng.close("all")
 # MATLAB compute variant
 timeStamps.tmp = time.time()
 outputHandler("starting MATLAB variant computation", han.info)
-ret = eng.computeIMUvari(str(path.parsed.IMU), str(path.config))
+ret = eng.computeVariant(str(path.parsed.IMU), str(path.config))
 if ret is not True: outputHandler("false returned from MATLAB script", han.err)
 outputHandler("variant computed in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
 
@@ -181,37 +181,26 @@ checkAccess(path.processed.resa, "r")
 # MATLAB compute velocity
 timeStamps.tmp = time.time()
 outputHandler("starting MATLAB velocity computation", han.info)
-ret = eng.computeIMUvelo(str(path.processed.resa), str(path.processed.velo), str(path.config))
+ret = eng.computeVelocity(str(path.processed.resa), str(path.processed.velo), str(path.config))
 if ret is not True: outputHandler("false returned from MATLAB script", han.err)
 outputHandler("velocity computed in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
 
 # check if created file exists and it is readable
 checkAccess(path.processed.velo, "r")
 
-# MATLAB convolute velocity
-timeStamps.tmp = time.time()
-outputHandler("starting MATLAB velocity convolution", han.info)
-ret = eng.convoluteIMUvelo(str(path.processed.velo), str(path.processed.conv), str(path.config))
-if ret is not True: outputHandler("false returned from MATLAB script", han.err)
-outputHandler("velocity convoluted in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
-
-# check if created file exists and it is readable
-checkAccess(path.processed.conv, "r")
-
 # MATLAB detect laps
 timeStamps.tmp = time.time()
 outputHandler("starting MATLAB laps detection", han.info)
-ret = eng.detectLapsIMU(str(path.processed.conv), str(path.processed.boun), str(path.processed.laps), str(path.config))
+ret = eng.detectBoundaries(str(path.processed.velo), str(path.processed.boun), str(path.config))
 if ret is not True: outputHandler("false returned from MATLAB script", han.err)
 outputHandler("laps detected in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
 
 # check if created file exists and it is readable
 checkAccess(path.processed.boun, "r")
-checkAccess(path.processed.laps, "r")
 
 # MATLAB plot boundaries for human check
 outputHandler("plotting results in MATLAB", han.info)
-eng.plotIMUboundaries(str(path.processed.velo), str(path.processed.conv), str(path.processed.boun), nargout=0)
+eng.plotBoundaries(str(path.processed.velo), str(path.processed.boun), nargout=0)
 
 # wait for human interaction
 while True:

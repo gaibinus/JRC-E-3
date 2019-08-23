@@ -11,7 +11,7 @@ if exist('plotTime','var')
     period = abs(table{1,1} - table{2,1});
     
     % compute how many lines from CSV are needed to match specified time
-    rows = plotTime / period;
+    rows = ceil(plotTime / period);
     
     % load data to time table
     data = data2timetable(pathFile, rows);
