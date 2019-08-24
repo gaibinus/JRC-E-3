@@ -1,35 +1,57 @@
 from functions import *
 from pathlib import Path
 
+import argparse
 import csv
 
-# check number of parameters and marking
-if len(sys.argv) != 5: outputHandler("4 parameters expected, got " + str(len(sys.argv) - 1), han.err)
-if sys.argv[1] != "-o": outputHandler("first marker should be -o", han.err)
-if sys.argv[3] != "-s": outputHandler("second marker should be -s", han.err)
-if sys.argv[3] != "-e": outputHandler("third marker should be -e", han.err)
 
-# parse information from call arguments
-pathIn = Path(sys.argv[2])
-pathOut = Path(sys.argv[2].replace(".csv", "_edited.csv"))
-startTime = float(sys.argv[4])
-endTime = float(sys.argv[6])
+# CLASSES --------------------------------------------------------------------------------------------------------------
+
+class path:
+    input = None
+    orig = None
+    tmp = None
+
+
+# MAIN------------------------------------------------------------------------------------------------------------------
+
+# FILES HANDLING -------------------------------------------------------------------------------------------------------
+
+# create input arguments parser
+parser = argparse.ArgumentParser(description='Keeps only specific time window of data.')
+
+# add required arguments
+parser.add_argument('-f', '--file', help='path to CSV data file', required=True)
+parser.add_argument('-s', '--start', help='start time of window [s]', required=True)
+parser.add_argument('-e', '--end', help='end time of window [s]', required=True)
+
+# load input arguments
+arguments = parser.parse_args()
+
+# parse information from call arguments and compute directories
+startTime = float(arguments.start)
+endTime = float(arguments.end)
+
+path.input = Path(arguments.file)
+path.orig = Path(arguments.file.replace('.csv', '_original.csv'))
+path.tmp = Path(arguments.file.replace('.csv', '_tmp.csv'))
+
+# PROCESS DATA ---------------------------------------------------------------------------------------------------------
 
 # check if data CSV file exists and is readable
-if not os.path.isfile(pathIn): outputHandler("input CSV file does not exist", han.err)
-if not os.access(pathIn, os.R_OK): outputHandler("input CSV file is not readable", han.err)
+checkAccess(path.input, 'r')
 
 # open input CSV file
-inFile = open(pathIn, 'r')
-if not inFile.readable(): outputHandler("unable to read input CSV file", han.err)
+inFile = open(path.input, 'r')
+if not inFile.readable(): outputHandler('unable to read input CSV file', han.err)
 
 # create csv reader and read header
 reader = csv.reader(inFile, delimiter=',')
 header = next(reader)
 
 # create output csv file
-outFile = open(pathOut, 'w')
-if not outFile.writable(): outputHandler("unable to create output CSV file", han.err)
+outFile = open(path.tmp, 'w')
+if not outFile.writable(): outputHandler('unable to create output CSV file', han.err)
 
 # create writer and write header
 writer = csv.writer(outFile, delimiter=',', lineterminator='\n')
@@ -44,3 +66,9 @@ for row in reader:
 # close files
 inFile.close()
 outFile.close()
+
+# rename input file to *_original and tmp file to input
+renameFile(path.input, path.orig)
+renameFile(path.tmp, path.input)
+
+# CODE END -------------------------------------------------------------------------------------------------------------

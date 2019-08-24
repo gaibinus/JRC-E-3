@@ -24,22 +24,22 @@ pathBound = Path(arguments.bound)
 pathLaps = Path(arguments.laps)
 
 # check if boundaries file exists and is readable
-checkAccess(pathBound, "r")
+checkAccess(pathBound, 'r')
 
 # load and check boundaries file
 boundFile = open(pathBound, 'r')
-if not boundFile.readable(): outputHandler("unable to read boundaries file", han.err)
+if not boundFile.readable(): outputHandler('unable to read boundaries file', han.err)
 
 # create boundaries CSV reader
 reader = csv.reader(boundFile, delimiter=',', lineterminator='\n')
 
 # create and check laps file
 lapsFile = open(pathLaps, 'w')
-if not lapsFile.writable(): outputHandler("unable to create laps file", han.err)
+if not lapsFile.writable(): outputHandler('unable to create laps file', han.err)
 
 # create laps CSV writer and write header
 writer = csv.writer(lapsFile, delimiter=',', lineterminator='\n')
-writer.writerow(["LapNo", "Start", "End", "Duration"])
+writer.writerow(['LapNo', 'Start', 'End', 'Duration'])
 
 # PROCESS BOUNDARIES FILE AND CREATE LAPS FILE -------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ currStart = None
 # check if first boundary data is static, pre-read row for next loop
 row = next(reader)
 lastBound = str2float(row[1])
-if not lastBound == 1: outputHandler("corrupted boundaries file - starts with 0", han.err)
+if not lastBound == 1: outputHandler('corrupted boundaries file - starts with 0', han.err)
 
 # loop thru whole boundaries file
 for row in reader:
@@ -73,11 +73,11 @@ for row in reader:
 
         # check if lap times make sense
         if not currStart < currEnd:
-            outputHandler("start time !< than end time in lap " + str(currLap), han.err)
+            outputHandler('start time !< than end time in lap ' + str(currLap), han.err)
 
         # check if lap time is after previous lap
         if prevEnd is not None and currStart < prevEnd:
-            outputHandler("end of previous lap !< than start of current lap " + str(currLap), han.err)
+            outputHandler('end of previous lap !< than start of current lap ' + str(currLap), han.err)
 
         # compute current lap duration
         currDuration = round(abs(currStart - currEnd), 2)
@@ -93,7 +93,7 @@ for row in reader:
     lastBound = row[1]
 
 # check if last boundary data is static
-if not lastBound == 1: outputHandler("corrupted boundaries file - ends with 0", han.err)
+if not lastBound == 1: outputHandler('corrupted boundaries file - ends with 0', han.err)
 
 # close open CSV files
 boundFile.close()

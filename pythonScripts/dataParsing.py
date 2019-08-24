@@ -2,12 +2,14 @@ from functions import *
 from pathlib import Path
 
 import argparse
-import math  # isnan()
-import os  # file exploring
-import time  # execution time measurement
+import math
+import os
+import time
 import csv
 
+
 # DEFINITIONS ----------------------------------------------------------------------------------------------------------
+
 CONFIG_LINES = 8
 GRAVITY = 9.80581295200000
 DECIMAL = 6
@@ -15,8 +17,9 @@ DELTAGPSUTC = 315964782  # current update for data after Jan 1 2017
 
 
 # CLASSES --------------------------------------------------------------------------------------------------------------
+
 class path:
-    def __index__(self, folder):
+    def __index__(self, experiment, config):
         self.IMU = self.IMU()
         self.GPS = self.GPS()
         self.experiment = None
@@ -56,17 +59,18 @@ class proc:
 
 class timeStamps:
     start = None
-    IMUpre = None
-    IMUfinal = None
+    preIMU = None
+    finalIMU = None
     GPS = None
 
 
 # FUNCTIONS ------------------------------------------------------------------------------------------------------------
+
 def fixNaN(string) -> str:
-    # string = string.replace("NaN", "nan")
-    string = string.replace(",\n", ",nan\n")
-    string = string.replace(",,", ",nan,")
-    string = string.replace(",,", ",nan,")
+    # string = string.replace('NaN', 'nan')
+    string = string.replace(',\n', ',nan\n')
+    string = string.replace(',,', ',nan,')
+    string = string.replace(',,', ',nan,')
     return string
 
 
@@ -85,7 +89,7 @@ def countNoneArray(array) -> int:
     return counter
 
 
-def decToDMS(degrees):
+def dec2DMS(degrees):
     positive = degrees >= 0
     degrees = abs(degrees)
     minutes, seconds = divmod(degrees * 3600, 60)
@@ -97,15 +101,15 @@ def decToDMS(degrees):
 # MAIN------------------------------------------------------------------------------------------------------------------
 timeStamps.start = time.time()
 
-# INPUT FILES HANDLING -------------------------------------------------------------------------------------------------
+# FILES HANDLING -------------------------------------------------------------------------------------------------------
 
 # create input arguments parser
 parser = argparse.ArgumentParser(description='Parse and check raw IMU and GPS files to CSV format.')
 
 # add required arguments
-parser.add_argument('-e', '--experiment', help='path to existing experiment directory', required=True)
-parser.add_argument('-i', '--imu', help='name of raw IMU .mtb file', required=True)
-parser.add_argument('-g', '--gps', help='name of raw GPS .ubx file', required=True)
+parser.add_argument('-e', '--experiment', help='path to existing experiment directory', type=str, required=True)
+parser.add_argument('-i', '--imu', help='name of raw IMU .mtb file', type=str, required=True)
+parser.add_argument('-g', '--gps', help='name of raw GPS .ubx file', type=str, required=True)
 
 # load input arguments
 arguments = parser.parse_args()
@@ -116,31 +120,31 @@ arguments.gps = arguments.gps.replace('.ubx', '')
 
 # compute directories
 path.experiment = arguments.experiment
-path.config = Path(path.experiment + "/config.txt")
+path.config = Path(path.experiment + '/config.txt')
 
-path.IMU.mtb = Path(path.experiment + "/raw_data/" + arguments.imu + ".mtb")
-path.IMU.input = Path(path.experiment + "/raw_data/" + arguments.imu + ".txt")
+path.IMU.mtb = Path(path.experiment + '/raw_data/' + arguments.imu + '.mtb')
+path.IMU.input = Path(path.experiment + '/raw_data/' + arguments.imu + '.txt')
 
-path.IMU.tmp = Path(path.experiment + "/parsed_data/IMU_tmp.txt")
-path.IMU.output = Path(path.experiment + "/parsed_data/IMU_parsed.csv")
-path.IMU.raw = Path(path.experiment + "/raw_data/IMU_raw.txt")
+path.IMU.tmp = Path(path.experiment + '/parsed_data/IMU_tmp.txt')
+path.IMU.output = Path(path.experiment + '/parsed_data/IMU_parsed.csv')
+path.IMU.raw = Path(path.experiment + '/raw_data/IMU_raw.txt')
 
-path.GPS.ubx = Path(path.experiment + "/raw_data/" + arguments.gps + ".ubx")
-path.GPS.input = Path(path.experiment + "/raw_data/" + arguments.gps)
+path.GPS.ubx = Path(path.experiment + '/raw_data/' + arguments.gps + '.ubx')
+path.GPS.input = Path(path.experiment + '/raw_data/' + arguments.gps)
 
-path.GPS.output = Path(path.experiment + "/parsed_data/GPS_parsed.csv")
-path.GPS.Llh = Path(path.experiment + "/raw_data/GPS_Llh.txt")
-path.GPS.Sol = Path(path.experiment + "/raw_data/GPS_Sol.txt")
-path.GPS.VNed = Path(path.experiment + "/raw_data/GPS_VNed.txt")
+path.GPS.output = Path(path.experiment + '/parsed_data/GPS_parsed.csv')
+path.GPS.Llh = Path(path.experiment + '/raw_data/GPS_Llh.txt')
+path.GPS.Sol = Path(path.experiment + '/raw_data/GPS_Sol.txt')
+path.GPS.VNed = Path(path.experiment + '/raw_data/GPS_VNed.txt')
 
 # check if files exists and are readable / writable
 checkAccess(path.IMU.mtb, 'r')
 checkAccess(path.IMU.input, 'r')
 
 checkAccess(path.GPS.ubx, 'r')
-checkAccess(path.GPS.input.with_suffix(".Llh"), 'r')
-checkAccess(path.GPS.input.with_suffix(".Sol"), 'r')
-checkAccess(path.GPS.input.with_suffix(".VNed"), 'r')
+checkAccess(path.GPS.input.with_suffix('.Llh'), 'r')
+checkAccess(path.GPS.input.with_suffix('.Sol'), 'r')
+checkAccess(path.GPS.input.with_suffix('.VNed'), 'r')
 
 checkAccess(path.config, 'r')
 checkAccess(path.experiment, 'w')
@@ -152,7 +156,7 @@ conf.sampleRate = readConfig(path.config, 'sample_rate')
 
 # check if is valid
 if math.isnan(conf.sampleRate):
-    outputHandler("loaded sample rate is NaN value", han.err)
+    outputHandler('loaded sample rate is NaN value', han.err)
 
 # compute time per step from frequency
 proc.timeStepIMU = 1 / conf.sampleRate * 10000
@@ -161,39 +165,39 @@ proc.timeStepIMU = 1 / conf.sampleRate * 10000
 if proc.timeStepIMU.is_integer():
     proc.timeStepIMU = int(proc.timeStepIMU)
 else:
-    outputHandler("computed time step is: " + str(proc.timeStepIMU) + " - not an integer", han.err)
+    outputHandler('computed time step is: ' + str(proc.timeStepIMU) + ' - not an integer', han.err)
 
 # compute period in ms from frequency
 proc.periodIMU = 1 / conf.sampleRate * 1000
 
 # rename IMU and GPS input files
-renameFile(path.IMU.mtb, Path(path.experiment + "/raw_data/IMU.mtb"))
+renameFile(path.IMU.mtb, Path(path.experiment + '/raw_data/IMU.mtb'))
 renameFile(path.IMU.input, path.IMU.raw)
-renameFile(path.GPS.ubx, Path(path.experiment + "/raw_data/GPS.ubx"))
-renameFile(path.GPS.input.with_suffix(".Llh"), path.GPS.Llh)
-renameFile(path.GPS.input.with_suffix(".Sol"), path.GPS.Sol)
-renameFile(path.GPS.input.with_suffix(".VNed"), path.GPS.VNed)
+renameFile(path.GPS.ubx, Path(path.experiment + '/raw_data/GPS.ubx'))
+renameFile(path.GPS.input.with_suffix('.Llh'), path.GPS.Llh)
+renameFile(path.GPS.input.with_suffix('.Sol'), path.GPS.Sol)
+renameFile(path.GPS.input.with_suffix('.VNed'), path.GPS.VNed)
 
-outputHandler("all files loaded successfully", han.info)
+outputHandler('all files loaded successfully', han.info)
 
 # IMU DATA PREPROCESSING -----------------------------------------------------------------------------------------------
-outputHandler("starting IMU pre-processing", han.info)
-timeStamps.IMUpre = time.time()
+outputHandler('starting IMU pre-processing', han.info)
+timeStamps.preIMU = time.time()
 
 # data format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
 
 # create tmp IMU txt file
 IMUtmpFile = open(path.IMU.tmp, 'w')
-if not IMUtmpFile.writable(): outputHandler("unable to create IMU tmp file", han.err)
+if not IMUtmpFile.writable(): outputHandler('unable to create IMU tmp file', han.err)
 
 # open input IMU txt file
 IMUinFile = open(path.IMU.raw, 'r')
-if not IMUinFile.readable(): outputHandler("unable to read IMU input file", han.err)
+if not IMUinFile.readable(): outputHandler('unable to read IMU input file', han.err)
 
-wantedData = ["PacketCounter", "SampleTimeFine", "Acc_X", "Acc_Y", "Acc_Z", "Gyr_X", "Gyr_Y", "Gyr_Z", "Mag_X", "Mag_Y",
-              "Mag_Z", "Pressure"]
+wantedData = ['PacketCounter', 'SampleTimeFine', 'Acc_X', 'Acc_Y', 'Acc_Z', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Mag_X', 'Mag_Y',
+              'Mag_Z', 'Pressure']
 wantedDataID = len(wantedData) * [0]
-rawDataHeader = ""
+rawDataHeader = ''
 
 # track if header was already loaded
 headerFlag = False
@@ -203,11 +207,11 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
     line = fixNaN(line)
 
     # ignore data info
-    if headerFlag is False and line.find("// ") != -1:
+    if headerFlag is False and line.find('// ') != -1:
         continue
 
     # find out data sequence and process it
-    elif headerFlag is False and line.find("PacketCounter") != -1:
+    elif headerFlag is False and line.find('PacketCounter') != -1:
         # rewrite flag
         headerFlag = True
         # strip header to names array
@@ -225,12 +229,12 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
         if cnt == 0:
             pass
         elif cnt == 1 and wantedDataID[-1] is None:
-            outputHandler("pressure not presented in IMU raw file", han.warn, lineCnt)
+            outputHandler('pressure not presented in IMU raw file', han.warn, lineCnt)
         else:
             # artificial error print due to printing its information
-            print("ERROR: IMU raw file does not contain following data, line no: " + str(lineCnt))
+            print('ERROR: IMU raw file does not contain following data, line no: ' + str(lineCnt))
             for i in range(len(wantedDataID)):
-                if wantedDataID[i] is None: print("- " + wantedData[i])
+                if wantedDataID[i] is None: print('- ' + wantedData[i])
             sys.exit(-1)
 
     # check format of every line, check if PacketCounter and SampleTimeFine are continuous
@@ -240,21 +244,21 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
 
         # check if enough data is presented
         if len(line) != len(rawDataHeader):
-            outputHandler("line length do not match header length", han.err, lineCnt)
+            outputHandler('line length do not match header length', han.err, lineCnt)
 
         # check if PacketCounter and SampleTimeFine are valid
         if not isStrNum(line[wantedDataID[0]]):
-            outputHandler("corrupted line on PacketCounter", han.err, lineCnt)
+            outputHandler('corrupted line on PacketCounter', han.err, lineCnt)
         if not isStrNum(line[wantedDataID[1]]):
-            outputHandler("corrupted line on SampleTimeFine", han.err, lineCnt)
+            outputHandler('corrupted line on SampleTimeFine', han.err, lineCnt)
 
         # check if every data in line is numerical, replace with 'nan'
         flagNum = 0
         for i in range(len(line)):
             if not isStrNum(line[i]):
-                line[i] = "nan"
+                line[i] = 'nan'
                 flagNum = flagNum + 1
-        if flagNum: outputHandler(str(flagNum) + " of data is 'nan'", han.warn, lineCnt)
+        if flagNum: outputHandler(str(flagNum) + ' of data is \'nan\'', han.warn, lineCnt)
 
         # export PacketCounter and SampleTimeFine to float
         currPacketCounter = str2float(line[wantedDataID[0]])
@@ -268,7 +272,7 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
             if proc.lastPacketIMU + 1 != currPacketCounter:
                 # it might be jus overflow
                 if proc.lastPacketIMU != 65535 and currPacketCounter != 0:
-                    outputHandler("discontinuity detected in PacketCounter", han.err, lineCnt)
+                    outputHandler('discontinuity detected in PacketCounter', han.err, lineCnt)
             # update old value
             proc.lastPacketIMU = currPacketCounter
 
@@ -278,7 +282,7 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
         else:
             # old != new-timeStep
             if proc.lastSampleIMU + proc.timeStepIMU != currSampleTimeFine:
-                outputHandler("discontinuity detected in SampleTimeFine", han.err, lineCnt)
+                outputHandler('discontinuity detected in SampleTimeFine', han.err, lineCnt)
             # update old value
             proc.lastSampleIMU = currSampleTimeFine
 
@@ -295,10 +299,10 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
                     proc.magMin[i] = str2float(line[wantedDataID[8 + i]])
 
         # recreate line in standard sequence for future processing
-        outLine = len(wantedData) * ["nan"]
+        outLine = len(wantedData) * ['nan']
         for i in range(len(wantedData)):
             if wantedDataID[i] is None:
-                outLine[i] = "nan"
+                outLine[i] = 'nan'
             else:
                 outLine[i] = str(line[wantedDataID[i]])
 
@@ -314,22 +318,22 @@ for i in range(3):
     proc.magMean[i] = 0.5 * (proc.magMax[i] + proc.magMin[i])
 
 # print execution time of actual segment
-outputHandler("IMU pre-processing executed in: " + timeDeltaStr(time.time(), timeStamps.IMUpre), han.info)
+outputHandler('IMU pre-processing executed in: ' + timeDeltaStr(time.time(), timeStamps.preIMU), han.info)
 
 # IMU DATA FINAL PROCESS -----------------------------------------------------------------------------------------------
-outputHandler("starting IMU final-processing", han.info)
-timeStamps.IMUfinal = time.time()
+outputHandler('starting IMU final-processing', han.info)
+timeStamps.finalIMU = time.time()
 
 # reopen IMU tmp file
 IMUtmpFile = open(path.IMU.tmp, 'r')
-if not IMUtmpFile.readable(): outputHandler("unable to read IMU tmp file", han.err)
+if not IMUtmpFile.readable(): outputHandler('unable to read IMU tmp file', han.err)
 
 # create IMU out file
 IMUoutFile = open(path.IMU.output, 'w')
-if not IMUoutFile.writable(): outputHandler("unable to create IMU output file", han.err)
+if not IMUoutFile.writable(): outputHandler('unable to create IMU output file', han.err)
 
 # create IMU out CSV writer
-header = ["Time", "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "MagX", "MagY", "MagZ", "Pres"]
+header = ['Time', 'AccX', 'AccY', 'AccZ', 'GyrX', 'GyrY', 'GyrZ', 'MagX', 'MagY', 'MagZ', 'Pres']
 IMUoutFileWriter = csv.writer(IMUoutFile, delimiter=',', lineterminator='\n')
 IMUoutFileWriter.writerow(header)
 
@@ -345,7 +349,7 @@ for lineCnt, line in enumerate(IMUtmpFile, start=1):
 
     # prepare output array
     dataOut = 11 * [float('nan')]
-    lineOut: [str] = 11 * [""]
+    lineOut: [str] = 11 * ['']
 
     # time in s
     dataOut[0] = ((lineCnt - 1) * proc.periodIMU) / 1000
@@ -380,34 +384,34 @@ IMUoutFile.close()
 try:
     os.remove(path.IMU.tmp)
 except (OSError, IOError):
-    outputHandler("unable to remove IMU tmp file", han.warn)
+    outputHandler('unable to remove IMU tmp file', han.warn)
 
 # print execution time of actual segment
-outputHandler("IMU final-processing executed in: " + timeDeltaStr(time.time(), timeStamps.IMUfinal), han.info)
+outputHandler('IMU final-processing executed in: ' + timeDeltaStr(time.time(), timeStamps.finalIMU), han.info)
 
 # GPS DATA PROCESS -----------------------------------------------------------------------------------------------------
-outputHandler("starting GPS processing", han.info)
+outputHandler('starting GPS processing', han.info)
 timeStamps.GPS = time.time()
 
 # open GPS Llh file
 GPSllhFile = open(path.GPS.Llh, 'r')
-if not GPSllhFile.readable(): outputHandler("unable to read GPS Llh file", han.err)
+if not GPSllhFile.readable(): outputHandler('unable to read GPS Llh file', han.err)
 
 # open GPS Sol file
 GPSsolFile = open(path.GPS.Sol, 'r')
-if not GPSsolFile.readable(): outputHandler("unable to read GPS Sol file", han.err)
+if not GPSsolFile.readable(): outputHandler('unable to read GPS Sol file', han.err)
 
 # open GPS VNed file
 GPSvnedFile = open(path.GPS.VNed, 'r')
-if not GPSvnedFile.readable(): outputHandler("unable to read GPS VNed file", han.err)
+if not GPSvnedFile.readable(): outputHandler('unable to read GPS VNed file', han.err)
 
 # create GPS out file
 GPSoutFile = open(path.GPS.output, 'w')
-if not GPSoutFile.writable(): outputHandler("unable to create GPS output file", han.err)
+if not GPSoutFile.writable(): outputHandler('unable to create GPS output file', han.err)
 
 # create IMU out CSV writer
-header = ["Time", "UTC", "LatNum", "LonNum", "Height", "GPSfix", "SatNum", "PosDOP", "HorAcc", "VerAcc", "Head",
-          "Speed", "Lat", "Lon"]
+header = ['Time', 'UTC', 'LatNum', 'LonNum', 'Height', 'GPSfix', 'SatNum', 'PosDOP', 'HorAcc', 'VerAcc', 'Head',
+          'Speed', 'Lat', 'Lon']
 GPSoutFileWriter = csv.writer(GPSoutFile, delimiter=',', lineterminator='\n')
 GPSoutFileWriter.writerow(header)
 
@@ -437,7 +441,7 @@ for lineLLh, lineSol, lineVNed in zip(GPSllhFile, GPSsolFile, GPSvnedFile):
 
     # prepare output array
     dataOut = len(header) * [float('nan')]
-    lineOut: [str] = len(header) * [""]
+    lineOut: [str] = len(header) * ['']
 
     # compute GPS time
     tmpGPS = lineSol[2] * 7 * 24 * 60 * 60 + lineLLh[0] / 1000
@@ -453,11 +457,11 @@ for lineLLh, lineSol, lineVNed in zip(GPSllhFile, GPSsolFile, GPSvnedFile):
     proc.lastSampleUBX = dataOut[1]
 
     # compute latitude degrees
-    tmpDMS = decToDMS(lineLLh[1])
+    tmpDMS = dec2DMS(lineLLh[1])
     dataOut[2] = tmpDMS[0] * 100 + tmpDMS[1] + round(tmpDMS[2] / 100, DECIMAL)
 
     # compute longitude degrees
-    tmpDMS = decToDMS(lineLLh[2])
+    tmpDMS = dec2DMS(lineLLh[2])
     dataOut[3] = tmpDMS[0] * 100 + tmpDMS[1] + round(tmpDMS[2] / 100, DECIMAL)
 
     # copy height
@@ -500,7 +504,7 @@ GPSvnedFile.close()
 GPSoutFile.close()
 
 # print execution time of actual segment
-outputHandler("GPS processing executed in: " + timeDeltaStr(time.time(), timeStamps.GPS), han.info)
+outputHandler('GPS processing executed in: ' + timeDeltaStr(time.time(), timeStamps.GPS), han.info)
 
 # CODE END -------------------------------------------------------------------------------------------------------------
-outputHandler("overall script execution time: " + timeDeltaStr(time.time(), timeStamps.start), han.info)
+outputHandler('overall script execution time: ' + timeDeltaStr(time.time(), timeStamps.start), han.info)
