@@ -1,22 +1,27 @@
 from functions import *
 from pathlib import Path
 
+import argparse
 import csv
-import sys
+
 
 # MAIN------------------------------------------------------------------------------------------------------------------
 
 # FILES HANDLING -------------------------------------------------------------------------------------------------------
-# input format: main -b <boundaries file> -l <laps file>
 
-# check number of parameters and marking
-if len(sys.argv) != 5: outputHandler("4 parameters expected, got " + str(len(sys.argv) - 1), han.err)
-if sys.argv[1] != "-b": outputHandler("first marker should be -b", han.err)
-if sys.argv[3] != "-l": outputHandler("first marker should be -l", han.err)
+# create input arguments parser
+parser = argparse.ArgumentParser(description='Parse individual laps from binary boundaries file.')
+
+# add required arguments
+parser.add_argument('-b', '--bound', help='path to existing CSV boundary file', required=True)
+parser.add_argument('-l', '--laps', help='path to future CSV laps file', required=True)
+
+# load input arguments
+arguments = parser.parse_args()
 
 # compute directories
-pathBound = Path(sys.argv[2])
-pathLaps = Path(sys.argv[4])
+pathBound = Path(arguments.bound)
+pathLaps = Path(arguments.laps)
 
 # check if boundaries file exists and is readable
 checkAccess(pathBound, "r")

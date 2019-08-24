@@ -2,8 +2,8 @@ from functions import *
 from pathlib import Path
 import matlab.engine
 
+import argparse
 import time  # execution time measurement
-import sys
 import os
 
 
@@ -69,15 +69,20 @@ def processInput(normalName, unit, typeExpect):
 # MAIN------------------------------------------------------------------------------------------------------------------
 timeStamps.start = time.time()
 
-# INPUT FILES HANDLING -------------------------------------------------------------------------------------------------
+# FILES HANDLING -------------------------------------------------------------------------------------------------------
 # input format: main -o <experiment file>
 
-# check number of parameters and marking
-if len(sys.argv) != 3: outputHandler("2 parameters expected, got " + str(len(sys.argv) - 1), han.err)
-if sys.argv[1] != "-o": outputHandler("first marker should be -o", han.err)
+# create input arguments parser
+parser = argparse.ArgumentParser(description='Divide parsed IMU data to individual laps.')
+
+# add required argument
+parser.add_argument('-e', '--experiment', help='path to existing experiment directory', required=True)
+
+# load input argument
+arguments = parser.parse_args()
 
 # compute directories
-path.experiment = sys.argv[2]
+path.experiment = arguments.experiment
 path.config = Path(path.experiment + "/config.txt")
 path.final = Path(path.experiment + "/final_data/")
 

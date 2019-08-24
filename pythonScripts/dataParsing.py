@@ -1,6 +1,7 @@
 from functions import *
 from pathlib import Path
 
+import argparse
 import math  # isnan()
 import os  # file exploring
 import time  # execution time measurement
@@ -97,27 +98,35 @@ def decToDMS(degrees):
 timeStamps.start = time.time()
 
 # INPUT FILES HANDLING -------------------------------------------------------------------------------------------------
-# input format: main -o <experiment folder> -m <IMU name> -u <GPS name>
 
-# check number of parameters and marking
-if len(sys.argv) != 7: outputHandler("6 parameters expected, got " + str(len(sys.argv) - 1), han.err)
-if sys.argv[1] != "-o": outputHandler("first marker should be -o", han.err)
-if sys.argv[3] != "-m": outputHandler("second marker should be -m", han.err)
-if sys.argv[5] != "-u": outputHandler("third marker should be -u", han.err)
+# create input arguments parser
+parser = argparse.ArgumentParser(description='Parse and check raw IMU and GPS files to CSV format.')
+
+# add required arguments
+parser.add_argument('-e', '--experiment', help='path to existing experiment directory', required=True)
+parser.add_argument('-i', '--imu', help='name of raw IMU .mtb file', required=True)
+parser.add_argument('-g', '--gps', help='name of raw GPS .ubx file', required=True)
+
+# load input arguments
+arguments = parser.parse_args()
+
+# if file extension is included in arguments, remove it
+arguments.imu = arguments.imu.replace('.mtb', '')
+arguments.gps = arguments.gps.replace('.ubx', '')
 
 # compute directories
-path.experiment = sys.argv[2]
+path.experiment = arguments.experiment
 path.config = Path(path.experiment + "/config.txt")
 
-path.IMU.mtb = Path(path.experiment + "/raw_data/" + sys.argv[4] + ".mtb")
-path.IMU.input = Path(path.experiment + "/raw_data/" + sys.argv[4] + ".txt")
+path.IMU.mtb = Path(path.experiment + "/raw_data/" + arguments.imu + ".mtb")
+path.IMU.input = Path(path.experiment + "/raw_data/" + arguments.imu + ".txt")
 
 path.IMU.tmp = Path(path.experiment + "/parsed_data/IMU_tmp.txt")
 path.IMU.output = Path(path.experiment + "/parsed_data/IMU_parsed.csv")
 path.IMU.raw = Path(path.experiment + "/raw_data/IMU_raw.txt")
 
-path.GPS.ubx = Path(path.experiment + "/raw_data/" + sys.argv[6] + ".ubx")
-path.GPS.input = Path(path.experiment + "/raw_data/" + sys.argv[6])
+path.GPS.ubx = Path(path.experiment + "/raw_data/" + arguments.gps + ".ubx")
+path.GPS.input = Path(path.experiment + "/raw_data/" + arguments.gps)
 
 path.GPS.output = Path(path.experiment + "/parsed_data/GPS_parsed.csv")
 path.GPS.Llh = Path(path.experiment + "/raw_data/GPS_Llh.txt")
@@ -166,7 +175,6 @@ renameFile(path.GPS.input.with_suffix(".Sol"), path.GPS.Sol)
 renameFile(path.GPS.input.with_suffix(".VNed"), path.GPS.VNed)
 
 outputHandler("all files loaded successfully", han.info)
-
 
 # IMU DATA PREPROCESSING -----------------------------------------------------------------------------------------------
 outputHandler("starting IMU pre-processing", han.info)
@@ -308,7 +316,6 @@ for i in range(3):
 # print execution time of actual segment
 outputHandler("IMU pre-processing executed in: " + timeDeltaStr(time.time(), timeStamps.IMUpre), han.info)
 
-
 # IMU DATA FINAL PROCESS -----------------------------------------------------------------------------------------------
 outputHandler("starting IMU final-processing", han.info)
 timeStamps.IMUfinal = time.time()
@@ -377,7 +384,6 @@ except (OSError, IOError):
 
 # print execution time of actual segment
 outputHandler("IMU final-processing executed in: " + timeDeltaStr(time.time(), timeStamps.IMUfinal), han.info)
-
 
 # GPS DATA PROCESS -----------------------------------------------------------------------------------------------------
 outputHandler("starting GPS processing", han.info)
