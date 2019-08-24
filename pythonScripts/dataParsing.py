@@ -1,4 +1,4 @@
-from commonFunctions import *
+from functions import *
 from pathlib import Path
 
 import math  # isnan()
@@ -22,14 +22,14 @@ class path:
         self.config = None
 
     class IMU:
-        IMU = None
+        mtb = None
         input = None
         output = None
         tmp = None
         raw = None
 
     class GPS:
-        GPS = None
+        ubx = None
         input = None
         output = None
         Llh = None
@@ -43,7 +43,7 @@ class conf:
 
 class proc:
     timeStepIMU = 0
-    period = 0
+    periodIMU = 0
     magMax = 3 * [float('nan')]
     magMin = 3 * [float('nan')]
     magMean = 3 * [float('nan')]
@@ -67,22 +67,6 @@ def fixNaN(string) -> str:
     string = string.replace(",,", ",nan,")
     string = string.replace(",,", ",nan,")
     return string
-
-
-def isStrNum(value) -> bool:
-    try:
-        float(value)
-        return True
-    except ValueError:
-        return False
-
-
-def strToFloat(value) -> float:
-    try:
-        value = float(value)
-    except ValueError:
-        value = float('nan')
-    return value
 
 
 def isNanArray(array) -> bool:
@@ -127,46 +111,30 @@ path.config = Path(path.experiment + "/config.txt")
 
 path.IMU.mtb = Path(path.experiment + "/raw_data/" + sys.argv[4] + ".mtb")
 path.IMU.input = Path(path.experiment + "/raw_data/" + sys.argv[4] + ".txt")
+
 path.IMU.tmp = Path(path.experiment + "/parsed_data/IMU_tmp.txt")
 path.IMU.output = Path(path.experiment + "/parsed_data/IMU_parsed.csv")
 path.IMU.raw = Path(path.experiment + "/raw_data/IMU_raw.txt")
 
-path.GPS.GPS = Path(path.experiment + "/raw_data/" + sys.argv[6] + ".ubx")
+path.GPS.ubx = Path(path.experiment + "/raw_data/" + sys.argv[6] + ".ubx")
 path.GPS.input = Path(path.experiment + "/raw_data/" + sys.argv[6])
+
 path.GPS.output = Path(path.experiment + "/parsed_data/GPS_parsed.csv")
 path.GPS.Llh = Path(path.experiment + "/raw_data/GPS_Llh.txt")
 path.GPS.Sol = Path(path.experiment + "/raw_data/GPS_Sol.txt")
 path.GPS.VNed = Path(path.experiment + "/raw_data/GPS_VNed.txt")
 
-# check if the IMU mtb exists and is readable
-if not os.path.isfile(path.IMU.mtb): outputHandler("mtb IMU file does not exist", han.err)
-if not os.access(path.IMU.mtb, os.R_OK): outputHandler("mtb IMU file is not readable", han.err)
+# check if files exists and are readable / writable
+checkAccess(path.IMU.mtb, 'r')
+checkAccess(path.IMU.input, 'r')
 
-# check if the IMU file exists and is readable
-if not os.path.isfile(path.IMU.input): outputHandler("input IMU file does not exist", han.err)
-if not os.access(path.IMU.input, os.R_OK): outputHandler("input IMU file is not readable", han.err)
+checkAccess(path.GPS.ubx, 'r')
+checkAccess(path.GPS.input.with_suffix(".Llh"), 'r')
+checkAccess(path.GPS.input.with_suffix(".Sol"), 'r')
+checkAccess(path.GPS.input.with_suffix(".VNed"), 'r')
 
-# check if the GPS Llh exists and is readable
-if not os.path.isfile(path.GPS.input.with_suffix(".Llh")): outputHandler("input GPS Llh does not exist", han.err)
-if not os.access(path.GPS.input.with_suffix(".Llh"), os.R_OK): outputHandler("input GPS Llh is not readable",
-                                                                             han.err)
-
-# check if the GPS Llh exists and is readable
-if not os.path.isfile(path.GPS.input.with_suffix(".Sol")): outputHandler("input GPS Sol does not exist", han.err)
-if not os.access(path.GPS.input.with_suffix(".Sol"), os.R_OK): outputHandler("input GPS Sol is not readable",
-                                                                             han.err)
-
-# check if the GPS Llh exists and is readable
-if not os.path.isfile(path.GPS.input.with_suffix(".VNed")): outputHandler("input GPS VNed does not exist", han.err)
-if not os.access(path.GPS.input.with_suffix(".VNed"), os.R_OK): outputHandler("input GPS VNed is not readable",
-                                                                              han.err)
-
-# check if config file exists and is readable
-if not os.path.isfile(path.config): outputHandler("config file does not exist", han.err)
-if not os.access(path.config, os.R_OK): outputHandler("config file is not readable", han.err)
-
-# check if experiment directory is writable
-if not os.access(path.experiment, os.W_OK): outputHandler("output experiment directory is not writable", han.err)
+checkAccess(path.config, 'r')
+checkAccess(path.experiment, 'w')
 
 # LOAD DATA FROM CONFIG FILE AND RENAME FILES --------------------------------------------------------------------------
 
@@ -187,40 +155,23 @@ else:
     outputHandler("computed time step is: " + str(proc.timeStepIMU) + " - not an integer", han.err)
 
 # compute period in ms from frequency
-proc.period = 1 / conf.sampleRate * 1000
+proc.periodIMU = 1 / conf.sampleRate * 1000
 
 # rename IMU and GPS input files
-try:
-    os.rename(path.IMU.mtb, Path(path.experiment + "/raw_data/IMU.mtb"))
-except (OSError, IOError):
-    outputHandler("unable to rename IMU mtb file", han.err)
-try:
-    os.rename(path.IMU.input, path.IMU.raw)
-except (OSError, IOError):
-    outputHandler("unable to rename IMU raw file", han.err)
-
-try:
-    os.rename(path.GPS.GPS, Path(path.experiment + "/raw_data/GPS.ubx"))
-except (OSError, IOError):
-    outputHandler("unable to rename GPS ubx file", han.err)
-try:
-    os.rename(path.GPS.input.with_suffix(".Llh"), path.GPS.Llh)
-except (OSError, IOError):
-    outputHandler("unable to rename GPS Llh file", han.err)
-try:
-    os.rename(path.GPS.input.with_suffix(".Sol"), path.GPS.Sol)
-except (OSError, IOError):
-    outputHandler("unable to rename GPS Sol file", han.err)
-try:
-    os.rename(path.GPS.input.with_suffix(".VNed"), path.GPS.VNed)
-except (OSError, IOError):
-    outputHandler("unable to rename GPS VNed file", han.err)
+renameFile(path.IMU.mtb, Path(path.experiment + "/raw_data/IMU.mtb"))
+renameFile(path.IMU.input, path.IMU.raw)
+renameFile(path.GPS.ubx, Path(path.experiment + "/raw_data/GPS.ubx"))
+renameFile(path.GPS.input.with_suffix(".Llh"), path.GPS.Llh)
+renameFile(path.GPS.input.with_suffix(".Sol"), path.GPS.Sol)
+renameFile(path.GPS.input.with_suffix(".VNed"), path.GPS.VNed)
 
 outputHandler("all files loaded successfully", han.info)
+
 
 # IMU DATA PREPROCESSING -----------------------------------------------------------------------------------------------
 outputHandler("starting IMU pre-processing", han.info)
 timeStamps.IMUpre = time.time()
+
 # data format: PacketCounter SampleTimeFine Acc_X Acc_Y Acc_Z Gyr_X Gyr_Y Gyr_Z Mag_X Mag_Y Mag_Z Pressure
 
 # create tmp IMU txt file
@@ -298,8 +249,8 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
         if flagNum: outputHandler(str(flagNum) + " of data is 'nan'", han.warn, lineCnt)
 
         # export PacketCounter and SampleTimeFine to float
-        currPacketCounter = strToFloat(line[wantedDataID[0]])
-        currSampleTimeFine = strToFloat(line[wantedDataID[1]])
+        currPacketCounter = str2float(line[wantedDataID[0]])
+        currSampleTimeFine = str2float(line[wantedDataID[1]])
 
         # check if PacketCounter is continuous, it will overflow after 65535
         if proc.lastPacketIMU is None:
@@ -326,14 +277,14 @@ for lineCnt, line in enumerate(IMUinFile, start=1):
         # everything was fine so far, update mag extremes for future processing
         if isNanArray(proc.magMax) or isNanArray(proc.magMin):
             for i in range(3):
-                proc.magMax[i] = strToFloat(line[wantedDataID[8 + i]])
-                proc.magMin[i] = strToFloat(line[wantedDataID[8 + i]])
+                proc.magMax[i] = str2float(line[wantedDataID[8 + i]])
+                proc.magMin[i] = str2float(line[wantedDataID[8 + i]])
         else:
             for i in range(3):
-                if proc.magMax[i] < strToFloat(line[wantedDataID[8 + i]]):
-                    proc.magMax[i] = strToFloat(line[wantedDataID[8 + i]])
-                if proc.magMin[i] > strToFloat(line[wantedDataID[8 + i]]):
-                    proc.magMin[i] = strToFloat(line[wantedDataID[8 + i]])
+                if proc.magMax[i] < str2float(line[wantedDataID[8 + i]]):
+                    proc.magMax[i] = str2float(line[wantedDataID[8 + i]])
+                if proc.magMin[i] > str2float(line[wantedDataID[8 + i]]):
+                    proc.magMin[i] = str2float(line[wantedDataID[8 + i]])
 
         # recreate line in standard sequence for future processing
         outLine = len(wantedData) * ["nan"]
@@ -355,8 +306,8 @@ for i in range(3):
     proc.magMean[i] = 0.5 * (proc.magMax[i] + proc.magMin[i])
 
 # print execution time of actual segment
-outputHandler("IMU pre-processing executed in: " + str(round(time.time() - timeStamps.IMUpre, 4)) + " seconds",
-              han.info)
+outputHandler("IMU pre-processing executed in: " + timeDeltaStr(time.time(), timeStamps.IMUpre), han.info)
+
 
 # IMU DATA FINAL PROCESS -----------------------------------------------------------------------------------------------
 outputHandler("starting IMU final-processing", han.info)
@@ -383,14 +334,14 @@ for lineCnt, line in enumerate(IMUtmpFile, start=1):
 
     # change line data to float
     for i in range(len(line)):
-        line[i] = strToFloat(line[i])
+        line[i] = str2float(line[i])
 
     # prepare output array
     dataOut = 11 * [float('nan')]
     lineOut: [str] = 11 * [""]
 
     # time in s
-    dataOut[0] = ((lineCnt - 1) * proc.period) / 1000
+    dataOut[0] = ((lineCnt - 1) * proc.periodIMU) / 1000
 
     # accelerometer - divide with gravity constant
     for i in range(3):
@@ -425,10 +376,10 @@ except (OSError, IOError):
     outputHandler("unable to remove IMU tmp file", han.warn)
 
 # print execution time of actual segment
-outputHandler("IMU final-processing executed in: " + str(round(time.time() - timeStamps.IMUfinal, 4)) + " seconds",
-              han.info)
+outputHandler("IMU final-processing executed in: " + timeDeltaStr(time.time(), timeStamps.IMUfinal), han.info)
 
-# GPS DATA PROCESS ---------------------------------------------------------------------------------------------------
+
+# GPS DATA PROCESS -----------------------------------------------------------------------------------------------------
 outputHandler("starting GPS processing", han.info)
 timeStamps.GPS = time.time()
 
@@ -454,9 +405,11 @@ header = ["Time", "UTC", "LatNum", "LonNum", "Height", "GPSfix", "SatNum", "PosD
 GPSoutFileWriter = csv.writer(GPSoutFile, delimiter=',', lineterminator='\n')
 GPSoutFileWriter.writerow(header)
 
-# data: tow lat lon height (meanSeaLevel) horAcc verAcc Sol  data: iTow (fTow) weekNum gpsFix satNum (ecefX) (ecefY)
-# (ecefZ) (ecefVX) (ecefVY) (ecefVZ) (posAccuracy) (speedAccuracy) posDop VNed data: towNum (vN) (vE) (vD) speed
-# groundSpeed heading (speedAcc) (headingAcc) bracket means we do not use those data
+# data from gps files, bracket means we do not use those data:
+# Llh:  tow lat lon height (meanSeaLevel) horAcc verAcc
+# Sol:  iTow (fTow) weekNum gpsFix satNum (ecefX) (ecefY) (ecefZ) (ecefVX) (ecefVY) (ecefVZ) (posAcc) (speedAcc) posDop
+# VNed: towNum (vN) (vE) (vD) speed groundSpeed heading (speedAcc) (headingAcc)
+
 
 # no need to check format, sequence and continuity of data - GPS binary parser already did it
 
@@ -470,11 +423,11 @@ for lineLLh, lineSol, lineVNed in zip(GPSllhFile, GPSsolFile, GPSvnedFile):
 
     # change line data to float
     for i in range(len(lineLLh)):
-        lineLLh[i] = strToFloat(lineLLh[i])
+        lineLLh[i] = str2float(lineLLh[i])
     for i in range(len(lineSol)):
-        lineSol[i] = strToFloat(lineSol[i])
+        lineSol[i] = str2float(lineSol[i])
     for i in range(len(lineVNed)):
-        lineVNed[i] = strToFloat(lineVNed[i])
+        lineVNed[i] = str2float(lineVNed[i])
 
     # prepare output array
     dataOut = len(header) * [float('nan')]
@@ -541,7 +494,7 @@ GPSvnedFile.close()
 GPSoutFile.close()
 
 # print execution time of actual segment
-outputHandler("GPS processing executed in: " + str(round(time.time() - timeStamps.GPS, 4)) + " seconds", han.info)
+outputHandler("GPS processing executed in: " + timeDeltaStr(time.time(), timeStamps.GPS), han.info)
 
 # CODE END -------------------------------------------------------------------------------------------------------------
-outputHandler("overall script execution time: " + str(round(time.time() - timeStamps.start, 4)) + " seconds", han.info)
+outputHandler("overall script execution time: " + timeDeltaStr(time.time(), timeStamps.start), han.info)

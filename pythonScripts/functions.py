@@ -15,8 +15,8 @@ DEFAULT = object()
 
 
 # FUNCTIONS ------------------------------------------------------------------------------------------------------------
-def outputHandler(message, typeOut, lineNO=DEFAULT):
-    if lineNO is DEFAULT:
+def outputHandler(message, typeOut, lineNo=DEFAULT):
+    if lineNo is DEFAULT:
         if typeOut == han.err:
             print("ERROR: " + message)
             sys.exit(-1),
@@ -30,18 +30,41 @@ def outputHandler(message, typeOut, lineNO=DEFAULT):
 
     else:
         if typeOut == han.err:
-            print("ERROR: " + message + ", line no: " + str(lineNO))
+            print("ERROR: " + message + ", line no: " + str(lineNo))
             sys.exit(-1),
         elif typeOut == han.warn:
-            print("WARNING: " + message + ", line no: " + str(lineNO))
+            print("WARNING: " + message + ", line no: " + str(lineNo))
         elif typeOut == han.info:
-            print("INFO: " + message + ", line no: " + str(lineNO))
+            print("INFO: " + message + ", line no: " + str(lineNo))
         elif typeOut == han.confErr:
-            print("ERROR: config handler : " + message + ", line no: " + str(lineNO))
+            print("ERROR: config handler : " + message + ", line no: " + str(lineNo))
             sys.exit(-1),
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+
+
+def isStrNum(value) -> bool:
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def str2float(value) -> float:
+    try:
+        value = float(value)
+    except ValueError:
+        value = float('nan')
+    return value
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 def checkAccess(filePath, accessType):
     # check if file exists
@@ -49,19 +72,37 @@ def checkAccess(filePath, accessType):
         outputHandler("file/folder does not exists:\n" + str(filePath), han.err)
 
     # check specified access type
-
-    if accessType == "r" or accessType == "R":
+    if accessType in ['R', 'r']:
         if not os.access(filePath, os.R_OK):
             outputHandler("file/folder is not readable:\n" + str(filePath), han.err)
 
-    elif accessType == "w" or accessType == "W":
+    elif accessType in ['W', 'w']:
         if not os.access(filePath, os.W_OK):
             outputHandler("file/folder is not writable:\n" + str(filePath), han.err)
 
     else:
-        outputHandler("file/folder access type unrecognised", han.err)
+        outputHandler("file/folder access type unrecognised:\n" + str(filePath), han.err)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
+
+
+def renameFile(oldPath, newPath):
+    try:
+        os.rename(oldPath, newPath)
+    except (OSError, IOError):
+        outputHandler("unable to rename:\n" + str(oldPath), han.err)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def timeDeltaStr(timeA, timeB) -> str:
+    return str(round(abs(timeA - timeB), 4)) + " seconds"
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 def readConfig(filePath, dataName):
     # check if config file exists and is readable

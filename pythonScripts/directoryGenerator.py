@@ -1,4 +1,4 @@
-from commonFunctions import *
+from functions import *
 from pathlib import Path
 from shutil import copyfile
 import os

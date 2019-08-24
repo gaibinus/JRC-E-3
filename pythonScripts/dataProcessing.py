@@ -1,4 +1,4 @@
-from commonFunctions import *
+from functions import *
 from pathlib import Path
 import matlab.engine
 
@@ -166,14 +166,14 @@ timeStamps.tmp = time.time()
 outputHandler("starting MATLAB variant computation", han.info)
 ret = eng.computeVariant(str(path.parsed.IMU), str(path.config))
 if ret is not True: outputHandler("false returned from MATLAB script", han.err)
-outputHandler("variant computed in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
+outputHandler("variant computed in: " + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
 
 # MATLAB resample function
 timeStamps.tmp = time.time()
 outputHandler("starting MATLAB data resampling", han.info)
 ret = eng.resampleData(str(path.parsed.IMU), str(path.processed.resa), float(config.resampleRate), config.resampleMode)
 if ret is not True: outputHandler("false returned from MATLAB script", han.err)
-outputHandler("data resampled in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
+outputHandler("data resampled in: " + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
 
 # check if created file exists and it is readable
 checkAccess(path.processed.resa, "r")
@@ -183,7 +183,7 @@ timeStamps.tmp = time.time()
 outputHandler("starting MATLAB velocity computation", han.info)
 ret = eng.computeVelocity(str(path.processed.resa), str(path.processed.velo), str(path.config))
 if ret is not True: outputHandler("false returned from MATLAB script", han.err)
-outputHandler("velocity computed in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
+outputHandler("velocity computed in: " + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
 
 # check if created file exists and it is readable
 checkAccess(path.processed.velo, "r")
@@ -193,7 +193,7 @@ timeStamps.tmp = time.time()
 outputHandler("starting MATLAB laps detection", han.info)
 ret = eng.detectBoundaries(str(path.processed.velo), str(path.processed.boun), str(path.config))
 if ret is not True: outputHandler("false returned from MATLAB script", han.err)
-outputHandler("laps detected in: " + str(round(time.time() - timeStamps.tmp, 4)) + " seconds", han.info)
+outputHandler("laps detected in: " + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
 
 # check if created file exists and it is readable
 checkAccess(path.processed.boun, "r")
@@ -207,7 +207,7 @@ while True:
     tmpIn = processInput("press 'y' to end script", "-", "string")
 
     # check validity of data
-    if tmpIn is not'y' and tmpIn is not 'Y':
+    if tmpIn is not 'y' and tmpIn is not 'Y':
         outputHandler("invalid input, repeat the process", han.warn)
         continue
     else:
@@ -219,5 +219,7 @@ eng.close("all")
 # abort matlab engine
 eng.exit()
 
+# CODE END -------------------------------------------------------------------------------------------------------------
+
 # print execution time
-outputHandler("overall script executed in: " + str(round(time.time() - timeStamps.start, 4)) + " seconds", han.info)
+outputHandler("overall script executed in: " + timeDeltaStr(time.time(), timeStamps.start), han.info)
