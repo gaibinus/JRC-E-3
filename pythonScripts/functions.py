@@ -149,18 +149,16 @@ def timeDeltaStr(timeA, timeB) -> str:
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-def readConfig(filePath, dataName):
+def readConfig(path, dataName):
     # check if config file exists and is readable
-    if not os.path.isfile(filePath): outputHandler('config file does not exist', han.confErr)
-    if not os.access(filePath, os.R_OK): outputHandler('config file is not readable', han.confErr)
+    checkAccess(path, 'r')
 
     # open config file
-    file = open(filePath, 'r')
-    if not file.readable(): outputHandler('unable to read config file', han.confErr)
-
-    confVal = None
+    file = open(path, 'r')
+    checkOpen(file, 'r')
 
     # read line by line
+    confVal = None
     for lineCnt, line in enumerate(file, start=1):
 
         # ignore human comment lines and empty lines
@@ -204,14 +202,13 @@ def readConfig(filePath, dataName):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-def writeConfig(filePath, dataName, dataVal):
+def writeConfig(path, dataName, dataVal):
     # check if config file exists and is readable
-    if not os.path.isfile(filePath): outputHandler('config file does not exist', han.confErr)
-    if not os.access(filePath, os.R_OK): outputHandler('config file is not readable', han.confErr)
+    checkAccess(path, 'r')
 
     # open config file
-    file = open(filePath, 'r')
-    if not file.readable(): outputHandler('unable to read config file', han.confErr)
+    file = open(path, 'r')
+    checkOpen(file, 'r')
 
     # create copy of config file and close it
     data = file.readlines()
@@ -254,8 +251,8 @@ def writeConfig(filePath, dataName, dataVal):
     if flagWriten is False: outputHandler('config file was not changed', han.confErr)
 
     # open config file
-    file = open(filePath, 'w')
-    if not file.writable(): outputHandler('unable to write to config file', han.confErr)
+    file = open(path, 'w')
+    checkOpen(file, 'w')
 
     # write changed data back to file
     file.writelines(data)

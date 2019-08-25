@@ -28,14 +28,14 @@ checkAccess(pathBound, 'r')
 
 # load and check boundaries file
 boundFile = open(pathBound, 'r')
-if not boundFile.readable(): outputHandler('unable to read boundaries file', han.err)
+checkOpen(boundFile, 'r')
 
 # create boundaries CSV reader
 reader = csv.reader(boundFile, delimiter=',', lineterminator='\n')
 
 # create and check laps file
 lapsFile = open(pathLaps, 'w')
-if not lapsFile.writable(): outputHandler('unable to create laps file', han.err)
+checkOpen(lapsFile, 'w')
 
 # create laps CSV writer and write header
 writer = csv.writer(lapsFile, delimiter=',', lineterminator='\n')

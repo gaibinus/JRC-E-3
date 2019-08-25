@@ -43,7 +43,7 @@ checkAccess(path.input, 'r')
 
 # open input CSV file
 inFile = open(path.input, 'r')
-if not inFile.readable(): outputHandler('unable to read input CSV file', han.err)
+checkOpen(inFile, 'r')
 
 # create csv reader and read header
 reader = csv.reader(inFile, delimiter=',')
@@ -51,7 +51,7 @@ header = next(reader)
 
 # create output csv file
 outFile = open(path.tmp, 'w')
-if not outFile.writable(): outputHandler('unable to create output CSV file', han.err)
+checkOpen(outFile, 'w')
 
 # create writer and write header
 writer = csv.writer(outFile, delimiter=',', lineterminator='\n')

@@ -188,11 +188,11 @@ timeStamps.preIMU = time.time()
 
 # create tmp IMU txt file
 IMUtmpFile = open(path.IMU.tmp, 'w')
-if not IMUtmpFile.writable(): outputHandler('unable to create IMU tmp file', han.err)
+checkOpen(IMUtmpFile, 'w')
 
 # open input IMU txt file
 IMUinFile = open(path.IMU.raw, 'r')
-if not IMUinFile.readable(): outputHandler('unable to read IMU input file', han.err)
+checkOpen(IMUinFile, 'r')
 
 wantedData = ['PacketCounter', 'SampleTimeFine', 'Acc_X', 'Acc_Y', 'Acc_Z', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Mag_X', 'Mag_Y',
               'Mag_Z', 'Pressure']
@@ -326,11 +326,11 @@ timeStamps.finalIMU = time.time()
 
 # reopen IMU tmp file
 IMUtmpFile = open(path.IMU.tmp, 'r')
-if not IMUtmpFile.readable(): outputHandler('unable to read IMU tmp file', han.err)
+checkOpen(IMUtmpFile, 'r')
 
 # create IMU out file
 IMUoutFile = open(path.IMU.output, 'w')
-if not IMUoutFile.writable(): outputHandler('unable to create IMU output file', han.err)
+checkOpen(IMUoutFile, 'w')
 
 # create IMU out CSV writer
 header = ['Time', 'AccX', 'AccY', 'AccZ', 'GyrX', 'GyrY', 'GyrZ', 'MagX', 'MagY', 'MagZ', 'Pres']
@@ -395,19 +395,19 @@ timeStamps.GPS = time.time()
 
 # open GPS Llh file
 GPSllhFile = open(path.GPS.Llh, 'r')
-if not GPSllhFile.readable(): outputHandler('unable to read GPS Llh file', han.err)
+checkOpen(GPSllhFile, 'r')
 
 # open GPS Sol file
 GPSsolFile = open(path.GPS.Sol, 'r')
-if not GPSsolFile.readable(): outputHandler('unable to read GPS Sol file', han.err)
+checkOpen(GPSsolFile, 'r')
 
 # open GPS VNed file
 GPSvnedFile = open(path.GPS.VNed, 'r')
-if not GPSvnedFile.readable(): outputHandler('unable to read GPS VNed file', han.err)
+checkOpen(GPSvnedFile, 'r')
 
 # create GPS out file
 GPSoutFile = open(path.GPS.output, 'w')
-if not GPSoutFile.writable(): outputHandler('unable to create GPS output file', han.err)
+checkOpen(GPSoutFile, 'w')
 
 # create IMU out CSV writer
 header = ['Time', 'UTC', 'LatNum', 'LonNum', 'Height', 'GPSfix', 'SatNum', 'PosDOP', 'HorAcc', 'VerAcc', 'Head',
