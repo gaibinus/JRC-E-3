@@ -132,6 +132,16 @@ def copyFile(sourPath, destPath):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
+def removeFile(path):
+    try:
+        os.remove(path)
+    except (OSError, IOError):
+        outputHandler('unable to remove:\n' + str(path), han.err)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
 def createDirectory(filePath):
     try:
         os.makedirs(filePath)

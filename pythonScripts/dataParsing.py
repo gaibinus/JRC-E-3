@@ -3,7 +3,6 @@ from pathlib import Path
 
 import argparse
 import math
-import os
 import time
 import csv
 
@@ -380,10 +379,7 @@ IMUtmpFile.close()
 IMUoutFile.close()
 
 # remove no longer needed IMU temporary file
-try:
-    os.remove(path.IMU.tmp)
-except (OSError, IOError):
-    outputHandler('unable to remove IMU tmp file', han.warn)
+removeFile(path.IMU.tmp)
 
 # print execution time of actual segment
 outputHandler('IMU final-processing executed in: ' + timeDeltaStr(time.time(), timeStamps.finalIMU), han.info)
