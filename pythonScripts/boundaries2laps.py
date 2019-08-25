@@ -13,8 +13,8 @@ import csv
 parser = argparse.ArgumentParser(description='Parse individual laps from binary boundaries file.')
 
 # add required arguments
-parser.add_argument('-b', '--bound', help='path to existing CSV boundary file', required=True)
-parser.add_argument('-l', '--laps', help='path to future CSV laps file', required=True)
+parser.add_argument('-b', '--bound', help='path to existing CSV boundary file', type=str, required=True)
+parser.add_argument('-l', '--laps', help='path to future CSV laps file', type=str, required=True)
 
 # load input arguments
 arguments = parser.parse_args()

@@ -21,9 +21,9 @@ class path:
 parser = argparse.ArgumentParser(description='Keeps only specific time window of data.')
 
 # add required arguments
-parser.add_argument('-f', '--file', help='path to CSV data file', required=True)
-parser.add_argument('-s', '--start', help='start time of window [s]', required=True)
-parser.add_argument('-e', '--end', help='end time of window [s]', required=True)
+parser.add_argument('-f', '--file', help='path to CSV data file', type=str, required=True)
+parser.add_argument('-s', '--start', help='start time of window [s]', type=str, required=True)
+parser.add_argument('-e', '--end', help='end time of window [s]', type=str, required=True)
 
 # load input arguments
 arguments = parser.parse_args()

@@ -42,7 +42,7 @@ class files:
 parser = argparse.ArgumentParser(description='Create standardised experiment directory.')
 
 # add required argument
-parser.add_argument('-e', '--experiment', help='path to future experiment directory', required=True)
+parser.add_argument('-e', '--experiment', help='path to future experiment directory',  type=str, required=True)
 
 # load input argument
 arguments = parser.parse_args()

@@ -75,7 +75,7 @@ timeStamps.start = time.time()
 parser = argparse.ArgumentParser(description='Divide parsed IMU data to individual laps.')
 
 # add required argument
-parser.add_argument('-e', '--experiment', help='path to existing experiment directory', required=True)
+parser.add_argument('-e', '--experiment', help='path to existing experiment directory', type=str, required=True)
 
 # load input argument
 arguments = parser.parse_args()
