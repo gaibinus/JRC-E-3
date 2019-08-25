@@ -10,7 +10,6 @@ import csv
 
 # DEFINITIONS ----------------------------------------------------------------------------------------------------------
 
-CONFIG_LINES = 8
 GRAVITY = 9.80581295200000
 DECIMAL = 6
 DELTAGPSUTC = 315964782  # current update for data after Jan 1 2017
