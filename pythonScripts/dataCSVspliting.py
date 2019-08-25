@@ -1,35 +1,47 @@
 from functions import *
 from pathlib import Path
-import os
+
+import argparse
 import csv
 
-# modified script from mr. Jordi Rivero, found at: https://gist.github.com/jrivero/1085501
 
-# COMPUTE FILE DIRECTORIES AND CHECK FOR VALIDITY ----------------------------------------------------------------------
+# MAIN------------------------------------------------------------------------------------------------------------------
 
-pathData = Path("C:/Users/geibfil/Desktop/JRC-E-3/experiments/1308-01/parsed_data/IMU_parsed.csv")
-pathLaps = Path("C:/Users/geibfil/Desktop/JRC-E-3/experiments/1308-01/processed_data/IMU_laps.csv")
-dirFinal = "C:/Users/geibfil/Desktop/JRC-E-3/experiments/1308-01/final_data"
-sampleRate = 2000
-periode = 1 / sampleRate
+# FILES HANDLING -------------------------------------------------------------------------------------------------------
 
-# check if data CSV file exists and is readable
-if not os.path.isfile(pathData): outputHandler("data CSV file does not exist", han.err)
-if not os.access(pathData, os.R_OK): outputHandler("data CSV file is not readable", han.err)
+# create input arguments parser
+parser = argparse.ArgumentParser(description='Parse and check raw IMU and GPS files to CSV format.')
 
-# check if laps CSV file exists and is readable
-if not os.path.isfile(pathLaps): outputHandler("laps CSV file does not exist", han.err)
-if not os.access(pathLaps, os.R_OK): outputHandler("laps CSV file is not readable", han.err)
+# add required arguments
+parser.add_argument('-d', '--data', help='path to data file', type=str, required=True)
+parser.add_argument('-l', '--laps', help='path to laps file', type=str, required=True)
+parser.add_argument('-f', '--final', help='path to final data folder', type=str, required=True)
+parser.add_argument('-s', '--sampleRate', help='sample rate of data file', type=int, required=True)
+
+# load input arguments
+arguments = parser.parse_args()
+
+# load sample rate and compute period
+sampleRate = arguments.sampleRate
+period = sampleRate / 1
+
+# compute directories
+pathData = Path(arguments.data)
+pathLaps = Path(arguments.laps)
+dirFinal = arguments.final
+
+# check if files exists and are readable
+checkAccess(pathData, 'r')
+checkAccess(pathLaps, 'r')
 
 # check if directory for separated laps exists and is writable
-if not os.path.exists(Path(dirFinal)): outputHandler("final data directory is not writable", han.err)
-if not os.access(Path(dirFinal), os.W_OK): outputHandler("final data directory is not writable", han.err)
+checkAccess(Path(dirFinal), 'w')
 
 # LOAD START AND END TIMES OF EACH LAP ---------------------------------------------------------------------------------
 
 # open laps csv file
 lapsFile = open(pathLaps, 'r')
-if not lapsFile.readable(): outputHandler("unable to read laps CSV file", han.err)
+checkOpen(lapsFile, 'r')
 
 # create csv reader
 reader = csv.reader(lapsFile, delimiter=',')
@@ -79,7 +91,7 @@ for i in range(len(lapStart)):
 
 # open data CSV file
 dataFile = open(pathData, 'r')
-if not dataFile.readable(): outputHandler("unable to read data CSV file", han.err)
+checkOpen(dataFile, 'r')
 
 # create csv reader, lap counter and lap time
 reader = csv.reader(dataFile, delimiter=',')
@@ -94,7 +106,7 @@ currentPath = Path(dirFinal + "/IMU_lap_" + str(currentLap).zfill(2) + ".csv")
 
 # create csv file for currently processed lap
 currentFile = open(currentPath, 'w')
-if not currentFile.writable(): outputHandler("unable to create CSV lap file", han.err)
+checkOpen(currentFile, 'w')
 
 # create writer for currently processed lap
 currentWriter = csv.writer(currentFile, delimiter=',', lineterminator='\n')
@@ -111,7 +123,7 @@ for i, row in enumerate(reader):
         currentWriter.writerow(row)
 
         # compute next lap time
-        timeLap += periode
+        timeLap += period
 
         if i == lapEnd[currentLap - 1]:
             # close actual csv file
@@ -129,13 +141,14 @@ for i, row in enumerate(reader):
 
                 # create csv file for currently processed lap
                 currentFile = open(currentPath, 'w')
-                if not currentFile.writable(): outputHandler("unable to create CSV lap file", han.err)
+                checkOpen(currentFile, 'w')
 
                 # create writer for currently processed lap
                 currentWriter = csv.writer(open(currentPath, 'w'), delimiter=',', lineterminator='\n')
 
                 # write header to current CSV file
                 currentWriter.writerow(header)
+
             # no more laps expected
             else:
                 break
