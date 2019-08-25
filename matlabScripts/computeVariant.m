@@ -17,7 +17,7 @@ sampleRate = py.commonFunctions.readConfig(pathConfig, 'sample_rate');
 startTime = py.commonFunctions.readConfig(pathConfig, 'bnw_start');
 stopTime = py.commonFunctions.readConfig(pathConfig, 'bnw_stop');
 
-% check if reat values contains any 'nan'
+% check if values contains any 'nan'
 if sum(isnan([sampleRate startTime stopTime])) > 0
    error("Uncomplete config file"); 
 end
@@ -26,7 +26,7 @@ end
 firstLine = round(startTime / (1/sampleRate)) + 1;
 lastLine = round(stopTime / (1/sampleRate)) + 1;
 
-% load data as matrix but only in speciefied range
+% load data as matrix but only in specified range
 opts = detectImportOptions(pathFile);
 opts.DataLines = [firstLine+1 lastLine+1];
 data = readtable(pathFile, opts);

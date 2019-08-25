@@ -5,7 +5,7 @@ if exist(pathFile, 'file') == 0
     error("Path does not exists");
 end
 
-% recognise options for csv loading
+% recognize options for CSV loading
 opts = detectImportOptions(pathFile);
 
 % check if number of rows was specified,

@@ -12,7 +12,7 @@ py.importlib.reload(pyModule);
 
 %% LOAD DATA
 
-% load freqency, window time and variation from config file
+% load frequency, window time and variation from config file
 freqency = py.commonFunctions.readConfig(pathConfig, 'resample_rate');
 startTime = py.commonFunctions.readConfig(pathConfig, 'bnw_start');
 stopTime = py.commonFunctions.readConfig(pathConfig, 'bnw_stop');
@@ -57,7 +57,7 @@ veloDelt = sum([abs(velo(:,1)-velo(:,2)) ...
                 abs(velo(:,2)-velo(:,3)) ...
                 abs(velo(:,3)-velo(:,1))], 2);
             
-%% COMPUTE VELOCITY STACISTICAL DATA AND PROCEED CONVOLUTION            
+%% COMPUTE VELOCITY STATISTICAL DATA AND PROCEED CONVOLUTION            
 
 % compute mean between normative and delta velocity
 veloMean = mean([veloNorm veloDelt], 2);
@@ -68,7 +68,7 @@ convMatrix = ones(1, freqency) / freqency;
 % proceed convolution
 meanConv = conv(convMatrix, veloMean, 'full');
 
-% compute convolutin offsets
+% compute convolution offsets
 meanConv = meanConv(ceil(size(convMatrix,2)/2) : ...
                     end-floor(size(convMatrix,2)/2));
                 
@@ -82,7 +82,7 @@ data = table(data{:,'Time'}, velo(:,1), velo(:,2),velo(:,3), veloNorm,...
 % write table to CSV
 writetable(data, pathOut);
 
-%% COMPUTE STACISTICAL DATA FROM BNW AND WRITE THEM TO CONFIG FILE
+%% COMPUTE STATISTICAL DATA FROM BNW AND WRITE THEM TO CONFIG FILE
 
 % compute first and last line of data in BNW
 firstLine = round(startTime / (1/freqency)) + 1;

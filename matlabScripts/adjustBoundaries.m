@@ -28,7 +28,7 @@ if strcmp(type, 'static')
     
 % remove mobile windows
 elseif strcmp(type, 'mobile')
-    % invers boundary marking
+    % inverse boundary marking
     dataBound{:,'Bound'} = ~dataBound{:,'Bound'};
     
     % detect and count groups
@@ -40,10 +40,10 @@ elseif strcmp(type, 'mobile')
     % delete required groups
     bound(bound ~= 0) = 1;
     
-    % invers boundary marking back to original
+    % inverts boundary marking back to original
     bound = ~bound;
     
-% unrecognised window type
+% unrecognized window type
 else
     error('type of adjusting window do not recognised');
 end
@@ -52,7 +52,7 @@ end
 dataBound = table(dataBound{:,'Time'}, bound, ...
                  'VariableNames',{'Time' 'Bound'});
 
-% write boundarties table to CSV
+% write boundaries table to CSV
 writetable(dataBound, pathFile);
 
 %% END OF SCRIPT

@@ -1,4 +1,4 @@
-function plotIMU(pathFile, plotTime)
+function plotIMU(pathFile, plotTime)﻿
 
 % check if time frame was specified,
 if exist('plotTime','var')
@@ -7,7 +7,7 @@ if exist('plotTime','var')
     opts.DataLines = [2 3];
     table = readtable(pathFile, opts);
     
-    % compute lenght between two measurements
+    % compute length between two measurements
     period = abs(table{1,'Time'} - table{2,'Time'});
     
     % compute how many lines from CSV are needed to match specified time
