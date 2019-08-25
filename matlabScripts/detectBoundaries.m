@@ -70,7 +70,6 @@ writetable(dataBound, pathBound);
 
 
 %% END OF SCRIPT
-% if okay, return true
 ret = true;
 
 end

@@ -1,5 +1,7 @@
 function ret = computeVelocity(pathIn, pathOut, pathConfig)
 
+%% PYTHON IN MATLAB WORKAROUND
+
 % load folder with python scripts
 pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
 py_addpath(pathPython);
@@ -7,6 +9,8 @@ py_addpath(pathPython);
 % import python module and reload it
 pyModule = py.importlib.import_module('commonFunctions');
 py.importlib.reload(pyModule);
+
+%% LOAD DATA
 
 % load freqency, window time and variation from config file
 freqency = py.commonFunctions.readConfig(pathConfig, 'resample_rate');
@@ -31,6 +35,8 @@ end
 % load data as table
 data = readtable(pathIn);
 
+%% COMPUTE VELOCITY FROM IMU DATA
+
 % create filter
 FUSE = ahrsfilter();
 FUSE.SampleRate = freqency;
@@ -51,6 +57,8 @@ veloDelt = sum([abs(velo(:,1)-velo(:,2)) ...
                 abs(velo(:,2)-velo(:,3)) ...
                 abs(velo(:,3)-velo(:,1))], 2);
             
+%% COMPUTE VELOCITY STACISTICAL DATA AND PROCEED CONVOLUTION            
+
 % compute mean between normative and delta velocity
 veloMean = mean([veloNorm veloDelt], 2);
 
@@ -63,6 +71,8 @@ meanConv = conv(convMatrix, veloMean, 'full');
 % compute convolutin offsets
 meanConv = meanConv(ceil(size(convMatrix,2)/2) : ...
                     end-floor(size(convMatrix,2)/2));
+                
+%% CREATE VELOCITY CSV TABLE WITH COMPUTED DATA
 
 % rewrite table with new data
 data = table(data{:,'Time'}, velo(:,1), velo(:,2),velo(:,3), veloNorm,...
@@ -71,6 +81,8 @@ data = table(data{:,'Time'}, velo(:,1), velo(:,2),velo(:,3), veloNorm,...
 
 % write table to CSV
 writetable(data, pathOut);
+
+%% COMPUTE STACISTICAL DATA FROM BNW AND WRITE THEM TO CONFIG FILE
 
 % compute first and last line of data in BNW
 firstLine = round(startTime / (1/freqency)) + 1;
@@ -104,7 +116,7 @@ py.commonFunctions.writeConfig(pathConfig, 'velo_mean_norm', meanNorm);
 py.commonFunctions.writeConfig(pathConfig, 'velo_mean_delt', meanDelt);
 py.commonFunctions.writeConfig(pathConfig, 'velo_mean', meanBNW)
 
-% if okay, return true
+%% END OF SCRIPT
 ret = true;
 
 end

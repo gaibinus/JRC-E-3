@@ -1,5 +1,7 @@
 function ret = computeVariant(pathFile, pathConfig)
 
+%% PYTHON IN MATLAB WORKAROUND
+
 % load folder with python scripts
 pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
 py_addpath(pathPython);
@@ -7,6 +9,8 @@ py_addpath(pathPython);
 % import python module and reload it
 pyModule = py.importlib.import_module('commonFunctions');
 py.importlib.reload(pyModule);
+
+%% LOAD AND PROCESS DATA
 
 % load all necessary data from config file
 sampleRate = py.commonFunctions.readConfig(pathConfig, 'sample_rate');
@@ -43,7 +47,7 @@ py.commonFunctions.writeConfig(pathConfig, 'vari_mag_x', magVari(1));
 py.commonFunctions.writeConfig(pathConfig, 'vari_mag_y', magVari(2));
 py.commonFunctions.writeConfig(pathConfig, 'vari_mag_z', magVari(3));
 
-% if okay, return true
+%% END OF SCRIPT
 ret = true;
 
 end

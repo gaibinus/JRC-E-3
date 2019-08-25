@@ -27,15 +27,17 @@ statPlot.DisplayLabels = {'Axial velocity'
 statPlot.GridVisible = 'off';
 statPlot.XLabel = 'Time [s]';
 
-% set up parameters
+% set up parameters for first plot
 statPlot.AxesProperties(1).LegendVisible = 'on';
 statPlot.AxesProperties(1).LegendLocation = 'northeast';
 statPlot.AxesProperties(1).LegendLabels = {'X axis', 'Y axis', 'Z axis'};
 
+% set up parameters for second plot
 statPlot.AxesProperties(2).LegendVisible = 'on';
 statPlot.AxesProperties(2).LegendLocation = 'northeast';
 statPlot.AxesProperties(2).LegendLabels = {'Normative', 'Delta', 'Mean'};
 
+% set up parameters for third plot
 statPlot.AxesProperties(3).YLimits = [-1 2];
 
 end

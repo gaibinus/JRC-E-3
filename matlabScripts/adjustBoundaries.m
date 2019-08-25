@@ -1,5 +1,7 @@
 function ret = adjustBoundaries(pathFile, windows, type)
+
 %% PYTHON IN MATLAB WORKAROUND
+
 % load folder with python scripts
 pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
 py_addpath(pathPython);
@@ -13,21 +15,35 @@ py.importlib.reload(pyModule);
 % load data as table
 dataBound = readtable(pathFile);
 
-% remove required windows
+% remove static windows
 if strcmp(type, 'static')
+    % detect and count groups
     bound = bwlabel(dataBound{:,'Bound'});
+    
+    % delete required groups
     bound(ismember(bound, windows)) = 0;
     
+    % destroy groups
     bound(bound ~= 0) = 1;
-
+    
+% remove mobile windows
 elseif strcmp(type, 'mobile')
+    % invers boundary marking
     dataBound{:,'Bound'} = ~dataBound{:,'Bound'};
+    
+    % detect and count groups
     bound = bwlabel(dataBound{:,'Bound'});
     
+    % delete required groups
     bound(ismember(bound, windows)) = 0;
     
+    % delete required groups
     bound(bound ~= 0) = 1;
+    
+    % invers boundary marking back to original
     bound = ~bound;
+    
+% unrecognised window type
 else
     error('type of adjusting window do not recognised');
 end
@@ -40,7 +56,6 @@ dataBound = table(dataBound{:,'Time'}, bound, ...
 writetable(dataBound, pathFile);
 
 %% END OF SCRIPT
-% if okay, return true
 ret = true;
 
 end

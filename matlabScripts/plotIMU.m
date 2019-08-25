@@ -8,7 +8,7 @@ if exist('plotTime','var')
     table = readtable(pathFile, opts);
     
     % compute lenght between two measurements
-    period = abs(table{1,1} - table{2,1});
+    period = abs(table{1,'Time'} - table{2,'Time'});
     
     % compute how many lines from CSV are needed to match specified time
     rows = ceil(plotTime / period);
