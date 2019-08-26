@@ -114,7 +114,7 @@ py.functions.writeConfig(pathConfig, 'velo_mean_y', meanAxial(2));
 py.functions.writeConfig(pathConfig, 'velo_mean_z', meanAxial(3));
 py.functions.writeConfig(pathConfig, 'velo_mean_norm', meanNorm);
 py.functions.writeConfig(pathConfig, 'velo_mean_delt', meanDelt);
-py.functions.writeConfig(pathConfig, 'velo_mean', meanBNW)
+py.functions.writeConfig(pathConfig, 'velo_mean', meanBNW);
 
 %% END OF SCRIPT
 ret = true;
