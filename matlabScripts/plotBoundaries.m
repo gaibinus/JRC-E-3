@@ -9,7 +9,7 @@ data = [dataVelo dataBound];
 
 % create figure and set it up
 fig = figure();
-fig.Name = 'IMU processed data';
+fig.Name = 'IMU processed data';	
 fig.NumberTitle = 'off';
 
 % create stacked plot
@@ -43,7 +43,7 @@ statPlot.AxesProperties(3).YLimits = [-1 2];
 % compute processed data directory
 [filepath, ~, ~] = fileparts(pathBound);
 
-% save figure to experimetn tirectory
+% save figure to experiment directory
 savefig(strcat(filepath, '\finalBoundaries.fig'));
 
 end

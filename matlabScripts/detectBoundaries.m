@@ -12,7 +12,7 @@ py.importlib.reload(pyModule);
 %% LOAD CONFIG FILE AND DATA
 frequency = py.functions.readConfig(pathConfig, 'resample_rate');
 bnwSize = py.functions.readConfig(pathConfig, 'bnw_size');
-veloStd = py.functions.readConfig(pathConfig, 'velo_std');
+veloStd = py.functions.readConfig(pathConfig, 'velo_std');	
 veloMean = py.functions.readConfig(pathConfig, 'velo_mean');
 
 % check if loaded values contains any 'nan'
@@ -25,15 +25,15 @@ dataBound = readtable(pathVelo);
 
 %% DETECT WINDOWS WHEN CAR IS STATIC
 
-% calculate upper and lower treshold
-upperTreshold = veloMean + veloStd * 1.5;
+% calculate upper and lower threshold
+upperTreshold = veloMean + veloStd * 1;
 lowerTreshold = 0;
 
 % create binary vector of possible loop boundaries
 bound = dataBound{:,'MeanConv'} < upperTreshold  & ...
         dataBound{:,'MeanConv'} > lowerTreshold;
     
-% find too small movemet windows, less or equal to 1 s
+% find too small movement windows, less or equal to 1 s
 bound = bwlabel(bound);
 for i = 1:max(bound)
     if sum(bound == i) <= ceil(frequency * 1)
@@ -65,7 +65,7 @@ end
 dataBound = table(dataBound{:,'Time'}, bound, ...
                  'VariableNames',{'Time' 'Bound'});
 
-% write boundarties table to CSV
+% write boundaries table to CSV
 writetable(dataBound, pathBound);
 
 

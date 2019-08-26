@@ -2,8 +2,8 @@ function ret = resampleData(pathIn, pathOot, frequency, mode)
 
 % load data to time table
 data = data2timetable(pathIn);
-
-% resample time table to desired frequency with metod
+	
+% resample time table to desired frequency with method
 data = retime(data, 'regular', mode, 'SampleRate', frequency);
 
 % export newly sampled time table to desired csv file

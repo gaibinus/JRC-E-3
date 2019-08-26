@@ -6,8 +6,8 @@ if exist('plotTime','var')
     opts = detectImportOptions(pathFile);
     opts.DataLines = [2 3];
     table = readtable(pathFile, opts);
-    
-    % compute lenght between two measurements
+    	
+    % compute length between two measurements
     period = abs(table{1,'Time'} - table{2,'Time'});
     
     % compute how many lines from CSV are needed to match specified time

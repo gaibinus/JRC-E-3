@@ -12,7 +12,7 @@ py.importlib.reload(pyModule);
 
 %% LOAD DATA
 
-% load freqency, window time and variation from config file
+% load frequency, window time and variation from config file
 freqency = py.functions.readConfig(pathConfig, 'resample_rate');
 startTime = py.functions.readConfig(pathConfig, 'bnw_start');
 stopTime = py.functions.readConfig(pathConfig, 'bnw_stop');
@@ -68,7 +68,7 @@ convMatrix = ones(1, freqency) / freqency;
 % proceed convolution
 meanConv = conv(convMatrix, veloMean, 'full');
 
-% compute convolutin offsets
+% compute convolution offsets
 meanConv = meanConv(ceil(size(convMatrix,2)/2) : ...
                     end-floor(size(convMatrix,2)/2));
                 

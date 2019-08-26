@@ -33,7 +33,7 @@ elseif strcmp(type, 'mobile')
     % invers boundary marking back to original
     bound = ~bound;
     
-% unrecognised window type
+% unrecognized window type
 else
     error('type of adjusting window do not recognised');
 end
@@ -42,7 +42,7 @@ end
 dataBound = table(dataBound{:,'Time'}, bound, ...
                  'VariableNames',{'Time' 'Bound'});
 
-% write boundarties table to CSV
+% write boundaries table to CSV
 writetable(dataBound, pathBound);
 
 %% END OF SCRIPT
