@@ -7,6 +7,7 @@ import sys
 
 # CLASSES AND OBJECTS---------------------------------------------------------------------------------------------------
 
+
 class han(Enum):
     err = 0
     warn = 1
@@ -127,6 +128,16 @@ def copyFile(sourPath, destPath):
         copyfile(sourPath, destPath)
     except IOError:
         outputHandler('unable to copy:\n' + str(sourPath), han.err)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def removeFile(filePath):
+    try:
+        os.remove(filePath)
+    except (OSError, IOError):
+        outputHandler('unable to remove:\n' + str(filePath), han.err)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
