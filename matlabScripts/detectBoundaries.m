@@ -26,7 +26,7 @@ dataBound = readtable(pathVelo);
 %% DETECT WINDOWS WHEN CAR IS STATIC
 
 % calculate upper and lower treshold
-upperTreshold = veloMean + veloStd;
+upperTreshold = veloMean + veloStd * 1.5;
 lowerTreshold = 0;
 
 % create binary vector of possible loop boundaries
