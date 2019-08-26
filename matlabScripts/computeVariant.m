@@ -37,15 +37,15 @@ gyrVari = var([data{:,'GyrX'} data{:,'GyrY'} data{:,'GyrZ'}]);
 magVari = var([data{:,'MagX'} data{:,'MagY'} data{:,'MagZ'}]);
 
 % write variation to config file
-py.commonFunctions.writeConfig(pathConfig, 'vari_acc_x', accVari(1));
-py.commonFunctions.writeConfig(pathConfig, 'vari_acc_y', accVari(2));
-py.commonFunctions.writeConfig(pathConfig, 'vari_acc_z', accVari(3));
-py.commonFunctions.writeConfig(pathConfig, 'vari_gyr_x', gyrVari(1));
-py.commonFunctions.writeConfig(pathConfig, 'vari_gyr_y', gyrVari(2));
-py.commonFunctions.writeConfig(pathConfig, 'vari_gyr_z', gyrVari(3));
-py.commonFunctions.writeConfig(pathConfig, 'vari_mag_x', magVari(1));
-py.commonFunctions.writeConfig(pathConfig, 'vari_mag_y', magVari(2));
-py.commonFunctions.writeConfig(pathConfig, 'vari_mag_z', magVari(3));
+py.functions.writeConfig(pathConfig, 'vari_acc_x', accVari(1));
+py.functions.writeConfig(pathConfig, 'vari_acc_y', accVari(2));
+py.functions.writeConfig(pathConfig, 'vari_acc_z', accVari(3));
+py.functions.writeConfig(pathConfig, 'vari_gyr_x', gyrVari(1));
+py.functions.writeConfig(pathConfig, 'vari_gyr_y', gyrVari(2));
+py.functions.writeConfig(pathConfig, 'vari_gyr_z', gyrVari(3));
+py.functions.writeConfig(pathConfig, 'vari_mag_x', magVari(1));
+py.functions.writeConfig(pathConfig, 'vari_mag_y', magVari(2));
+py.functions.writeConfig(pathConfig, 'vari_mag_z', magVari(3));
 
 %% END OF SCRIPT
 ret = true;
