@@ -163,6 +163,10 @@ for i, row in enumerate(reader):
             else:
                 break
 
+# inform user
+outputHandler('lap no. ' + str(currentLap) + ' splitted in: ' +
+              timeDeltaStr(time.time(), lastExecTime), han.info)
+
 # close files
 dataFile.close()
 currentFile.close()
