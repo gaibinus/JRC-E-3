@@ -1,4 +1,4 @@
-function ret = detectBoundaries(pathIn, pathBound, pathConfig)
+function ret = detectBoundaries(pathVelo, pathBound, pathConfig)
 
 %% PYTHON IN MATLAB WORKAROUND
 % load folder with python scripts
@@ -21,7 +21,7 @@ if sum(sum(isnan([frequency bnwSize veloStd veloMean]))) > 0
 end
 
 % load data as table
-dataBound = readtable(pathIn);
+dataBound = readtable(pathVelo);
 
 %% DETECT WINDOWS WHEN CAR IS STATIC
 
@@ -33,10 +33,10 @@ lowerTreshold = 0;
 bound = dataBound{:,'MeanConv'} < upperTreshold  & ...
         dataBound{:,'MeanConv'} > lowerTreshold;
     
-% find too small movemet windows, less or equal to 1.5 s
+% find too small movemet windows, less or equal to 1 s
 bound = bwlabel(bound);
 for i = 1:max(bound)
-    if sum(bound == i) <= ceil(frequency * 1.5)
+    if sum(bound == i) <= ceil(frequency * 1)
        bound(bound == i) = 0; 
     end
 end
