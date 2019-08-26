@@ -55,12 +55,12 @@ inFile = open(pathIn, 'r')
 checkOpen(inFile, 'r')
 
 # create csv reader and read header
-reader = csv.reader(pathIn, delimiter=',')
+reader = csv.reader(inFile, delimiter=',')
 header = next(reader)
 
 # create output csv file
 outFile = open(pathTmp, 'w')
-checkOpen(pathTmp, 'w')
+checkOpen(outFile, 'w')
 
 # create writer and write header
 writer = csv.writer(outFile, delimiter=',', lineterminator='\n')
