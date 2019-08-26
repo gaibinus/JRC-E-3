@@ -3,6 +3,7 @@ from pathlib import Path
 
 import argparse
 import csv
+import time
 
 
 # MAIN------------------------------------------------------------------------------------------------------------------
@@ -87,16 +88,20 @@ for i in range(len(lapStart)):
     lapStart[i] = lapStart[i] * sampleRate
     lapEnd[i] = lapEnd[i] * sampleRate
 
+# inform about current state
+outputHandler("all files loaded successfully, starting to split CSV", han.info)
+
 # SPLIT INPUT CSV FILE TO CHUNKS (LAPS) ACCORDING TO LOADED LAPS TIMES -------------------------------------------------
 
 # open data CSV file
 dataFile = open(pathData, 'r')
 checkOpen(dataFile, 'r')
 
-# create csv reader, lap counter and lap time
+# create csv reader, lap counter, lap time and execution time
 reader = csv.reader(dataFile, delimiter=',')
 currentLap = 1
 timeLap = 0
+lastExecTime = time.time()
 
 # load original header
 header = next(reader)
@@ -129,8 +134,13 @@ for i, row in enumerate(reader):
             # close actual csv file
             currentFile.close()
 
-            # new lap ahead
+            # inform user
+            outputHandler('lap no. ' + str(currentLap) + ' splitted in: ' +
+                          timeDeltaStr(time.time(), lastExecTime), han.info)
+
+            # update lap and time
             currentLap += 1
+            lastExecTime = time.time()
 
             # reset internal lap time
             timeLap = 0
