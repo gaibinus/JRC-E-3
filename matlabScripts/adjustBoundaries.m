@@ -1,15 +1,5 @@
 function ret = adjustBoundaries(pathFile, windows, type)
 
-%% PYTHON IN MATLAB WORKAROUND
-
-% load folder with python scripts
-pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
-py_addpath(pathPython);
-
-% import python module and reload it
-pyModule = py.importlib.import_module('commonFunctions');
-py.importlib.reload(pyModule);
-
 %% LOAD AND PROCESS DATA
 
 % load data as table

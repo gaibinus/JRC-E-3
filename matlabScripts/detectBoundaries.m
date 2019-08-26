@@ -6,14 +6,14 @@ pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
 py_addpath(pathPython);
 
 % import python module and reload it
-pyModule = py.importlib.import_module('commonFunctions');
+pyModule = py.importlib.import_module('functions');
 py.importlib.reload(pyModule);
 
 %% LOAD CONFIG FILE AND DATA
-frequency = py.commonFunctions.readConfig(pathConfig, 'resample_rate');
-bnwSize = py.commonFunctions.readConfig(pathConfig, 'bnw_size');
-veloStd = py.commonFunctions.readConfig(pathConfig, 'velo_std');
-veloMean = py.commonFunctions.readConfig(pathConfig, 'velo_mean');
+frequency = py.functions.readConfig(pathConfig, 'resample_rate');
+bnwSize = py.functions.readConfig(pathConfig, 'bnw_size');
+veloStd = py.functions.readConfig(pathConfig, 'velo_std');
+veloMean = py.functions.readConfig(pathConfig, 'velo_mean');
 
 % check if loaded values contains any 'nan'
 if sum(sum(isnan([frequency bnwSize veloStd veloMean]))) > 0

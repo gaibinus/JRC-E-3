@@ -7,15 +7,15 @@ pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
 py_addpath(pathPython);
 
 % import python module and reload it
-pyModule = py.importlib.import_module('commonFunctions');
+pyModule = py.importlib.import_module('functions');
 py.importlib.reload(pyModule);
 
 %% LOAD AND PROCESS DATA
 
 % load all necessary data from config file
-sampleRate = py.commonFunctions.readConfig(pathConfig, 'sample_rate');
-startTime = py.commonFunctions.readConfig(pathConfig, 'bnw_start');
-stopTime = py.commonFunctions.readConfig(pathConfig, 'bnw_stop');
+sampleRate = py.functions.readConfig(pathConfig, 'sample_rate');
+startTime = py.functions.readConfig(pathConfig, 'bnw_start');
+stopTime = py.functions.readConfig(pathConfig, 'bnw_stop');
 
 % check if reat values contains any 'nan'
 if sum(isnan([sampleRate startTime stopTime])) > 0
