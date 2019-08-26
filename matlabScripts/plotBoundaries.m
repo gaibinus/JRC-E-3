@@ -40,5 +40,11 @@ statPlot.AxesProperties(2).LegendLabels = {'Normative', 'Delta', 'Mean'};
 % set up parameters for third plot
 statPlot.AxesProperties(3).YLimits = [-1 2];
 
+% compute processed data directory
+[filepath, ~, ~] = fileparts(pathBound);
+
+% save figure to experimetn tirectory
+savefig(strcat(filepath, '\finalBoundaries.fig'));
+
 end
 
