@@ -1,9 +1,9 @@
-function ret = adjustBoundaries(pathFile, windows, type)
+function ret = adjustBoundaries(pathBound, windows, type)
 
 %% LOAD AND PROCESS DATA
 
 % load data as table
-dataBound = readtable(pathFile);
+dataBound = readtable(pathBound);
 
 % remove static windows
 if strcmp(type, 'static')
@@ -43,7 +43,7 @@ dataBound = table(dataBound{:,'Time'}, bound, ...
                  'VariableNames',{'Time' 'Bound'});
 
 % write boundarties table to CSV
-writetable(dataBound, pathFile);
+writetable(dataBound, pathBound);
 
 %% END OF SCRIPT
 ret = true;
