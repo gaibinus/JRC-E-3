@@ -85,8 +85,8 @@ lapsFile.close()
 
 # change starting and ending times of laps to starting and ending lines
 for i in range(len(lapStart)):
-    lapStart[i] = lapStart[i] * sampleRate
-    lapEnd[i] = lapEnd[i] * sampleRate
+    lapStart[i] = round(lapStart[i] * sampleRate)
+    lapEnd[i] = round(lapEnd[i] * sampleRate)
 
 # inform about current state
 outputHandler("all files loaded successfully, starting to split CSV", han.info)
@@ -162,10 +162,6 @@ for i, row in enumerate(reader):
             # no more laps expected
             else:
                 break
-
-# inform user
-outputHandler('lap no. ' + str(currentLap) + ' splitted in: ' +
-              timeDeltaStr(time.time(), lastExecTime), han.info)
 
 # close files
 dataFile.close()
