@@ -1,7 +1,9 @@
 # general settings
+gravity = 9.8058129520
 sample_rate = 2000
 resample_rate = 20
 resample_mode = mean
+laps_count = nan
 
 # background noise window - BNW
 bnw_search = 60
@@ -35,3 +37,9 @@ velo_mean_z = nan
 velo_mean = nan
 velo_mean_norm = nan
 velo_mean_delt = nan
+
+# mean of quaternion rotation in BNW
+quat_mean = nan
+quat_mean_i = nan
+quat_mean_j = nan
+quat_mean_k = nan
