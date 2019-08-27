@@ -9,7 +9,7 @@ import time
 # FUNCTIONS ------------------------------------------------------------------------------------------------------------
 def dataCSVsplitting(pathData, pathLaps, dirFinal, sampleRate):
     # compute period
-    period = sampleRate / 1
+    period = 1 / sampleRate
 
     # check if files exists and are readable
     checkAccess(pathData, 'r')
