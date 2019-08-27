@@ -5,6 +5,8 @@ from boundaries2laps import boundaries2laps
 from dataCSVsplitting import dataCSVsplitting
 
 import argparse
+import time
+import matlab.engine
 
 
 # CLASSES --------------------------------------------------------------------------------------------------------------
@@ -14,6 +16,7 @@ class path:
     bound = None
     laps = None
     data = None
+    compen = None
     final = None
 
 
@@ -35,6 +38,7 @@ path.config = Path(arguments.experiment + '/config.txt')
 path.bound = Path(arguments.experiment + '/processed_data/IMU_boundaries.csv')
 path.laps = Path(arguments.experiment + '/processed_data/IMU_laps.csv')
 path.data = Path(arguments.experiment + '/parsed_data/IMU_parsed.csv')
+path.compen = Path(arguments.experiment + '/parsed_data/IMU_compensated.csv')
 path.final = arguments.experiment + '/final_data'
 
 # check if files exist and are readable / writable
@@ -47,14 +51,36 @@ checkAccess(path.final, 'w')
 # inform about current state
 outputHandler("all files loaded successfully", han.info)
 
+# COMPENSATE GRAVITY ---------------------------------------------------------------------------------------------------
+
+# start matlab engine
+eng = matlab.engine.start_matlab()
+
+# compute matlab directory path and load it to engine
+matlabDir = os.getcwd()
+matlabDir = matlabDir.replace('pythonScripts', 'matlabScripts')
+eng.cd(matlabDir)
+
+# MATLAB detect laps
+timeTmp = time.time()
+outputHandler('starting MATLAB gravity compensation', han.info)
+ret = eng.compensateGravity(str(path.data), str(path.compen), str(path.config))
+if ret is not True: outputHandler('false returned from MATLAB script', han.err)
+outputHandler('gravity compensated in: ' + timeDeltaStr(time.time(), timeTmp), han.info)
+
+# abort matlab engine
+eng.exit()
+
 # COMPUTE LAPS FROM BOUNDARIES -----------------------------------------------------------------------------------------
 
 # inform about current state
 outputHandler("starting 'boundaries2laps.py", han.info)
+timeTmp = time.time()
 
-# call function
+# call function and its workaround
 ret = boundaries2laps(path.bound, path.laps)
 if ret is not True: outputHandler('false returned from boundaries2laps script', han.err)
+outputHandler('laps computed in: ' + timeDeltaStr(time.time(), timeTmp), han.info)
 
 # SPLIT DATA TO LAPS ---------------------------------------------------------------------------------------------------
 
@@ -65,7 +91,7 @@ outputHandler("starting 'dataCSVsplitting.py", han.info)
 sampleRate = readConfig(path.config, 'sample_rate')
 
 # call function
-ret = dataCSVsplitting(path.data, path.laps, path.final, sampleRate)
+ret = dataCSVsplitting(path.compen, path.laps, path.final, sampleRate)
 if ret is not True: outputHandler('false returned from dataCSVsplitting script', han.err)
 
 # CODE END -------------------------------------------------------------------------------------------------------------
