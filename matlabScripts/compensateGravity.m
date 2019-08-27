@@ -29,16 +29,15 @@ data = readtable(pathIn);
 
 %% COMPENSATE DATA WITH QUATERNION ROTATION
 
-% create quaternion rotation array and decrease gravity
+% create quaternion rotation array
 quat = [quat quatI quatJ quatK];
-gravity = gravity / 10;
 
 % rotate every vector from data by quaternion
 dataComputed = ...
     quatrotate(quat, [data{:,'AccX'} data{:,'AccY'} data{:,'AccZ'}]);
 
 % remove gravitational acceleration
-dataComputed(:,3) = dataComputed(:,3) - gravity;
+% dataComputed(:,3) = dataComputed(:,3) - gravity / 10;
 
 % rewrite data in table
 data{:,'AccX'} = dataComputed(:,1);
