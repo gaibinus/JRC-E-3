@@ -185,7 +185,7 @@ checkAccess(path.processed.resa, 'r')
 # MATLAB compute velocity
 timeStamps.tmp = time.time()
 outputHandler('starting MATLAB velocity computation', han.info)
-ret = eng.computeVelocity(str(path.processed.resa), str(path.processed.velo), str(path.config))
+ret = eng.computeBNW(str(path.processed.resa), str(path.processed.velo), str(path.config))
 if ret is not True: outputHandler('false returned from MATLAB script', han.err)
 outputHandler('velocity computed in: ' + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
 
