@@ -1,4 +1,4 @@
-function data = loadData(pathExp)
+function data = loadData(pathExp, pathSave)
 
 % load experiment configuration file
 config = readtable(strcat(pathExp, '\config.csv'));
@@ -25,6 +25,15 @@ for car = 1:size(config,1)
         fprintf('INFO: table of car: %d lap: %d loaded\n', car, lap);
         
     end
+end
+
+% if save path was specified, save data
+if exist('pathSave','var')
+    % inform user about progress
+    fprintf('INFO: saving data to:\n%s\n', pathSave);
+
+    % save data to coputer
+    save(pathSave, 'data');
 end
 
 end
