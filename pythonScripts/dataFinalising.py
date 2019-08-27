@@ -22,7 +22,7 @@ class path:
 
 # MAIN------------------------------------------------------------------------------------------------------------------
 
-# FILES HANDLING -------------------------------------------------------------------------------------------------------
+# FILES AND MATLAB HANDLING --------------------------------------------------------------------------------------------
 
 # create input arguments parser
 parser = argparse.ArgumentParser(description='Divide parsed IMU data to individual laps.')
@@ -49,9 +49,7 @@ checkAccess(path.data, 'r')
 checkAccess(path.final, 'w')
 
 # inform about current state
-outputHandler("all files loaded successfully", han.info)
-
-# COMPENSATE GRAVITY ---------------------------------------------------------------------------------------------------
+outputHandler('all files loaded successfully, starting MATLAB engine', han.info)
 
 # start matlab engine
 eng = matlab.engine.start_matlab()
@@ -61,15 +59,21 @@ matlabDir = os.getcwd()
 matlabDir = matlabDir.replace('pythonScripts', 'matlabScripts')
 eng.cd(matlabDir)
 
-# MATLAB detect laps
+# COMPENSATE GRAVITY ---------------------------------------------------------------------------------------------------
+
 timeTmp = time.time()
 outputHandler('starting MATLAB gravity compensation', han.info)
 ret = eng.compensateGravity(str(path.data), str(path.compen), str(path.config))
 if ret is not True: outputHandler('false returned from MATLAB script', han.err)
 outputHandler('gravity compensated in: ' + timeDeltaStr(time.time(), timeTmp), han.info)
 
-# abort matlab engine
-eng.exit()
+# REMOVE PRESSURE ------------------------------------------------------------------------------------------------------
+
+timeTmp = time.time()
+outputHandler('starting MATLAB pressure removing', han.info)
+ret = eng.removePressure(str(path.compen))
+if ret is not True: outputHandler('false returned from MATLAB script', han.err)
+outputHandler('pressure removed in: ' + timeDeltaStr(time.time(), timeTmp), han.info)
 
 # COMPUTE LAPS FROM BOUNDARIES -----------------------------------------------------------------------------------------
 
@@ -92,6 +96,12 @@ sampleRate = readConfig(path.config, 'sample_rate')
 
 # call function
 ret = dataCSVsplitting(path.compen, path.laps, path.final, sampleRate)
-if ret is not True: outputHandler('false returned from dataCSVsplitting script', han.err)
+if ret is False: outputHandler('false returned from dataCSVsplitting script', han.err)
+
+# write laps count to config txt
+writeConfig(path.config, 'laps_count', ret)
 
 # CODE END -------------------------------------------------------------------------------------------------------------
+
+# abort matlab engine
+eng.exit()
