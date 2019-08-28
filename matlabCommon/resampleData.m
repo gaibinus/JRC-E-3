@@ -13,7 +13,7 @@ data = timetable2table(data);
 data = convertvars(data,'Time','seconds');
 
 % export table to new file or return as table
-if strcmp(pathout,'return') == true
+if strcmp(pathOut, 'return') == true
     % return resampled data as table
     ret = data;
 else
