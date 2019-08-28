@@ -140,8 +140,9 @@ eng = matlab.engine.start_matlab()
 
 # compute matlab directory path and load it to engine
 matlabDir = os.getcwd()
-matlabDir = matlabDir.replace('pythonScripts', 'matlabScripts')
-eng.cd(matlabDir)
+scriptsDir = matlabDir.replace('pythonScripts', 'matlabScripts')
+commonDir = matlabDir.replace('pythonScripts', 'matlabCommon')
+eng.addpath(scriptsDir, commonDir)
 
 # MATLAB plot graph for human search of BNW
 eng.plotIMU(str(path.parsed.IMU), config.searchSize, nargout=0)
