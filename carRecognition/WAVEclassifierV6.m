@@ -10,6 +10,7 @@ load('C:\Users\geibfil\Desktop\JRC-E-3\experiments\data_10.mat', 'data');
 SEGMENT_SIZE = 20; % in [s]
 SAMPLE_RATE = 10; % in [Hz]
 CARS = size(data, 1);
+LAPS = size(data, 2);
 
 %% COMPUTE AND PLOT VARIANCE
 
@@ -27,23 +28,25 @@ results = cell(CARS, 8);
 
 for car = 1 : CARS
     % create table header as cell array
-    header = strsplit(sprintf('Car%dLap%d,', [car*ones(1,20); 1:20]), ',');
+    header = sprintf('Car%dLap%d,', [car*ones(1,LAPS) ; 1:LAPS]);
+    header = strsplit(header, ',');
     header(cellfun('isempty',header)) = [];
     
     % create tables of every method for current car
     for method = 1 : 8
-        results{car, method} = array2table(zeros(segCount, 20), ...
-            'VariableNames', header);
+        results{car, method} = ...
+            array2table(zeros(segCount, LAPS), 'VariableNames', header);
     end
+    % results{car, :} = array2table(zeros(segCount, LAPS), 'VariableNames', header);
        
     for segment = 1 : segCount
         % compute end of current segment 
         segEnd = segIncrease * segment;
         
         % prealloc tmp results as: tmpResults{method, lap}
-        tmpResults = NaN(8, 20);
+        tmpResults = NaN(8, LAPS);
               
-        for lap = 1 : 20    
+        for lap = 1 : LAPS    
             % check if segEnd overflov current lap
             if segEnd > size(data{car, lap}, 1)
                 continue;
@@ -70,6 +73,7 @@ for car = 1 : CARS
         for method = 1 : 8
             results{car, method}{segment, :} = tmpResults(method,:);            
         end
+        % results{car, :}{segment, :} = tmpResults(:,:); 
         
     end
 end
@@ -95,18 +99,19 @@ for method = 1 : 1
    for car = 1 : CARS
        plotResults = [plotResults, results{car, method}];
    end
+   % plotResults = table(horzcat(results{:,method}));
    
    % create display variables parameter
-   dispVar = cell(20,1);
-   for lap = 1 : 20
-       tmp = strsplit(sprintf('Car%dLap%d\n', [1:CARS; ...
-                                               lap * ones(1,CARS)]));
+   dispVar = cell(LAPS,1);
+   for lap = 1 : LAPS
+       tmp = ...
+           strsplit(sprintf('Car%dLap%d\n', [1:CARS; lap * ones(1,CARS)]));
        tmp(cellfun('isempty',tmp)) = [];
        dispVar{lap,:} = tmp;
    end
    
    % create display labels parameter
-   dispLab = strsplit(sprintf('Lap %d,', 1:20), ',');
+   dispLab = strsplit(sprintf('Lap %d,', 1:LAPS), ',');
    dispLab(cellfun('isempty',dispLab)) = [];
    
    % create legend labels parameter
@@ -120,7 +125,7 @@ for method = 1 : 1
    statPlot.AxesProperties(1).LegendLabels = legLab;
    statPlot.AxesProperties(1).LegendVisible = 'on';
    
-   for i = 2:20
+   for i = 2:LAPS
         statPlot.AxesProperties(i).LegendVisible = 'off';
    end
 end   
