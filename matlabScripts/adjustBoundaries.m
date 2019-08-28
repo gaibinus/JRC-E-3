@@ -1,19 +1,9 @@
-function ret = adjustBoundaries(pathFile, windows, type)
-
-%% PYTHON IN MATLAB WORKAROUND
-
-% load folder with python scripts
-pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
-py_addpath(pathPython);
-
-% import python module and reload it
-pyModule = py.importlib.import_module('commonFunctions');
-py.importlib.reload(pyModule);
+function ret = adjustBoundaries(pathBound, windows, type)
 
 %% LOAD AND PROCESS DATA
 
 % load data as table
-dataBound = readtable(pathFile);
+dataBound = readtable(pathBound);
 
 % remove static windows
 if strcmp(type, 'static')
@@ -53,7 +43,11 @@ dataBound = table(dataBound{:,'Time'}, bound, ...
                  'VariableNames',{'Time' 'Bound'});
 
 % write boundaries table to CSV
+<<<<<<< HEAD
 writetable(dataBound, pathFile);
+=======
+writetable(dataBound, pathBound);
+>>>>>>> master
 
 %% END OF SCRIPT
 ret = true;

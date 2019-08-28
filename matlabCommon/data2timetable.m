@@ -5,13 +5,13 @@ if exist(pathFile, 'file') == 0
     error("Path does not exists");
 end
 
-% recognize options for CSV loading
+% recognize options for csv loading
 opts = detectImportOptions(pathFile);
 
 % check if number of rows was specified,
 if exist('rows','var')
     % set options to load only required number of rows
-    opts.DataLines = [2 rows+1];
+    opts.DataLines = [2 rows+1];	
 end
 
 % load data file

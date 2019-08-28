@@ -140,8 +140,9 @@ eng = matlab.engine.start_matlab()
 
 # compute matlab directory path and load it to engine
 matlabDir = os.getcwd()
-matlabDir = matlabDir.replace('pythonScripts', 'matlabScripts')
-eng.cd(matlabDir)
+scriptsDir = matlabDir.replace('pythonScripts', 'matlabScripts')
+commonDir = matlabDir.replace('pythonScripts', 'matlabCommon')
+eng.addpath(scriptsDir, commonDir)
 
 # MATLAB plot graph for human search of BNW
 eng.plotIMU(str(path.parsed.IMU), config.searchSize, nargout=0)
@@ -167,10 +168,10 @@ eng.close('all')
 
 # MATLAB compute variant
 timeStamps.tmp = time.time()
-outputHandler('starting MATLAB variant computation', han.info)
-ret = eng.computeVariant(str(path.parsed.IMU), str(path.config))
+outputHandler('starting MATLAB BNW computation', han.info)
+ret = eng.computeBNW(str(path.parsed.IMU), str(path.config))
 if ret is not True: outputHandler('false returned from MATLAB script', han.err)
-outputHandler('variant computed in: ' + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
+outputHandler('BNW computed in: ' + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
 
 # MATLAB resample function
 timeStamps.tmp = time.time()

@@ -9,7 +9,6 @@ import csv
 
 # DEFINITIONS ----------------------------------------------------------------------------------------------------------
 
-GRAVITY = 9.80581295200000
 DECIMAL = 6
 DELTAGPSUTC = 315964782  # current update for data after Jan 1 2017
 
@@ -40,6 +39,7 @@ class path:
 
 
 class conf:
+    gravity = None
     sampleRate = None
 
 
@@ -149,10 +149,13 @@ checkAccess(path.experiment, 'w')
 
 # LOAD DATA FROM CONFIG FILE AND RENAME FILES --------------------------------------------------------------------------
 
-# load sample rate from config file
+# load gravity and sample rate from config file
+conf.gravity = readConfig(path.config, 'gravity')
 conf.sampleRate = readConfig(path.config, 'sample_rate')
 
 # check if is valid
+if math.isnan(conf.gravity):
+    outputHandler('loaded gravity is NaN value', han.err)
 if math.isnan(conf.sampleRate):
     outputHandler('loaded sample rate is NaN value', han.err)
 
@@ -354,7 +357,7 @@ for lineCnt, line in enumerate(IMUtmpFile, start=1):
 
     # accelerometer - divide with gravity constant
     for i in range(3):
-        dataOut[1 + i] = line[2 + i] / GRAVITY
+        dataOut[1 + i] = line[2 + i] / conf.gravity
 
     # gyroscope - nothing to do
     for i in range(3):
@@ -493,6 +496,7 @@ for lineLLh, lineSol, lineVNed in zip(GPSllhFile, GPSsolFile, GPSvnedFile):
     # write processed line into output file
     GPSoutFileWriter.writerow(lineOut)
 
+# close files
 GPSllhFile.close()
 GPSsolFile.close()
 GPSvnedFile.close()

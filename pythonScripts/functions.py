@@ -7,6 +7,7 @@ import sys
 
 # CLASSES AND OBJECTS---------------------------------------------------------------------------------------------------
 
+
 class han(Enum):
     err = 0
     warn = 1
@@ -29,7 +30,7 @@ def outputHandler(message, typeOut, lineNo=DEFAULT):
         elif typeOut == han.info:
             print('INFO: ' + message)
         elif typeOut == han.confErr:
-            print('ERROR: config handler : ' + message)
+            print('ERROR: config handler: ' + message)
             sys.exit(-1),
 
     else:
@@ -41,7 +42,7 @@ def outputHandler(message, typeOut, lineNo=DEFAULT):
         elif typeOut == han.info:
             print('INFO: ' + message + ', line no: ' + str(lineNo))
         elif typeOut == han.confErr:
-            print('ERROR: config handler : ' + message + ', line no: ' + str(lineNo))
+            print('ERROR: config handler: ' + message + ', line no: ' + str(lineNo))
             sys.exit(-1),
 
 
@@ -132,11 +133,19 @@ def copyFile(sourPath, destPath):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
+<<<<<<< HEAD
 def removeFile(path):
     try:
         os.remove(path)
     except (OSError, IOError):
         outputHandler('unable to remove:\n' + str(path), han.err)
+=======
+def removeFile(filePath):
+    try:
+        os.remove(filePath)
+    except (OSError, IOError):
+        outputHandler('unable to remove:\n' + str(filePath), han.err)
+>>>>>>> master
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -206,7 +215,7 @@ def readConfig(path, dataName):
     if confVal is not None:
         return confVal
     else:
-        outputHandler('value '' + dataName + '' not found', han.confErr)
+        outputHandler("value '" + dataName +  "'not found", han.confErr)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
