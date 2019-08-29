@@ -1,7 +1,7 @@
 function ret = detectBoundaries(pathVelo, pathBound, pathConfig)
 
-
 %% PYTHON IN MATLAB WORKAROUND
+
 % load folder with python scripts
 pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
 py_addpath(pathPython);
@@ -11,6 +11,7 @@ pyModule = py.importlib.import_module('functions');
 py.importlib.reload(pyModule);
 
 %% LOAD CONFIG FILE AND DATA
+
 frequency = py.functions.readConfig(pathConfig, 'resample_rate');
 bnwSize = py.functions.readConfig(pathConfig, 'bnw_size');
 veloStd = py.functions.readConfig(pathConfig, 'velo_std');	
