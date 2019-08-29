@@ -43,3 +43,15 @@ quat_mean = nan
 quat_mean_i = nan
 quat_mean_j = nan
 quat_mean_k = nan
+
+# mean of values in BNW after gravity compensation
+acc_mean_x = nan
+acc_mean_y = nan
+acc_mean_z = nan
+gyr_mean_x = nan
+gyr_mean_y = nan
+gyr_mean_z = nan
+mag_mean_x = nan
+mag_mean_y = nan
+mag_mean_z = nan
+pres_mean = nan
