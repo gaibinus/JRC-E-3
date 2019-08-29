@@ -1,6 +1,7 @@
-%% FILE MANAGEMENT
 
 close all; clear; clc;
+
+%% FILE MANAGEMENT
 
 % load experiment data structure as data
 load('C:\Users\geibfil\Desktop\JRC-E-3\experiments\data_10.mat', 'data');
