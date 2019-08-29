@@ -3,13 +3,15 @@ function ret = createDataStructure(pathExp, resampleRate)
 % load experiment configuration file
 config = readtable(strcat(pathExp, '\config.csv'));
 
-% create cell array CARS x LAPS
-data = cell(size(config,1), 20);
+% load number of cars
+CARS = size(config,1);
+
+% create data cell array CARS x LAPS
+data = cell(CARS, 20);
 
 % go thru every car and its every lap
-for car = 1:size(config,1)
-    for lap = 1:20
-        
+for car = 1 : CARS
+    for lap = 1 : 20
         % compute lap number according to experiment config file
         lapNum = config{car, sprintf('Lap%d', lap)};
         lapNum = sprintf('%02d', lapNum);
@@ -31,9 +33,27 @@ for car = 1:size(config,1)
         data(car, lap) = {table};
         
         % inform user about progress
-        fprintf('INFO: table of car: %d lap: %d loaded\n', car, lap);
-        
+        fprintf('INFO: table of car: %d lap: %d loaded\n', car, lap); 
     end
+end
+
+% create BNW mean table header
+header = data{1, 1}.Properties.VariableNames;
+header(strcmp(header,'Time')) = [];
+header = [{'CarNo' 'ExpName'} , header];
+ 
+% create BNW mean table CARS x VALUES
+bnw = array2table(zeros(CARS, size(header, 2)), 'VariableNames', header);
+
+% fill BNW mean table from car config files
+for car = 1 : CARS
+    % compute file path for config.txt of current car
+    pathConfig = ...
+        char(strcat(pathExp, '\', config{car, 'ExpName'},'\config.txt'));
+    
+    
+    
+    
 end
 
 % compute save patch
