@@ -13,20 +13,6 @@ py.importlib.reload(pyModule);
 %% LOAD DATA
 
 % load frequency, window time and variation from config file
-<<<<<<< HEAD
-freqency = py.commonFunctions.readConfig(pathConfig, 'resample_rate');
-startTime = py.commonFunctions.readConfig(pathConfig, 'bnw_start');
-stopTime = py.commonFunctions.readConfig(pathConfig, 'bnw_stop');
-accVari(1) = py.commonFunctions.readConfig(pathConfig, 'vari_acc_x');
-accVari(2) = py.commonFunctions.readConfig(pathConfig, 'vari_acc_y');
-accVari(3) = py.commonFunctions.readConfig(pathConfig, 'vari_acc_z');
-gyrVari(1) = py.commonFunctions.readConfig(pathConfig, 'vari_gyr_x');
-gyrVari(2) = py.commonFunctions.readConfig(pathConfig, 'vari_gyr_y');
-gyrVari(3) = py.commonFunctions.readConfig(pathConfig, 'vari_gyr_z');
-magVari(1) = py.commonFunctions.readConfig(pathConfig, 'vari_mag_x');
-magVari(2) = py.commonFunctions.readConfig(pathConfig, 'vari_mag_y');
-magVari(3) = py.commonFunctions.readConfig(pathConfig, 'vari_mag_z');
-=======
 freqency = py.functions.readConfig(pathConfig, 'resample_rate');
 startTime = py.functions.readConfig(pathConfig, 'bnw_start');
 stopTime = py.functions.readConfig(pathConfig, 'bnw_stop');
@@ -39,7 +25,6 @@ gyrVari(3) = py.functions.readConfig(pathConfig, 'vari_gyr_z');
 magVari(1) = py.functions.readConfig(pathConfig, 'vari_mag_x');
 magVari(2) = py.functions.readConfig(pathConfig, 'vari_mag_y');
 magVari(3) = py.functions.readConfig(pathConfig, 'vari_mag_z');
->>>>>>> master
 
 % check if loaded values contains any 'nan'
 if sum(sum(isnan([freqency startTime stopTime ...

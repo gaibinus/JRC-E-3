@@ -1,4 +1,4 @@
-function plotIMU(pathFile, plotTime)﻿
+function plotIMU(pathFile, plotTime)
 
 % check if time frame was specified,
 if exist('plotTime','var')
@@ -6,11 +6,7 @@ if exist('plotTime','var')
     opts = detectImportOptions(pathFile);
     opts.DataLines = [2 3];
     table = readtable(pathFile, opts);
-<<<<<<< HEAD
-    
-=======
-    	
->>>>>>> master
+
     % compute length between two measurements
     period = abs(table{1,'Time'} - table{2,'Time'});
     

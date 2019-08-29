@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-function ret = detectBoundaries(pathIn, pathBound, pathConfig)﻿
-=======
 function ret = detectBoundaries(pathVelo, pathBound, pathConfig)
->>>>>>> master
+
 
 %% PYTHON IN MATLAB WORKAROUND
 % load folder with python scripts
@@ -30,22 +27,15 @@ dataBound = readtable(pathVelo);
 %% DETECT WINDOWS WHEN CAR IS STATIC
 
 % calculate upper and lower threshold
-<<<<<<< HEAD
-upperTreshold = veloMean + veloStd;
-=======
 upperTreshold = veloMean + veloStd * 1;
->>>>>>> master
 lowerTreshold = 0;
 
 % create binary vector of possible loop boundaries
 bound = dataBound{:,'MeanConv'} < upperTreshold  & ...
         dataBound{:,'MeanConv'} > lowerTreshold;
     
-<<<<<<< HEAD
-% find too small movement windows, less or equal to 1.5 s
-=======
+
 % find too small movement windows, less or equal to 1 s
->>>>>>> master
 bound = bwlabel(bound);
 for i = 1:max(bound)
     if sum(bound == i) <= ceil(frequency * 1)
