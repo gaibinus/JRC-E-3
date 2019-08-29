@@ -133,19 +133,11 @@ def copyFile(sourPath, destPath):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-<<<<<<< HEAD
-def removeFile(path):
-    try:
-        os.remove(path)
-    except (OSError, IOError):
-        outputHandler('unable to remove:\n' + str(path), han.err)
-=======
 def removeFile(filePath):
     try:
         os.remove(filePath)
     except (OSError, IOError):
         outputHandler('unable to remove:\n' + str(filePath), han.err)
->>>>>>> master
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -215,7 +207,7 @@ def readConfig(path, dataName):
     if confVal is not None:
         return confVal
     else:
-        outputHandler("value '" + dataName +  "'not found", han.confErr)
+        outputHandler("value '" + dataName + "'not found", han.confErr)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -281,6 +273,5 @@ def writeConfig(path, dataName, dataVal):
 
     # return true as success
     return True
-
 
 # ----------------------------------------------------------------------------------------------------------------------
