@@ -1,4 +1,3 @@
-
 %% FILE MANAGEMENT
 
 close all; clear; clc;
@@ -116,10 +115,6 @@ for method = 1 : 8
    
    % create left plot from 1 to 10
    leftPlot = stackedplot(plotResults, dispVar(1:10));
-   
-   leftPlot.Units = 'normalized';
-   leftPlot.ActivePositionProperty  = 'position';
-   
    leftPlot.DisplayLabels = dispLab(1:10);
    leftPlot.XLabel = 'Segment ID';
    leftPlot.AxesProperties(1).LegendLabels = legLab;
