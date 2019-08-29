@@ -20,7 +20,7 @@ segIncrease = SEGMENT_SIZE * SAMPLE_RATE;
 maxLength = max(max(cellfun(@height,data,'UniformOutput',true)));
 
 % compute number of segments
-segCount = ceil(maxLength / segIncrease);
+segCount = floor(maxLength / segIncrease);
 
 % prealloc results cell array as: results{car, method}
 results = cell(CARS, 8);
@@ -97,10 +97,10 @@ for method = 1 : 8
    % create display variables parameter
    dispVar = cell(20,1);
    for lap = 1 : 20
-       tmp = ...
-           strsplit(sprintf('Car%dLap%d\n', [1:CARS; lap * ones(1,CARS)]));
+       tmp = sprintf('Car%dLap%d,', [1:CARS; lap * ones(1,CARS)]);
+       tmp = strsplit(tmp, ',');
        tmp(cellfun('isempty',tmp)) = [];
-       dispVar{lap,:} = tmp;
+       dispVar{lap} = tmp;
    end
    
    % create display labels parameter
