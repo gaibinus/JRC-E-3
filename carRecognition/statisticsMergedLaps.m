@@ -2,7 +2,7 @@ close all; clear; clc;
 
 %% FILE MANAGEMENT
 
-dataPath = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments\data_10.mat';
+dataPath = '/home/filip/CVUT/intership/JRC/work/data_10.mat';
 
 % load experiment data structure
 load(dataPath, 'data');
@@ -166,17 +166,53 @@ return
 
 %% PLOT STATISTICS RESULTS IN SCATTER
 
+% CHOOSE 2/3 METHODS TO PLOT
+methods = [2, 3, 8];                                      %#ok<UNRCH>
+
 % create figure and set it up
-fig = figure(); %#ok<UNRCH>
-fig.Name = strcat('Statistics of merged laps in ');
+fig = figure();
+fig.Name = strcat('Statistics of merged laps in scatter plot');
 
-methods = [2, 3];
-
+% create layers of scatter plot in 2D or 3D
 for car = 1 : CARS
-    scatter(results{:, sprintf('Car%dMethod%d', car, methods(1))}, ...
-            results{:, sprintf('Car%dMethod%d', car, methods(2))})
+    if size(methods, 2) == 2
+        scatter(results{:, sprintf('Car%dMethod%d', car, methods(1))}, ...
+                results{:, sprintf('Car%dMethod%d', car, methods(2))});
+    elseif size(methods, 2) == 3
+        scatter3(results{:, sprintf('Car%dMethod%d', car, methods(1))}, ...
+                 results{:, sprintf('Car%dMethod%d', car, methods(2))}, ...
+                 results{:, sprintf('Car%dMethod%d', car, methods(3))});  
+    else
+        error('Wrong number of methots to plot');
+    end
+    
+    % keep adding layers to plot
     hold on;
 end
+
+% create X axis label
+methodStr = methodNames(rem(methods(1)-1, 4) + 1);
+dataStr = dataNames(floor((methods(1)-1)/4) + 1);
+xlabel(strcat(methodStr, " of ", dataStr));
+
+% create Y axis label
+methodStr = methodNames(rem(methods(2)-1, 4) + 1);
+dataStr = dataNames(floor((methods(2)-1)/4) + 1);
+ylabel(strcat(methodStr, " of ",  dataStr));
+
+% create Z axis label
+if size(methods, 2) == 3
+    methodStr = methodNames(rem(methods(3)-1, 4) + 1);
+    dataStr = dataNames(floor((methods(3)-1)/4) + 1);
+    zlabel(strcat(methodStr, " of ", dataStr));
+end
+
+% create legend
+legArr = strsplit(sprintf('Car %d,', 1:CARS), ',');
+legArr(cellfun('isempty',legArr)) = [];
+legend(legArr, 'Location','Best');
+
+% end of hold
 hold off;
 
 
