@@ -4,7 +4,10 @@ close all; clear; clc;
 %% FILE MANAGEMENT
 
 % load experiment data structure as data
-load('C:\Users\geibfil\Desktop\JRC-E-3\experiments\data_10.mat', 'data');
+dataPath = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments\data_10.mat';
+
+% load experiment data structure
+load(dataPath, 'data');
 
 % save constants
 SEGMENT_SIZE = 20; % in [s]

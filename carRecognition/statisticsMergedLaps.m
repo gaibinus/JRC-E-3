@@ -2,74 +2,80 @@ close all; clear; clc;
 
 %% FILE MANAGEMENT
 
-dataPath = '/home/filip/CVUT/intership/JRC/work/data_10.mat';
+dataPath = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments\data_200.mat';
+
+% inform user
+fprintf("Loading data\n");
 
 % load experiment data structure
 load(dataPath, 'data');
 load(dataPath, 'bnw');
 
 % save constants
-SEGMENT_SIZE = 20; % in [s]
-SAMPLE_RATE = 10; % in [Hz]
+SEGMENT_SIZE = 60; % in [s]
+SAMPLE_RATE = 200; % in [Hz]
 PERIOD = 1 / SAMPLE_RATE; % in [s]
 CARS = size(data, 1);
+
+% inform user
+fprintf("Normalising laps lenghts\n");
 
 % find maximal lenght of every lap
 lapMax = max(cellfun(@height,data,'UniformOutput',true));
 
 % normalize lap length for every car, fill with BNW means
 for lap = 1 : 20
-    for car = 1 : CARS
+    for computedCar = 1 : CARS
         % compute difference of actual lap from maximal lap in rows
-        delta = lapMax(lap) - size(data{car, lap}, 1);
+        delta = lapMax(lap) - size(data{computedCar, lap}, 1);
         
         % create append table with correct dimensions
-        header = data{car, lap}.Properties.VariableNames;
-        append = array2table(ones(delta, size(data{car, lap}, 2)));
+        header = data{computedCar, lap}.Properties.VariableNames;
+        append = array2table(ones(delta, size(data{computedCar, lap}, 2)));
         append.Properties.VariableNames = header;
         
         % change values to means from BNW
-        append{:, 'AccX'} = append{:, 'AccX'} .* bnw{car, 'AccX'};
-        append{:, 'AccY'} = append{:, 'AccY'} .* bnw{car, 'AccY'};
-        append{:, 'AccZ'} = append{:, 'AccZ'} .* bnw{car, 'AccZ'};
+        append{:, 'AccX'} = append{:, 'AccX'} .* bnw{computedCar, 'AccX'};
+        append{:, 'AccY'} = append{:, 'AccY'} .* bnw{computedCar, 'AccY'};
+        append{:, 'AccZ'} = append{:, 'AccZ'} .* bnw{computedCar, 'AccZ'};
         
-        append{:, 'GyrX'} = append{:, 'GyrX'} .* bnw{car, 'GyrX'};
-        append{:, 'GyrY'} = append{:, 'GyrY'} .* bnw{car, 'GyrY'};
-        append{:, 'GyrZ'} = append{:, 'GyrZ'} .* bnw{car, 'GyrZ'};
+        append{:, 'GyrX'} = append{:, 'GyrX'} .* bnw{computedCar, 'GyrX'};
+        append{:, 'GyrY'} = append{:, 'GyrY'} .* bnw{computedCar, 'GyrY'};
+        append{:, 'GyrZ'} = append{:, 'GyrZ'} .* bnw{computedCar, 'GyrZ'};
         
-        append{:, 'MagX'} = append{:, 'MagX'} .* bnw{car, 'MagX'};
-        append{:, 'MagY'} = append{:, 'MagY'} .* bnw{car, 'MagY'};
-        append{:, 'MagZ'} = append{:, 'MagZ'} .* bnw{car, 'MagZ'};
+        append{:, 'MagX'} = append{:, 'MagX'} .* bnw{computedCar, 'MagX'};
+        append{:, 'MagY'} = append{:, 'MagY'} .* bnw{computedCar, 'MagY'};
+        append{:, 'MagZ'} = append{:, 'MagZ'} .* bnw{computedCar, 'MagZ'};
         
         % compute starting and ending time of append table and write them
-        startTime = data{car, lap}{end, 'Time'} + PERIOD;
+        startTime = data{computedCar, lap}{end, 'Time'} + PERIOD;
         endTime = startTime + delta * PERIOD;
         append{:, 'Time'} = transpose(linspace(startTime, endTime, delta));
         
         % merge append table under the original table
-        data{car, lap} = [data{car, lap}; append]; 
+        data{computedCar, lap} = [data{computedCar, lap}; append]; 
     end
 end
 
 % connect laps in time domain
 for lap = 2 : 20
-    for car = 1 : CARS    
+    for computedCar = 1 : CARS    
         % compute delta time between two laps
-        delta = data{car, lap-1}{end, 'Time'} + PERIOD;
+        delta = data{computedCar, lap-1}{end, 'Time'} + PERIOD;
         
         % add time delta to time domain of second lap
-        data{car, lap}{:, 'Time'} = data{car, lap}{:, 'Time'} + delta;   
+        data{computedCar, lap}{:, 'Time'} = data{computedCar, lap}{:, 'Time'} + delta;   
     end
 end
 
 % join laps of car to one long record
-for car = 1 : CARS
+for computedCar = 1 : CARS
     for lap = 2 : 20
         % append current lap under first one
-        data{car, 1} = [data{car, 1}; data{car, lap}];
+        data{computedCar, 1} = [data{computedCar, 1}; data{computedCar, lap}];
         
         % delete current lap
-        data{car, lap} = [];        
+        data{computedCar, lap} = [];        
     end
 end
 
@@ -77,6 +83,7 @@ end
 data = transpose(data(:, 1));
 
 %% COMPUTE STATISTICS
+fprintf("Computing statistics\n");
 
 % compute increase between segments
 segIncrease = SEGMENT_SIZE * SAMPLE_RATE;
@@ -86,6 +93,7 @@ length = max(max(cellfun(@height,data,'UniformOutput',true)));
 
 % compute number of segments
 segCount = floor(length / segIncrease);
+fprintf("Segment no.: %d\n", segCount);
 
 % create table header
 header = ...
@@ -98,31 +106,57 @@ results = array2table(zeros(segCount, CARS * 8));
 results.Properties.VariableNames = header;
 
 % compute for every car for every segment
-for car = 1 : CARS
+for computedCar = 1 : CARS
     for segment = 1 : segCount
         % compute end of current segment 
         segEnd = segIncrease * segment;
         
         % load AccZ data from current car in lenght of current segment
-        tmpData = data{car}{1:segEnd, 'AccZ'};
+        tmpData = data{computedCar}{1:segEnd, 'AccZ'};
         
-        results{segment,sprintf('Car%dMethod1', car)} = var(tmpData);
-        results{segment,sprintf('Car%dMethod2', car)} = ...
+        results{segment,sprintf('Car%dMethod1', computedCar)} = var(tmpData);
+        results{segment,sprintf('Car%dMethod2', computedCar)} = ...
                                               wentropy(tmpData, 'shannon');
-        results{segment,sprintf('Car%dMethod3', car)} = skewness(tmpData);
-        results{segment,sprintf('Car%dMethod4', car)} = kurtosis(tmpData);
+        results{segment,sprintf('Car%dMethod3', computedCar)} = skewness(tmpData);
+        results{segment,sprintf('Car%dMethod4', computedCar)} = kurtosis(tmpData);
         
         % load GyrY data from current car in lenght of current segment
-        tmpData = data{car}{1:segEnd, 'GyrY'};
+        tmpData = data{computedCar}{1:segEnd, 'GyrY'};
         
-        results{segment,sprintf('Car%dMethod5', car)} = var(tmpData);
-        results{segment,sprintf('Car%dMethod6', car)} = ...
+        results{segment,sprintf('Car%dMethod5', computedCar)} = var(tmpData);
+        results{segment,sprintf('Car%dMethod6', computedCar)} = ...
                                               wentropy(tmpData, 'shannon');
-        results{segment,sprintf('Car%dMethod7', car)} = skewness(tmpData);
-        results{segment,sprintf('Car%dMethod8', car)} = kurtosis(tmpData);   
-    end
+        results{segment,sprintf('Car%dMethod7', computedCar)} = skewness(tmpData);
+        results{segment,sprintf('Car%dMethod8', computedCar)} = kurtosis(tmpData);
+        
+        % inform user about progress
+        fprintf("Car: %d segment: %d / %d done\n", computedCar, segment, segCount);
+    end    
 end
     
+%% NORMALIZE DISTANCE
+
+% for every method
+for method = 1 : 8
+    
+   % create mothot-size tmp array
+   tmp = zeros(segCount, CARS);
+   
+   % compute distance of every car in methot to others
+   for computed = 1 : CARS 
+       for compared = 1 : CARS
+       tmp(:, computed) = tmp(:, computed) + abs( ... 
+           results{:, sprintf('Car%dMethod%d',computed,method)} - ...
+           results{:, sprintf('Car%dMethod%d',compared,method)});
+       end
+   end
+   
+   % rewrite after finishing metode
+   for car = 1 : CARS
+        results{:, sprintf('Car%dMethod%d',car,method)} = tmp(:, car); 
+   end
+end
+
 %% PLOT STATISTICS RESULTS IN STACKED PLOT
 
 % create array with method names and data names
@@ -167,21 +201,21 @@ return
 %% PLOT STATISTICS RESULTS IN SCATTER
 
 % CHOOSE 2/3 METHODS TO PLOT
-methods = [2, 3, 8];                                      %#ok<UNRCH>
+methods = [2, 7, 8];                                      %#ok<UNRCH>
 
 % create figure and set it up
 fig = figure();
 fig.Name = strcat('Statistics of merged laps in scatter plot');
 
 % create layers of scatter plot in 2D or 3D
-for car = 1 : CARS
+for computedCar = 1 : CARS
     if size(methods, 2) == 2
-        scatter(results{:, sprintf('Car%dMethod%d', car, methods(1))}, ...
-                results{:, sprintf('Car%dMethod%d', car, methods(2))});
+        scatter(results{:, sprintf('Car%dMethod%d', computedCar, methods(1))}, ...
+                results{:, sprintf('Car%dMethod%d', computedCar, methods(2))});
     elseif size(methods, 2) == 3
-        scatter3(results{:, sprintf('Car%dMethod%d', car, methods(1))}, ...
-                 results{:, sprintf('Car%dMethod%d', car, methods(2))}, ...
-                 results{:, sprintf('Car%dMethod%d', car, methods(3))});  
+        scatter3(results{:, sprintf('Car%dMethod%d', computedCar, methods(1))}, ...
+                 results{:, sprintf('Car%dMethod%d', computedCar, methods(2))}, ...
+                 results{:, sprintf('Car%dMethod%d', computedCar, methods(3))});  
     else
         error('Wrong number of methots to plot');
     end

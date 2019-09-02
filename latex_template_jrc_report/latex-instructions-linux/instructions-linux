@@ -1,0 +1,24 @@
+to install the verdana fonts in linux follow the intstructions bellow: 
+1. download: http://mirrors.ctan.org/install/fonts/verdana.tds.zip
+2. kpsewhich --var-value TEXMFLOCAL (this will give you the "local texmf tree")
+    example of output for a demo installation is:
+    "/usr/local/share/texmf"
+3. Unzip the downloaded package and copy its content to the "local texmf tree"
+4. a. In case that your "local texmf" is not empty copy the files to the corresponding directories.
+   b. In case that your "local texmf" is empty copy the contents of the extracted package as is. So the "local texmf"  should have the following structure: 
+    --doc  
+    --fonts  
+    --source  
+    --tex
+5. The verdana *.ttf files should be copied in the following directory:
+    --"local texm tree"/fonts/truetype/ms/verdana
+    example of the correspoding path is : 
+    --/usr/local/share/texmf/fonts/truetype/ms/verdana	
+6. sudo -H mktexlsr
+7. go to your fonts map directory that should be located under "local texmf tree" and run the following command:
+    updmap-sys --force --enable Map=verdana.map
+
+(8). texhash
+
+
+

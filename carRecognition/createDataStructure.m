@@ -3,7 +3,7 @@ function ret = createDataStructure(pathExp, resampleRate)
 %% PYTHON IN MATLAB WORKAROUND
 
 % load folder with python scripts
-pathPython = strrep(pwd, 'matlabScripts', 'pythonScripts');
+pathPython = strrep(pwd, 'carRecognition', 'pythonScripts');
 py_addpath(pathPython);
 
 % import python module and reload it
