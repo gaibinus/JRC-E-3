@@ -43,11 +43,7 @@ dataBound = table(dataBound{:,'Time'}, bound, ...
                  'VariableNames',{'Time' 'Bound'});
 
 % write boundaries table to CSV
-<<<<<<< HEAD
-writetable(dataBound, pathFile);
-=======
 writetable(dataBound, pathBound);
->>>>>>> master
 
 %% END OF SCRIPT
 ret = true;
