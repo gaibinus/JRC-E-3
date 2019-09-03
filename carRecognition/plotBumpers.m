@@ -3,9 +3,10 @@ function plotBumpers(bumperPath)
 % load data to time table
 data = data2timetable(bumperPath);
 
-% label windows between bumpers
-data.Cnt = bwlabel(~data.Bump);
-data.Cnt(data.Cnt==0) = NaN;
+% label windows and bumpers
+data.Cnt = bwlabel(~data.Bump); % windows
+tmp = bwlabel(data.Bump); % bumpers
+data.Cnt(data.Cnt==0) = tmp(data.Cnt==0);
 data.Cnt = fillmissing(data.Cnt, 'linear');
 
 % create figure and set it up
@@ -15,11 +16,12 @@ fig.NumberTitle = 'off';
 
 % create stacked plot
 statPlot = stackedplot(data);
+statPlot.Title = 'Found bumpers';	
 
 % set up stacked plot parameters
 statPlot.DisplayVariables = {'Bound' 'Conv' 'Bump' 'Cnt'};
 statPlot.DisplayLabels = {'Laps boundaries' 'Convoluted velocity'  ...
-                          'Detected bumpers' 'Window count'};
+                          'Detected bumpers' 'Window and buper count'};
 statPlot.GridVisible = 'off';
 statPlot.XLabel = 'Time [s]';
 

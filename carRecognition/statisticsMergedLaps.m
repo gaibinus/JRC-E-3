@@ -134,6 +134,8 @@ for computedCar = 1 : CARS
     end    
 end
     
+return
+
 %% NORMALIZE DISTANCE
 
 % for every method
