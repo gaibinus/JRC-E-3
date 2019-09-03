@@ -1,4 +1,4 @@
-function ret = adjustBoundaries(pathBound, windows, type)
+function ret = adjustWindows(pathBound, windows, type)
 
 %% LOAD AND PROCESS DATA
 
