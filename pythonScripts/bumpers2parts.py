@@ -7,83 +7,126 @@ import csv
 
 # FUNCTIONS ------------------------------------------------------------------------------------------------------------
 
-def boundaries2laps(pathBump, pathParts):
-    # check if boundaries file exists and is readable
+def bumpers2laps(pathBump, pathLaps, pathBumpTimes, pathBumpSizes):
+    # check if files exists and is readable
     checkAccess(pathBump, 'r')
+    checkAccess(pathLaps, 'r')
 
-    # load and check boundaries file
-    boundFile = open(pathBump, 'r')
-    checkOpen(boundFile, 'r')
+    # load and check bumpers file
+    bumpFile = open(pathBump, 'r')
+    checkOpen(bumpFile, 'r')
 
-    # create boundaries CSV reader
-    reader = csv.reader(boundFile, delimiter=',', lineterminator='\n')
+    # load and check laps file
+    lapsFile = open(pathLaps, 'r')
+    checkOpen(lapsFile, 'r')
 
-    # create and check laps file
-    lapsFile = open(pathParts, 'w')
-    checkOpen(lapsFile, 'w')
+    # create bumpers CSV reader and skip header
+    readerBump = csv.reader(bumpFile, delimiter=',', lineterminator='\n')
+    next(readerBump)
 
-    # create laps CSV writer and write header
-    writer = csv.writer(lapsFile, delimiter=',', lineterminator='\n')
-    writer.writerow(['LapNo', 'Start', 'StartAcc', 'FastBump', 'FirstBump', 'RoundOne', 'SecondBump', 'WindowOne',
-                     'Damage', 'WindowTwo', 'Stop', 'WindowThree', 'VisitBump', 'WindowFour', 'RoundTwo', 'End'])
+    # create laps CSV reader and skip header
+    readerLaps = csv.reader(lapsFile, delimiter=',', lineterminator='\n')
+    next(readerLaps)
+
+    # create and check parts times file
+    partsTimesFile = open(pathBumpTimes, 'w')
+    checkOpen(partsTimesFile, 'w')
+
+    # create and check parts sizes file
+    partsSizesFile = open(pathBumpSizes, 'w')
+    checkOpen(partsSizesFile, 'w')
+
+    # create parts times CSV writer and write header
+    writerTimes = csv.writer(partsTimesFile, delimiter=',', lineterminator='\n')
+    writerTimes.writerow(['LapNo', 'Start', 'StartTurn', 'FastFirstBump', 'PreRound', 'RoundOne', 'SecondBump', 'Curve',
+                          'WindowOne', 'CrossOne', 'VisitBump', 'CrossTwo', 'WindowTwo', 'RoundTwo', 'WindowThree'])
+
+    # create parts sizes CSV writer and write header
+    writerSizes = csv.writer(partsSizesFile, delimiter=',', lineterminator='\n')
+    writerSizes.writerow(['LapNo', 'Start', 'StartTurn', 'FastFirstBump', 'PreRound', 'RoundOne', 'SecondBump', 'Curve',
+                          'WindowOne', 'CrossOne', 'VisitBump', 'CrossTwo', 'WindowTwo', 'RoundTwo', 'WindowThree'])
 
     # PROCESS BOUNDARIES FILE AND CREATE LAPS FILE ---------------------------------------------------------------------
 
-    # skip header row
-    next(reader)
+    # create data file and support variables
+    data = 15 * [float(0)]
+    lastBump = True
+    cursor = 0
+    skipFlag = False
 
-    # current lap counter, last boundary, and variables for time checking
-    currLap = 1
-    prevEnd = None
-    currStart = None
+    # read first lap data
+    lap = list(map(float, next(readerLaps)))
 
-    # check if first boundary data is static, pre-read row for next loop
-    row = next(reader)
-    lastBound = str2float(row[1])
-    if not lastBound == 1: outputHandler('corrupted boundaries file - starts with 0', han.err)
-
-    # loop thru whole boundaries file
-    for row in reader:
-
+    # loop thru whole bumper file
+    for bump in readerBump:
         # retype row from string to float
-        row[0] = str2float(row[0])
-        row[1] = str2float(row[1])
+        bump = list(map(float, bump))
 
-        # detect falling edge => lap start
-        if lastBound == 1 and row[1] == 0:
-            currStart = row[0]
+        # check if we are inside current lap and change occurred
+        if lap[1] <= bump[0] <= lap[2] and bump[5] != lastBump:
+            # update last bump
+            lastBump = bump[5]
 
-        # detect rising edge => lap end and proceed current lap
-        elif lastBound == 0 and row[1] == 1:
-            currEnd = row[0]
+            # move cursor to right
+            cursor += 1
 
-            # check if lap times make sense
-            if not currStart < currEnd:
-                outputHandler('start time !< than end time in lap ' + str(currLap), han.err)
+            # check if we just found first change and 'LapNo' field need to be assigned
+            if cursor == 1: data[0] = int(lap[0])
 
-            # check if lap time is after previous lap
-            if prevEnd is not None and currStart < prevEnd:
-                outputHandler('end of previous lap !< than start of current lap ' + str(currLap), han.err)
+            # check if we are skipping 7 change
+            if cursor == 7 and skipFlag is False:
+                cursor -= 1
+                skipFlag = True
+                continue
 
-            # compute current lap duration
-            currDuration = round(abs(currStart - currEnd), 2)
+            # check for cursor overflow
+            if cursor > 14: outputHandler("Cursor overflew at time: " + str(bump[0]), han.err)
 
-            # everything is OK, write to CSV
-            writer.writerow([currLap, currStart, currEnd, currDuration])
+            # write current time to current cursor
+            data[cursor] = float(bump[0])
 
-            # update variables
-            currLap += 1
-            prevEnd = currEnd
+        # check if we just ended current lap
+        if bump[0] == lap[2]:
+            # check if data contains 'None'
+            if 0 in data: outputHandler("Corrupted data detected at time: " + str(bump[0]), han.err)
 
-        # update lastBound
-        lastBound = row[1]
+            # write data to CSV time file
+            writerTimes.writerow(data)
 
-    # check if last boundary data is static
-    if not lastBound == 1: outputHandler('corrupted boundaries file - ends with 0', han.err)
+            # compute parts sizes
+            for i in range(1, 14):
+                data[i] = data[i + 1] - data[i]
+            data[0] = int(lap[0])
+            data[14] = lap[2] - data[14]
+
+            # check if is not zero or negative
+            for item in data:
+                if item <= 0: outputHandler("Corrupted length in lap: " + str(data[0]), han.err)
+
+            # check if total length matches with laps file
+            if round(sum(data[1:]), 2) != lap[3]:
+                outputHandler("Length does not match in lap: " + str(data[0]), han.err)
+
+            # write data to CSV time file
+            writerSizes.writerow(data)
+
+            # restore data and support variables for new lap
+            data = 15 * [float(0)]
+            lastBump = True
+            cursor = 0
+            skipFlag = False
+
+            # try to read next lap if exists
+            try:
+                lap = list(map(float, next(readerLaps)))
+            except StopIteration:
+                break
 
     # close open CSV files
-    boundFile.close()
+    bumpFile.close()
     lapsFile.close()
+    partsTimesFile.close()
+    partsSizesFile.close()
 
     # return success
     return True
@@ -91,22 +134,24 @@ def boundaries2laps(pathBump, pathParts):
 
 # MAIN------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-
     # create input arguments parser
     parser = argparse.ArgumentParser(description='Parse individual parts from binary bumpers file.')
 
     # add required arguments
     parser.add_argument('-b', '--bump', help='path to existing CSV bumpers file', type=str, required=True)
+    parser.add_argument('-l', '--laps', help='path to existing CSV laps file', type=str, required=True)
     parser.add_argument('-p', '--part', help='path to future CSV parts file', type=str, required=True)
 
     # load input arguments
     arguments = parser.parse_args()
 
     # compute directories
-    pathBumpPy = Path(arguments.bound)
-    pathPartPy = Path(arguments.laps)
+    pathBumpPy = Path(arguments.bump)
+    pathLapsPy = Path(arguments.laps)
+    pathBumpTimesPy = Path(arguments.part.replace('.csv', '_times.csv'))
+    pathBumpSizesPy = Path(arguments.part.replace('.csv', '_sizes.csv'))
 
     # call function
-    boundaries2laps(pathBumpPy, pathPartPy)
+    bumpers2laps(pathBumpPy, pathLapsPy, pathBumpTimesPy, pathBumpSizesPy)
 
 # CODE END -------------------------------------------------------------------------------------------------------------
