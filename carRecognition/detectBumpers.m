@@ -2,9 +2,6 @@ function ret = detectBumpers(carPath)
 
 %% LOAD DATA
 
-close all; clear; clc;
-carPath = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments\1408-01';
-
 % constant frequency
 FREQ = 20;
 
