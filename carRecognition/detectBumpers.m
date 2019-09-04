@@ -2,23 +2,37 @@ function ret = detectBumpers(carPath)
 
 %% LOAD DATA
 
+close all; clear; clc;
+carPath = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments\1408-01';
+
 % constant frequency
 FREQ = 20;
 
 % load car data
-data = readtable(strcat(carPath, '\processed_data\IMU_velocity.csv'));
+prev = readtable(strcat(carPath, '\processed_data\IMU_velocity.csv'));
+data = readtable(strcat(carPath, '\parsed_data\IMU_compensated_20.csv'));
 bound = readtable(strcat(carPath, '\processed_data\IMU_boundaries.csv'));
 laps = readtable(strcat(carPath, '\processed_data\IMU_laps.csv'));
 
 % edit table
-data = table(data.Time, data.VeloZ, bound.Bound, ...
-                                 'VariableNames', {'Time' 'Velo' 'Bound'});
+data = table(data.Time, data.AccZ, prev.VeloZ, bound.Bound, ...
+                           'VariableNames', {'Time' 'Acc' 'Velo' 'Bound'});
 
 % modifi velocity data
-data.Velo(data.Velo > 0) = 0;
-data.Velo = abs(data.Velo);
+data.Acc = abs(data.Acc - 9.8058129520 / 10);
+
+% create convolution matrix and proceed convolution
+convMat = ones(1, FREQ * 2) / FREQ * 2;
+tmp = conv(convMat, data.Acc, 'full');
+
+% compute convolution offsets and cut edges
+data.Acc = tmp(ceil(size(convMat,2)/2) : end-floor(size(convMat,2)/2));
 
 %% FIND BUMPERS
+
+% modify velocity data
+data.Velo(data.Velo > 0) = 0;
+data.Velo = abs(data.Velo);
 
 % create convolution matrix and proceed convolution
 convMat = ones(1, FREQ * 2) / FREQ * 2;

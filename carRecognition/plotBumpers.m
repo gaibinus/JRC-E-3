@@ -19,9 +19,10 @@ statPlot = stackedplot(data);
 statPlot.Title = 'Found bumpers';	
 
 % set up stacked plot parameters
-statPlot.DisplayVariables = {'Bound' 'Conv' 'Bump' 'Cnt'};
-statPlot.DisplayLabels = {'Laps boundaries' 'Convoluted velocity'  ...
-                          'Detected bumpers' 'Window and buper count'};
+statPlot.DisplayVariables = {'Bound' 'Conv' 'Bump' 'Acc' 'Cnt'};
+statPlot.DisplayLabels = {'Laps boundaries' 'Velocity in  in Z axis' ...
+                          'Detected bumpers' 'Acceleration in Z axis' ...
+                          'Window and buper count'};
 statPlot.GridVisible = 'off';
 statPlot.XLabel = 'Time [s]';
 
