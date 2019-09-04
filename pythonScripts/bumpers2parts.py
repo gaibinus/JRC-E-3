@@ -49,7 +49,7 @@ def bumpers2laps(pathBump, pathLaps, pathBumpTimes, pathBumpSizes):
     # PROCESS BOUNDARIES FILE AND CREATE LAPS FILE ---------------------------------------------------------------------
 
     # create data file and support variables
-    data = 15 * [float(0)]
+    data = 15 * [float(-1)]
     lastBump = True
     cursor = 0
     skipFlag = False
@@ -83,12 +83,12 @@ def bumpers2laps(pathBump, pathLaps, pathBumpTimes, pathBumpSizes):
             if cursor > 14: outputHandler("Cursor overflew at time: " + str(bump[0]), han.err)
 
             # write current time to current cursor
-            data[cursor] = float(bump[0])
+            data[cursor] = round(float(bump[0] - lap[1]), 2)
 
         # check if we just ended current lap
         if bump[0] == lap[2]:
             # check if data contains 'None'
-            if 0 in data: outputHandler("Corrupted data detected at time: " + str(bump[0]), han.err)
+            if -1 in data: outputHandler("Corrupted data detected at time: " + str(bump[0]), han.err)
 
             # write data to CSV time file
             writerTimes.writerow(data)
@@ -97,7 +97,7 @@ def bumpers2laps(pathBump, pathLaps, pathBumpTimes, pathBumpSizes):
             for i in range(1, 14):
                 data[i] = data[i + 1] - data[i]
             data[0] = int(lap[0])
-            data[14] = lap[2] - data[14]
+            data[14] = lap[2] - data[14] - lap[1]
 
             # check if is not zero or negative
             for item in data:
@@ -111,7 +111,7 @@ def bumpers2laps(pathBump, pathLaps, pathBumpTimes, pathBumpSizes):
             writerSizes.writerow(data)
 
             # restore data and support variables for new lap
-            data = 15 * [float(0)]
+            data = 15 * [float(-1)]
             lastBump = True
             cursor = 0
             skipFlag = False
