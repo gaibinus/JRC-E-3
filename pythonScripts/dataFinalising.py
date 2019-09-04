@@ -16,7 +16,7 @@ class path:
     bound = None
     laps = None
     data = None
-    compen = None
+    comp = None
     final = None
 
 
@@ -38,7 +38,7 @@ path.config = Path(arguments.experiment + '/config.txt')
 path.bound = Path(arguments.experiment + '/processed_data/IMU_boundaries.csv')
 path.laps = Path(arguments.experiment + '/processed_data/IMU_laps.csv')
 path.data = Path(arguments.experiment + '/parsed_data/IMU_parsed.csv')
-path.compen = Path(arguments.experiment + '/parsed_data/IMU_compensated.csv')
+path.comp = Path(arguments.experiment + '/parsed_data/IMU_compensated.csv')
 path.final = arguments.experiment + '/final_data'
 
 # check if files exist and are readable / writable
@@ -64,7 +64,7 @@ eng.addpath(scriptsDir, commonDir)
 
 timeTmp = time.time()
 outputHandler('starting MATLAB gravity compensation', han.info)
-ret = eng.compensateGravity(str(path.data), str(path.compen), str(path.config))
+ret = eng.compensateGravity(str(path.data), str(path.comp), str(path.config))
 if ret is not True: outputHandler('false returned from MATLAB script', han.err)
 outputHandler('gravity compensated in: ' + timeDeltaStr(time.time(), timeTmp), han.info)
 
@@ -72,7 +72,7 @@ outputHandler('gravity compensated in: ' + timeDeltaStr(time.time(), timeTmp), h
 
 timeTmp = time.time()
 outputHandler('starting MATLAB pressure removing', han.info)
-ret = eng.removePressure(str(path.compen))
+ret = eng.removePressure(str(path.comp))
 if ret is not True: outputHandler('false returned from MATLAB script', han.err)
 outputHandler('pressure removed in: ' + timeDeltaStr(time.time(), timeTmp), han.info)
 
@@ -96,7 +96,7 @@ outputHandler("starting 'dataCSVsplitting.py", han.info)
 sampleRate = readConfig(path.config, 'sample_rate')
 
 # call function
-ret = dataCSVsplitting(path.compen, path.laps, path.final, sampleRate)
+ret = dataCSVsplitting(path.comp, path.laps, path.final, sampleRate)
 if ret is False: outputHandler('false returned from dataCSVsplitting script', han.err)
 
 # write laps count to config txt
