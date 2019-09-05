@@ -139,7 +139,7 @@ return
 %% NORMALIZE DISTANCE
 
 % for every method
-for method = 1 : 8
+for method = 1 : 8                                              %#ok<UNRCH>
     
    % create mothot-size tmp array
    tmp = zeros(segCount, CARS);
@@ -203,7 +203,7 @@ return
 %% PLOT STATISTICS RESULTS IN SCATTER
 
 % CHOOSE 2/3 METHODS TO PLOT
-methods = [2, 7, 8];                                      %#ok<UNRCH>
+methods = [2, 7, 8];                                            
 
 % create figure and set it up
 fig = figure();
