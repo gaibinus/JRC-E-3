@@ -1,4 +1,4 @@
-function ret = createDataStructure(pathExp, resampleRate)
+function ret = normalDatastruct(pathExp, configName, resampleRate)
 
 %% PYTHON IN MATLAB WORKAROUND
 
@@ -13,10 +13,10 @@ py.importlib.reload(pyModule);
 %% MAIN DATA STRUCTURE CREATION
 
 % load experiment configuration file
-config = readtable(strcat(pathExp, '\config.csv'));
+configName = readtable(strcat(pathExp, '\', configName, '.csv'));
 
 % load number of cars
-CARS = size(config,1);
+CARS = size(configName,1);
 
 % create data cell array CARS x LAPS
 data = cell(CARS, 20);
@@ -25,11 +25,11 @@ data = cell(CARS, 20);
 for car = 1 : CARS
     for lap = 1 : 20
         % compute lap number according to experiment config file
-        lapNum = config{car, sprintf('Lap%d', lap)};
+        lapNum = configName{car, sprintf('Lap%d', lap)};
         lapNum = sprintf('%02d', lapNum);
         
         % compute file path for current lap of current car
-        pathFile = char(strcat(pathExp, '\', config{car, 'ExpName'}, ...
+        pathFile = char(strcat(pathExp, '\', configName{car, 'ExpName'},...
                    '\final_data\IMU_lap_', lapNum, '.csv'));
                
         % resample if it was requested
@@ -45,7 +45,7 @@ for car = 1 : CARS
         data(car, lap) = {table};
         
         % inform user about progress
-        fprintf('INFO: table of car: %d lap: %d loaded\n', car, lap); 
+        fprintf('LOADED: car: %d/%d lap: %d/%d\n', car, CARS, lap, 20); 
     end
 end
 
@@ -63,7 +63,7 @@ bnw = array2table(zeros(CARS, size(header, 2)), 'VariableNames', header);
 for car = 1 : CARS
     % compute file path for config.txt of current car
     pathConfig = ...
-        char(strcat(pathExp, '\', config{car, 'ExpName'},'\config.txt'));
+        char(strcat(pathExp, '\', configName{car, 'ExpName'},'\config.txt'));
     
     % fill BNW table with current car info
     bnw{car, 'CarNo'} = car;
@@ -82,13 +82,14 @@ for car = 1 : CARS
     bnw{car, 'MagZ'} = py.functions.readConfig(pathConfig, 'mag_mean_z');
 end
 
-%% CREATED STRUCTURES SAVING
+%% SAVE CREATED STRUCTURE
 
 % compute save patch
-if exist('resampleRate','var')
-    pathSave = strcat(pathExp, '\data_', int2str(resampleRate),'.mat');
+pathSave = strcat(pathExp, '\', configName);
+if exist('resample','var')
+    pathSave = strcat(pathSave, '_', int2str(resampleRate),'_normal.mat');
 else
-    pathSave = strcat(pathExp, '\data.mat');
+    pathSave = strcat(pathSave, '_normal.mat');
 end
 
 % inform user about progress
