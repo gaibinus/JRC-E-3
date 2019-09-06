@@ -1,4 +1,4 @@
-function ret = squeezeDatastruct(pathExp, configName, resampleRate)
+function ret = datastructSqueeze(pathExp, configName, resampleRate)
 
 %% LOAD CONFIG FILE
 
@@ -53,7 +53,7 @@ end
 data = repmat({[array2table((1:20)', 'VariableNames', {'LapNo'}),...
                cell2table(cell(20,14), 'VariableNames', parts)]}, 1, CARS);
 
-for car = 1 : 2
+for car = 1 : CARS
     % compute file path for part times file of current car
     pathTimes = char(fullfile(pathExp, config{car, 'ExpName'}, ...
                                     'processed_data\IMU_parts_times.csv'));
@@ -74,8 +74,8 @@ for car = 1 : 2
         lapStr = sprintf('%02d', lapNum);
 
         % compute file path for current lap of current car
-        patchLap = char(fullfile(pathExp, config{car, 'ExpName'}, ...
-                                   'final_data\IMU_lap_', lapStr, '.csv'));
+        patchLap = char(strcat(pathExp, '\', config{car, 'ExpName'}, ...
+                                  '\final_data\IMU_lap_', lapStr, '.csv'));
 
         % open current lap
         lapData = readtable(patchLap);

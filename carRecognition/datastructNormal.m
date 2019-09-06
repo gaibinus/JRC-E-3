@@ -1,4 +1,4 @@
-function ret = normalDatastruct(pathExp, configName, resampleRate)
+function ret = datastructNormal(pathExp, configName, resampleRate)
 
 %% PYTHON IN MATLAB WORKAROUND
 
@@ -31,8 +31,8 @@ for car = 1 : CARS
         lapNum = sprintf('%02d', lapNum);
         
         % compute file path for current lap of current car
-        pathFile = char(fullfile(pathExp, config{car, 'ExpName'},...
-                                   'final_data\IMU_lap_', lapNum, '.csv'));
+        pathFile = char(strcat(pathExp, '\', config{car, 'ExpName'},...
+                                  '\final_data\IMU_lap_', lapNum, '.csv'));
                
         % resample if it was requested
         if exist('resampleRate','var')

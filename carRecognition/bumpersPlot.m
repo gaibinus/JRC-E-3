@@ -1,4 +1,4 @@
-function plotBumpers(bumperPath)
+function bumpersPlot(bumperPath)
 
 % load data to time table
 data = data2timetable(bumperPath);

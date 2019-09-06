@@ -1,23 +1,30 @@
-close all; clear; clc;
 
 %% FILE MANAGEMENT
+close all; clear; clc;
 
-dataPath = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments\data_200.mat';
+% \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+EXP_PATCH = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments';
+DATA_NAME = '11carsFull_200_squeezed.mat';
+SEGMENT_SIZE = 120; % in [s]
+SAMPLE_RATE = 200; % in [Hz]
+PARTS = {'FastFirstBump' 'SecondBump' 'WindowOne' 'VisitBump' 'WindowTwo'};
+
+% \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 % inform user
 fprintf("Loading data\n");
 
 % load experiment data structure
+dataPath = strcat(EXP_PATCH, '\dataStructures\', DATA_NAME);
 load(dataPath, 'data');
-load(dataPath, 'bnw');
 
-% save constants
-SEGMENT_SIZE = 60; % in [s]
-SAMPLE_RATE = 200; % in [Hz]
-PERIOD = 1 / SAMPLE_RATE; % in [s]
-CARS = size(data, 1);
+% compute rest of parameters
+period = 1 / SAMPLE_RATE; % in [s]
+cars = size(data, 2);
 
-% inform user
+
+%% PREPARE DATA
 fprintf("Normalising laps lenghts\n");
 
 % find maximal lenght of every lap
@@ -25,7 +32,7 @@ lapMax = max(cellfun(@height,data,'UniformOutput',true));
 
 % normalize lap length for every car, fill with BNW means
 for lap = 1 : 20
-    for computedCar = 1 : CARS
+    for computedCar = 1 : cars
         % compute difference of actual lap from maximal lap in rows
         delta = lapMax(lap) - size(data{computedCar, lap}, 1);
         
@@ -48,8 +55,8 @@ for lap = 1 : 20
         append{:, 'MagZ'} = append{:, 'MagZ'} .* bnw{computedCar, 'MagZ'};
         
         % compute starting and ending time of append table and write them
-        startTime = data{computedCar, lap}{end, 'Time'} + PERIOD;
-        endTime = startTime + delta * PERIOD;
+        startTime = data{computedCar, lap}{end, 'Time'} + period;
+        endTime = startTime + delta * period;
         append{:, 'Time'} = transpose(linspace(startTime, endTime, delta));
         
         % merge append table under the original table
@@ -59,9 +66,9 @@ end
 
 % connect laps in time domain
 for lap = 2 : 20
-    for computedCar = 1 : CARS    
+    for computedCar = 1 : cars    
         % compute delta time between two laps
-        delta = data{computedCar, lap-1}{end, 'Time'} + PERIOD;
+        delta = data{computedCar, lap-1}{end, 'Time'} + period;
         
         % add time delta to time domain of second lap
         data{computedCar, lap}{:, 'Time'} = data{computedCar, lap}{:, 'Time'} + delta;   
@@ -69,7 +76,7 @@ for lap = 2 : 20
 end
 
 % join laps of car to one long record
-for computedCar = 1 : CARS
+for computedCar = 1 : cars
     for lap = 2 : 20
         % append current lap under first one
         data{computedCar, 1} = [data{computedCar, 1}; data{computedCar, lap}];
@@ -97,16 +104,16 @@ fprintf("Segment no.: %d\n", segCount);
 
 % create table header
 header = ...
-    sprintf('Car%dMethod%d,', [repmat((1:CARS),1,8); repelem((1:8),CARS)]);
+    sprintf('Car%dMethod%d,', [repmat((1:cars),1,8); repelem((1:8),cars)]);
 header = strsplit(header, ',');
 header(cellfun('isempty',header)) = [];
 
 % create results table
-results = array2table(zeros(segCount, CARS * 8));
+results = array2table(zeros(segCount, cars * 8));
 results.Properties.VariableNames = header;
 
 % compute for every car for every segment
-for computedCar = 1 : CARS
+for computedCar = 1 : cars
     for segment = 1 : segCount
         % compute end of current segment 
         segEnd = segIncrease * segment;
@@ -134,123 +141,31 @@ for computedCar = 1 : CARS
     end    
 end
     
-return
+%% NORMALIZE DISTANCE INTO <0;1> INTERVAL
+fprintf("Normalizing distances\n");
 
-%% NORMALIZE DISTANCE
+results = normalizeDistances(results);
 
-% for every method
-for method = 1 : 8                                              %#ok<UNRCH>
-    
-   % create mothot-size tmp array
-   tmp = zeros(segCount, CARS);
-   
-   % compute distance of every car in methot to others
-   for computed = 1 : CARS 
-       for compared = 1 : CARS
-       tmp(:, computed) = tmp(:, computed) + abs( ... 
-           results{:, sprintf('Car%dMethod%d',computed,method)} - ...
-           results{:, sprintf('Car%dMethod%d',compared,method)});
-       end
-   end
-   
-   % rewrite after finishing metode
-   for car = 1 : CARS
-        results{:, sprintf('Car%dMethod%d',car,method)} = tmp(:, car); 
-   end
-end
+%% SAVE RESULTS TO RESULTS FOLDER
+
+% compute saving path
+DATA_NAME = strrep(DATA_NAME, '.mat', '_');
+pathSave = strcat(EXP_PATCH, '\results\', DATA_NAME, ...
+    int2str(SEGMENT_SIZE), '.mat');
+
+fprintf('INFO: saving results to:\n%s\n', pathSave);
+
+% save data to disc
+save(pathSave, 'results');
 
 %% PLOT STATISTICS RESULTS IN STACKED PLOT
+fprintf("Printing stacked plot\n");
 
-% create array with method names and data names
-dataNames = ["acceleration", "gyroscope"];
-methodNames = ["variance", "wentropy", "skewness", "kurtosis"];
-
-% create figure and set it up
-fig = figure();
-fig.Name = strcat('Statistics of merged laps in stacked plot');
-
-% create display variables parameter
-dispVar = cell(8,1);
-for method = 1 : 8
-   tmp = sprintf('Car%dMethod%d,', [1:CARS; method * ones(1,CARS)]);
-   tmp = strsplit(tmp, ',');
-   tmp(cellfun('isempty',tmp)) = [];
-   dispVar{method} = tmp;
-end
-
-% create display labels parameter
-dispLab = cell(8,1);
-for method = 1 : 8
-    dataStr = dataNames(floor((method-1)/4) + 1);
-    methodStr = methodNames(rem(method-1, 4) + 1);
-    dispLab{method} = {dataStr, methodStr};
-end
-% create legend labels parameter
-legLab = strsplit(sprintf('Car %d,', 1:CARS), ',');
-legLab(cellfun('isempty',legLab)) = [];
-
-stackedPlot = stackedplot(results, dispVar);
-stackedPlot.DisplayLabels = dispLab;
-stackedPlot.XLabel = 'Segment ID';
-stackedPlot.AxesProperties(1).LegendLabels = legLab;
-stackedPlot.AxesProperties(1).LegendVisible = 'on'; 
-for i = 2:8
-    stackedPlot.AxesProperties(i).LegendVisible = 'off';
-end
-   
-return
+plotResultsStacked(results);
 
 %% PLOT STATISTICS RESULTS IN SCATTER
+fprintf("Printing scatter plot\n");
 
-% CHOOSE 2/3 METHODS TO PLOT
-methods = [2, 7, 8];                                            
+plotResultsScatter(results, [2, 7, 8]);
 
-% create figure and set it up
-fig = figure();
-fig.Name = strcat('Statistics of merged laps in scatter plot');
-
-% create layers of scatter plot in 2D or 3D
-for computedCar = 1 : CARS
-    if size(methods, 2) == 2
-        scatter(results{:, sprintf('Car%dMethod%d', computedCar, methods(1))}, ...
-                results{:, sprintf('Car%dMethod%d', computedCar, methods(2))});
-    elseif size(methods, 2) == 3
-        scatter3(results{:, sprintf('Car%dMethod%d', computedCar, methods(1))}, ...
-                 results{:, sprintf('Car%dMethod%d', computedCar, methods(2))}, ...
-                 results{:, sprintf('Car%dMethod%d', computedCar, methods(3))});  
-    else
-        error('Wrong number of methots to plot');
-    end
-    
-    % keep adding layers to plot
-    hold on;
-end
-
-% create X axis label
-methodStr = methodNames(rem(methods(1)-1, 4) + 1);
-dataStr = dataNames(floor((methods(1)-1)/4) + 1);
-xlabel(strcat(methodStr, " of ", dataStr));
-
-% create Y axis label
-methodStr = methodNames(rem(methods(2)-1, 4) + 1);
-dataStr = dataNames(floor((methods(2)-1)/4) + 1);
-ylabel(strcat(methodStr, " of ",  dataStr));
-
-% create Z axis label
-if size(methods, 2) == 3
-    methodStr = methodNames(rem(methods(3)-1, 4) + 1);
-    dataStr = dataNames(floor((methods(3)-1)/4) + 1);
-    zlabel(strcat(methodStr, " of ", dataStr));
-end
-
-% create legend
-legArr = strsplit(sprintf('Car %d,', 1:CARS), ',');
-legArr(cellfun('isempty',legArr)) = [];
-legend(legArr, 'Location','Best');
-
-% end of hold
-hold off;
-
-
-
-
+%% CODE END

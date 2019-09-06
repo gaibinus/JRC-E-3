@@ -1,4 +1,4 @@
-function ret = adjustBumpers(pathBump, windows, type)
+function ret = bumpersAdjust(pathBump, windows, type)
 
 %% LOAD AND PROCESS DATA
 

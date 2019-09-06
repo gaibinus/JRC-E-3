@@ -1,4 +1,4 @@
-function ret = detectBumpers(carPath)
+function ret = bumpersDetect(carPath)
 
 %% LOAD DATA
 
