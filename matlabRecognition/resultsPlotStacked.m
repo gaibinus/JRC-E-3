@@ -10,6 +10,7 @@ methodNames = ["variance", "wentropy", "skewness", "kurtosis"];
 
 % create figure and set it up
 fig = figure();
+[~, fig.name, ~] = fileparts(pathResults);
 
 % create display variables parameter
 dispVar = cell(8,1);

@@ -1,9 +1,10 @@
-function ret = datastructSqueeze(pathExp, configName, resampleRate)
+function ret = datastructSqueeze(pathJRC, configName, resampleRate)
 
 %% LOAD CONFIG FILE
 
 % load experiment configuration file
-config = readtable(fullfile(pathExp, 'dataStructures', configName));
+pathExp = fullfile(pathJRC, 'experimentData');
+config = readtable(fullfile(pathJRC, 'experimentStructures', configName));
 configName = erase(configName, '.csv');
 
 % load number of cars
@@ -104,7 +105,7 @@ end
 %% SAVE CREATED STRUCTURE
 
 % compute save patch
-pathSave = strcat(pathExp, '\dataStructures\', configName, '_', ...
+pathSave = strcat(pathJRC, '\experimentStructures\', configName, '_', ...
                                    int2str(resampleRate), '_squeezed.mat');
 
 % inform user about progress

@@ -81,8 +81,8 @@ end
 %% SAVE CREATED STRUCTURE
 
 % compute save patch
-pathSave = strcat(pathExp, '\dataStructures\', configName, '_', ...
-                                     int2str(resampleRate), '_normal.mat');
+pathSave = strcat(pathJRC, '\experimentStructures\', configName, '_', ...
+                                   int2str(resampleRate), '_normal.mat');
 % inform user about progress
 fprintf('INFO: saving data to:\n%s\n', pathSave);
 

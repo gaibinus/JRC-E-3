@@ -4,7 +4,7 @@ close all; clear; clc;
 
 % \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-EXP_PATCH = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments';
+JRC_PATCH = 'C:\Users\geibfil\Desktop\JRC-E-3';
 DATA_NAME = '11carsFull_200_squeezed.mat';
 SEG_SIZE = 120; % in [s]
 SAMPLE_RATE = 200; % in [Hz]
@@ -16,7 +16,7 @@ PARTS = {'FastFirstBump' 'SecondBump' 'WindowOne' 'VisitBump' 'WindowTwo'};
 fprintf("Loading data\n");
 
 % load experiment data structure
-dataPath = strcat(EXP_PATCH, '\dataStructures\', DATA_NAME);
+dataPath = strcat(JRC_PATCH, '\experimentStructures\', DATA_NAME);
 load(dataPath, 'data');
 
 % compute rest of parameters
@@ -131,8 +131,8 @@ results = normalizeDistances(results);
 
 % compute saving path
 DATA_NAME = strrep(DATA_NAME, '.mat', '_');
-pathSave = strcat(EXP_PATCH, '\results\', DATA_NAME, int2str(SEG_SIZE), ...
-                                     '_(', char(join(PARTS,'-')), ').mat');
+pathSave = strcat(JRC_PATCH, '\experimentResults\', DATA_NAME, ...
+                  int2str(SEG_SIZE), '_(', char(join(PARTS,'-')), ').mat');
 
 fprintf('INFO: saving results to:\n%s\n', pathSave);
 

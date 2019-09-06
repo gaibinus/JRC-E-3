@@ -10,6 +10,7 @@ methodNames = ["variance", "wentropy", "skewness", "kurtosis"];
 
 % create figure and set it up
 fig = figure();
+[~, fig.name, ~] = fileparts(pathResults);
 
 % create layers of scatter plot in 2D or 3D
 for car = 1 : CARS
