@@ -3,10 +3,11 @@ function ret = squeezeDatastruct(pathExp, configName, resampleRate)
 %% LOAD CONFIG FILE
 
 % load experiment configuration file
-configName = readtable(strcat(pathExp, '\', configName, '.csv'));
+config = readtable(fullfile(pathExp, 'dataStructures', configName));
+configName = erase(configName, '.csv');
 
 % load number of cars
-CARS = size(configName,1);
+CARS = size(config,1);
 
 %% FIND THE LONGEST PARTS
 
@@ -22,8 +23,8 @@ maxParts = [table(['Car'; 'Lap'; 'Max'], 'VariableNames', {'Info'}), ...
 % search for every part in every car
 for car = 1 : CARS
     % compute file path for part sizes file of current car
-    pathSizes = char(strcat(pathExp, '\', configName{car, 'ExpName'}, ...
-                                   '\processed_data\IMU_parts_sizes.csv'));
+    pathSizes = char(fullfile(pathExp, config{car, 'ExpName'}, ...
+                                    'processed_data\IMU_parts_sizes.csv'));
            
     % open part sizes file as table
     sizes = readtable(pathSizes);
@@ -31,7 +32,7 @@ for car = 1 : CARS
     for part = 1 : 14
         for lap = 1 : 20
             % compute lap number according to experiment config file
-            lapNum = configName{car, sprintf('Lap%d', lap)};
+            lapNum = config{car, sprintf('Lap%d', lap)};
             
             % check if current size is minimal one
             if any(ismissing(maxParts{:, parts(part)})) || ...
@@ -54,27 +55,27 @@ data = repmat({[array2table((1:20)', 'VariableNames', {'LapNo'}),...
 
 for car = 1 : 2
     % compute file path for part times file of current car
-    pathTimes = char(strcat(pathExp, '\', configName{car, 'ExpName'}, ...
-                                   '\processed_data\IMU_parts_times.csv'));
+    pathTimes = char(fullfile(pathExp, config{car, 'ExpName'}, ...
+                                    'processed_data\IMU_parts_times.csv'));
 
     % open part times file as table
     times = readtable(pathTimes);
 
     % compute file path for part sizes file of current car
-    pathSizes = char(strcat(pathExp, '\', configName{car, 'ExpName'}, ...
-                                   '\processed_data\IMU_parts_sizes.csv'));
+    pathSizes = char(fullfile(pathExp, config{car, 'ExpName'}, ...
+                                    'processed_data\IMU_parts_sizes.csv'));
 
     % open part sizes file as table
     sizes = readtable(pathSizes);
 
     for lap = 1 : 20
         % compute lap number according to experiment config file
-        lapNum = configName{car, sprintf('Lap%d', lap)};
+        lapNum = config{car, sprintf('Lap%d', lap)};
         lapStr = sprintf('%02d', lapNum);
 
         % compute file path for current lap of current car
-        patchLap = char(strcat(pathExp, '\', configName{car, 'ExpName'}, ...
-                                  '\final_data\IMU_lap_', lapStr, '.csv'));
+        patchLap = char(fullfile(pathExp, config{car, 'ExpName'}, ...
+                                   'final_data\IMU_lap_', lapStr, '.csv'));
 
         % open current lap
         lapData = readtable(patchLap);
@@ -103,8 +104,8 @@ end
 %% SAVE CREATED STRUCTURE
 
 % compute save patch
-pathSave = strcat(pathExp, '\', configName, '_', ...
-                                    int2str(resampleRate), 'squeezed.mat');
+pathSave = strcat(pathExp, '\dataStructures\', configName, '_', ...
+                                   int2str(resampleRate), '_squeezed.mat');
 
 % inform user about progress
 fprintf('INFO: saving data to:\n%s\n', pathSave);
@@ -115,4 +116,4 @@ save(pathSave, 'data');
 % if okay, return true
 ret = true;
 
-%end
+end
