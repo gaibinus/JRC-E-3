@@ -1,4 +1,4 @@
-function ret = detectBoundaries(pathVelo, pathBound, pathConfig)
+function ret = boundariesDetect(pathVelo, pathBound, pathConfig)
 
 %% PYTHON IN MATLAB WORKAROUND
 

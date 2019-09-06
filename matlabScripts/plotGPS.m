@@ -1,4 +1,4 @@
-function plotGPSmap(pathFile)
+function plotGPS(pathFile)
 
 % load data as table
 data = readtable(pathFile);

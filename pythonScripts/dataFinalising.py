@@ -2,7 +2,7 @@ from functions import *
 from pathlib import Path
 
 from boundaries2laps import boundaries2laps
-from dataCSVsplitting import dataCSVsplitting
+from dataSplitting import dataCSVsplitting
 
 import argparse
 import time
@@ -90,7 +90,7 @@ outputHandler('laps computed in: ' + timeDeltaStr(time.time(), timeTmp), han.inf
 # SPLIT DATA TO LAPS ---------------------------------------------------------------------------------------------------
 
 # inform about current state
-outputHandler("starting 'dataCSVsplitting.py", han.info)
+outputHandler("starting 'dataSplitting.py", han.info)
 
 # read sample rate from config file
 sampleRate = readConfig(path.config, 'sample_rate')

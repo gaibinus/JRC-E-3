@@ -1,4 +1,4 @@
-function plotBoundaries(pathVelo, pathBound)
+function boundariesPlot(pathVelo, pathBound)
 
 % load data to time tables
 dataVelo = data2timetable(pathVelo);

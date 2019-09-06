@@ -196,7 +196,7 @@ checkAccess(path.processed.velo, 'r')
 # MATLAB detect laps
 timeStamps.tmp = time.time()
 outputHandler('starting MATLAB laps detection', han.info)
-ret = eng.detectBoundaries(str(path.processed.velo), str(path.processed.boun), str(path.config))
+ret = eng.boundariesDetect(str(path.processed.velo), str(path.processed.boun), str(path.config))
 if ret is not True: outputHandler('false returned from MATLAB script', han.err)
 outputHandler('laps detected in: ' + timeDeltaStr(time.time(), timeStamps.tmp), han.info)
 
@@ -205,7 +205,7 @@ checkAccess(path.processed.boun, 'r')
 
 # MATLAB plot boundaries for human check
 outputHandler('plotting results in MATLAB', han.info)
-eng.plotBoundaries(str(path.processed.velo), str(path.processed.boun), nargout=0)
+eng.boundariesPlot(str(path.processed.velo), str(path.processed.boun), nargout=0)
 
 # wait for human interaction
 while True:
