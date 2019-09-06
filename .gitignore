@@ -7,7 +7,7 @@ Desktop.ini
 *.asv
 *.m~
 
-#  pycharm
+# pycharm
 *venv/
 *__pycache__/
 pythonScripts/.idea/
