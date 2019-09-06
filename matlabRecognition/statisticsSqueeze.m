@@ -6,7 +6,7 @@ close all; clear; clc;
 
 EXP_PATCH = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments';
 DATA_NAME = '11carsFull_200_squeezed.mat';
-SEGMENT_SIZE = 120; % in [s]
+SEG_SIZE = 120; % in [s]
 SAMPLE_RATE = 200; % in [Hz]
 PARTS = {'FastFirstBump' 'SecondBump' 'WindowOne' 'VisitBump' 'WindowTwo'};
 
@@ -77,7 +77,7 @@ end
 fprintf("Computing statistics\n");
 
 % compute increase between segments
-segIncrease = SEGMENT_SIZE * SAMPLE_RATE;
+segIncrease = SEG_SIZE * SAMPLE_RATE;
 
 % find how long is the record
 length = max(max(cellfun(@height,data,'UniformOutput',true)));
@@ -131,8 +131,8 @@ results = normalizeDistances(results);
 
 % compute saving path
 DATA_NAME = strrep(DATA_NAME, '.mat', '_');
-pathSave = strcat(EXP_PATCH, '\results\', DATA_NAME, ...
-    int2str(SEGMENT_SIZE), '.mat');
+pathSave = strcat(EXP_PATCH, '\results\', DATA_NAME, int2str(SEG_SIZE), ...
+                                     '_(', char(join(PARTS,'-')), ').mat');
 
 fprintf('INFO: saving results to:\n%s\n', pathSave);
 
@@ -142,11 +142,11 @@ save(pathSave, 'results');
 %% PLOT STATISTICS RESULTS IN STACKED PLOT
 fprintf("Printing stacked plot\n");
 
-plotResultsStacked(results);
+resultsPlotStacked(pathSave);
 
 %% PLOT STATISTICS RESULTS IN SCATTER
 fprintf("Printing scatter plot\n");
 
-plotResultsScatter(results, [2, 7, 8]);
+resultsPlotScatter(pathSave, [2, 7, 8]);
 
 %% CODE END

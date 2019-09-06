@@ -35,13 +35,8 @@ for car = 1 : CARS
                                   '\final_data\IMU_lap_', lapNum, '.csv'));
                
         % resample if it was requested
-        if exist('resampleRate','var')
-            % resampling
-            table = resampleData(pathFile, 'return', resampleRate, 'mean');
-        else
-            % no resampling
-            table = readtable(pathFile);
-        end
+        table = resampleData(pathFile, 'return', resampleRate, 'mean');
+ 
                
         % add table to data cell array
         data(car, lap) = {table};
@@ -86,13 +81,8 @@ end
 %% SAVE CREATED STRUCTURE
 
 % compute save patch
-pathSave = fullfile(pathExp, 'dataStructures', configName);
-if exist('resample','var')
-    pathSave = strcat(pathSave, '_', int2str(resampleRate),'_normal.mat');
-else
-    pathSave = strcat(pathSave, '_normal.mat');
-end
-
+pathSave = strcat(pathExp, '\dataStructures\', configName, '_', ...
+                                     int2str(resampleRate), '_normal.mat');
 % inform user about progress
 fprintf('INFO: saving data to:\n%s\n', pathSave);
 

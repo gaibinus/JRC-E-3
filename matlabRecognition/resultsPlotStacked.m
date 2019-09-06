@@ -1,6 +1,8 @@
-function resultsPlotStacked(table)
+function resultsPlotStacked(pathResults)
 
-CARS = size(table, 2) / 8;
+% load data and compute number of cars
+load(pathResults, 'results');
+CARS = size(results, 2) / 8;
 
 % create array with method names and data names
 dataNames = ["acceleration", "gyroscope"];
@@ -8,7 +10,6 @@ methodNames = ["variance", "wentropy", "skewness", "kurtosis"];
 
 % create figure and set it up
 fig = figure();
-fig.Name = strcat('Statistics of merged laps in stacked plot');
 
 % create display variables parameter
 dispVar = cell(8,1);
@@ -32,7 +33,7 @@ legLab = strsplit(sprintf('Car %d,', 1:CARS), ',');
 legLab(cellfun('isempty',legLab)) = [];
 
 % reate and set up the plot
-stackedPlot = stackedplot(table, dispVar);
+stackedPlot = stackedplot(results, dispVar);
 stackedPlot.DisplayLabels = dispLab;
 stackedPlot.XLabel = 'Segment ID';
 stackedPlot.AxesProperties(1).LegendLabels = legLab;

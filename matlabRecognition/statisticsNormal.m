@@ -5,7 +5,7 @@ close all; clear; clc;
 % \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 EXP_PATCH = 'C:\Users\geibfil\Desktop\JRC-E-3\experiments';
-DATA_NAME = '11carsFull_200_squeezed.mat';
+DATA_NAME = '11carsFull_200_normal.mat';
 SEGMENT_SIZE = 120; % in [s]
 SAMPLE_RATE = 200; % in [Hz]
 PARTS = {'FastFirstBump' 'SecondBump' 'WindowOne' 'VisitBump' 'WindowTwo'};
@@ -18,10 +18,11 @@ fprintf("Loading data\n");
 % load experiment data structure
 dataPath = strcat(EXP_PATCH, '\dataStructures\', DATA_NAME);
 load(dataPath, 'data');
+load(dataPath, 'bnw');
 
 % compute rest of parameters
 period = 1 / SAMPLE_RATE; % in [s]
-cars = size(data, 2);
+cars = size(data, 1);
 
 
 %% PREPARE DATA
@@ -32,57 +33,57 @@ lapMax = max(cellfun(@height,data,'UniformOutput',true));
 
 % normalize lap length for every car, fill with BNW means
 for lap = 1 : 20
-    for computedCar = 1 : cars
+    for car = 1 : cars
         % compute difference of actual lap from maximal lap in rows
-        delta = lapMax(lap) - size(data{computedCar, lap}, 1);
+        delta = lapMax(lap) - size(data{car, lap}, 1);
         
         % create append table with correct dimensions
-        header = data{computedCar, lap}.Properties.VariableNames;
-        append = array2table(ones(delta, size(data{computedCar, lap}, 2)));
+        header = data{car, lap}.Properties.VariableNames;
+        append = array2table(ones(delta, size(data{car, lap}, 2)));
         append.Properties.VariableNames = header;
         
         % change values to means from BNW
-        append{:, 'AccX'} = append{:, 'AccX'} .* bnw{computedCar, 'AccX'};
-        append{:, 'AccY'} = append{:, 'AccY'} .* bnw{computedCar, 'AccY'};
-        append{:, 'AccZ'} = append{:, 'AccZ'} .* bnw{computedCar, 'AccZ'};
+        append{:, 'AccX'} = append{:, 'AccX'} .* bnw{car, 'AccX'};
+        append{:, 'AccY'} = append{:, 'AccY'} .* bnw{car, 'AccY'};
+        append{:, 'AccZ'} = append{:, 'AccZ'} .* bnw{car, 'AccZ'};
         
-        append{:, 'GyrX'} = append{:, 'GyrX'} .* bnw{computedCar, 'GyrX'};
-        append{:, 'GyrY'} = append{:, 'GyrY'} .* bnw{computedCar, 'GyrY'};
-        append{:, 'GyrZ'} = append{:, 'GyrZ'} .* bnw{computedCar, 'GyrZ'};
+        append{:, 'GyrX'} = append{:, 'GyrX'} .* bnw{car, 'GyrX'};
+        append{:, 'GyrY'} = append{:, 'GyrY'} .* bnw{car, 'GyrY'};
+        append{:, 'GyrZ'} = append{:, 'GyrZ'} .* bnw{car, 'GyrZ'};
         
-        append{:, 'MagX'} = append{:, 'MagX'} .* bnw{computedCar, 'MagX'};
-        append{:, 'MagY'} = append{:, 'MagY'} .* bnw{computedCar, 'MagY'};
-        append{:, 'MagZ'} = append{:, 'MagZ'} .* bnw{computedCar, 'MagZ'};
+        append{:, 'MagX'} = append{:, 'MagX'} .* bnw{car, 'MagX'};
+        append{:, 'MagY'} = append{:, 'MagY'} .* bnw{car, 'MagY'};
+        append{:, 'MagZ'} = append{:, 'MagZ'} .* bnw{car, 'MagZ'};
         
         % compute starting and ending time of append table and write them
-        startTime = data{computedCar, lap}{end, 'Time'} + period;
+        startTime = data{car, lap}{end, 'Time'} + period;
         endTime = startTime + delta * period;
         append{:, 'Time'} = transpose(linspace(startTime, endTime, delta));
         
         % merge append table under the original table
-        data{computedCar, lap} = [data{computedCar, lap}; append]; 
+        data{car, lap} = [data{car, lap}; append]; 
     end
 end
 
 % connect laps in time domain
 for lap = 2 : 20
-    for computedCar = 1 : cars    
+    for car = 1 : cars    
         % compute delta time between two laps
-        delta = data{computedCar, lap-1}{end, 'Time'} + period;
+        delta = data{car, lap-1}{end, 'Time'} + period;
         
         % add time delta to time domain of second lap
-        data{computedCar, lap}{:, 'Time'} = data{computedCar, lap}{:, 'Time'} + delta;   
+        data{car, lap}{:, 'Time'} = data{car, lap}{:, 'Time'} + delta;   
     end
 end
 
 % join laps of car to one long record
-for computedCar = 1 : cars
+for car = 1 : cars
     for lap = 2 : 20
         % append current lap under first one
-        data{computedCar, 1} = [data{computedCar, 1}; data{computedCar, lap}];
+        data{car, 1} = [data{car, 1}; data{car, lap}];
         
         % delete current lap
-        data{computedCar, lap} = [];        
+        data{car, lap} = [];        
     end
 end
 
@@ -99,45 +100,42 @@ segIncrease = SEGMENT_SIZE * SAMPLE_RATE;
 length = max(max(cellfun(@height,data,'UniformOutput',true)));
 
 % compute number of segments
-segCount = floor(length / segIncrease);
-fprintf("Segment no.: %d\n", segCount);
+SEGS = floor(length / segIncrease);
 
 % create table header
 header = ...
-    sprintf('Car%dMethod%d,', [repmat((1:cars),1,8); repelem((1:8),cars)]);
+    sprintf('Car%dMeth%d,', [repmat((1:cars),1,8); repelem((1:8),cars)]);
 header = strsplit(header, ',');
 header(cellfun('isempty',header)) = [];
 
 % create results table
-results = array2table(zeros(segCount, cars * 8));
+results = array2table(zeros(SEGS, cars * 8));
 results.Properties.VariableNames = header;
 
 % compute for every car for every segment
-for computedCar = 1 : cars
-    for segment = 1 : segCount
+for car = 1 : cars
+    for seg = 1 : SEGS
         % compute end of current segment 
-        segEnd = segIncrease * segment;
+        segEnd = segIncrease * seg;
         
         % load AccZ data from current car in lenght of current segment
-        tmpData = data{computedCar}{1:segEnd, 'AccZ'};
+        tmp = data{car}{1:segEnd, 'AccZ'};
         
-        results{segment,sprintf('Car%dMethod1', computedCar)} = var(tmpData);
-        results{segment,sprintf('Car%dMethod2', computedCar)} = ...
-                                              wentropy(tmpData, 'shannon');
-        results{segment,sprintf('Car%dMethod3', computedCar)} = skewness(tmpData);
-        results{segment,sprintf('Car%dMethod4', computedCar)} = kurtosis(tmpData);
+        results{seg, sprintf('Car%dMeth1',car)} = var(tmp);
+        results{seg, sprintf('Car%dMeth2',car)} = wentropy(tmp, 'shannon');
+        results{seg, sprintf('Car%dMeth3',car)} = skewness(tmp);
+        results{seg, sprintf('Car%dMeth4',car)} = kurtosis(tmp);
         
         % load GyrY data from current car in lenght of current segment
-        tmpData = data{computedCar}{1:segEnd, 'GyrY'};
+        tmp = data{car}{1:segEnd, 'GyrY'};
         
-        results{segment,sprintf('Car%dMethod5', computedCar)} = var(tmpData);
-        results{segment,sprintf('Car%dMethod6', computedCar)} = ...
-                                              wentropy(tmpData, 'shannon');
-        results{segment,sprintf('Car%dMethod7', computedCar)} = skewness(tmpData);
-        results{segment,sprintf('Car%dMethod8', computedCar)} = kurtosis(tmpData);
+        results{seg, sprintf('Car%dMeth5',car)} = var(tmp);
+        results{seg, sprintf('Car%dMeth6',car)} = wentropy(tmp, 'shannon');
+        results{seg, sprintf('Car%dMeth7',car)} = skewness(tmp);
+        results{seg, sprintf('Car%dMeth8',car)} = kurtosis(tmp);
         
         % inform user about progress
-        fprintf("Car: %d segment: %d / %d done\n", computedCar, segment, segCount);
+        fprintf("Car: %d segment: %d / %d done\n", car, seg, SEGS);
     end    
 end
     
@@ -161,11 +159,11 @@ save(pathSave, 'results');
 %% PLOT STATISTICS RESULTS IN STACKED PLOT
 fprintf("Printing stacked plot\n");
 
-plotResultsStacked(results);
+resultsPlotStacked(pathSave);
 
 %% PLOT STATISTICS RESULTS IN SCATTER
 fprintf("Printing scatter plot\n");
 
-plotResultsScatter(results, [2, 7, 8]);
+resultsPlotScatter(pathSave, [2, 7, 8]);
 
 %% CODE END

@@ -1,6 +1,8 @@
-function resultsPlotScatter(table, methods)
+function resultsPlotScatter(pathResults, methods)
 
-CARS = size(table, 2) / 8;
+% load data and compute number of cars
+load(pathResults, 'results');
+CARS = size(results, 2) / 8;
 
 % create array with method names and data names
 dataNames = ["acceleration", "gyroscope"];
@@ -8,17 +10,16 @@ methodNames = ["variance", "wentropy", "skewness", "kurtosis"];
 
 % create figure and set it up
 fig = figure();
-fig.Name = strcat('Statistics of merged laps in scatter plot');
 
 % create layers of scatter plot in 2D or 3D
 for car = 1 : CARS
     if size(methods, 2) == 2
-        scatter(table{:, sprintf('Car%dMeth%d', car, methods(1))}, ...
-                table{:, sprintf('Car%dMeth%d', car, methods(2))});
+        scatter(results{:, sprintf('Car%dMeth%d', car, methods(1))}, ...
+                results{:, sprintf('Car%dMeth%d', car, methods(2))});
     elseif size(methods, 2) == 3
-        scatter3(table{:, sprintf('Car%dMeth%d', car, methods(1))}, ...
-                 table{:, sprintf('Car%dMeth%d', car, methods(2))}, ...
-                 table{:, sprintf('Car%dMeth%d', car, methods(3))});  
+        scatter3(results{:, sprintf('Car%dMeth%d', car, methods(1))}, ...
+                 results{:, sprintf('Car%dMeth%d', car, methods(2))}, ...
+                 results{:, sprintf('Car%dMeth%d', car, methods(3))});  
     else
         error('Wrong number of methots to plot');
     end
