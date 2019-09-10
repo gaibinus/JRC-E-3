@@ -17,3 +17,4 @@ pythonScripts/testing.py
 experimentData/
 experimentStructures/
 experimentResults/
+*.tif

@@ -40,7 +40,7 @@ for i = 1:3
     statPlot.AxesProperties(i).LegendVisible = 'on';
     statPlot.AxesProperties(i).LegendLocation = 'northeast';
     statPlot.AxesProperties(i).LegendLabels = {'X axis', 'Y axis', 'Z axis'}; 
-    statPlot.LineProperties(i).LineWidth = 0.5;
+    statPlot.LineProperties(i).LineWidth = 0.75;
 end
 
 % 4th plot

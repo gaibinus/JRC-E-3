@@ -23,12 +23,9 @@ statPlot.DisplayVariables = {'Bound' 'Conv' 'Bump' 'Acc'};
 statPlot.Title = 'Lap Parts Template';
 statPlot.FontSize = 12;
 statPlot.DisplayLabels = {'Bound' 'VeloZ' 'Parts' 'AccZ'};
-
 statPlot.GridVisible = 'off';
 statPlot.XLabel = '';
-
 statPlot.LineWidth = 1.5;
-statPlot.HandleVisibility  = 'off';
 
 %% CERATE MARKERS
 

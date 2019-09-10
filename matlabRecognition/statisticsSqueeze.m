@@ -30,6 +30,8 @@ fprintf("Merging laps of each car\n");
 % connect laps in time domain
 for car = 1 : cars
    for lap = 1 : 20
+    
+    
       for part = 2 : size(PARTS, 2)
          data{car}.(char(PARTS(part))){lap}{:,'Time'} = ...
                data{car}.(char(PARTS(part))){lap}{:,'Time'} + ...
