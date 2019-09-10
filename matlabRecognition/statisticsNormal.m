@@ -35,7 +35,7 @@ for lap = 1 : 20
     for car = 1 : cars
         % compute difference of actual lap from maximal lap in rows
         delta = lapMax(lap) - size(data{car, lap}, 1);
-        
+     
         % create append table with correct dimensions
         header = data{car, lap}.Properties.VariableNames;
         append = array2table(ones(delta, size(data{car, lap}, 2)));

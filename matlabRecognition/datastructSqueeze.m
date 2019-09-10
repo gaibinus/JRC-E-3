@@ -17,10 +17,10 @@ parts = {'Start' 'StartTurn' 'FastFirstBump' 'PreRound' 'RoundOne'...
          'SecondBump' 'Curve' 'WindowOne' 'CrossOne' 'VisitBump'...
          'CrossTwo' 'WindowTwo' 'RoundTwo' 'WindowThree'};
  
-% create table for minimum of erery part
+% create table for maximum of erery part
 maxParts = [table(['Car'; 'Lap'; 'Max'], 'VariableNames', {'Info'}), ...
                           array2table(NaN(3, 14), 'VariableNames', parts)];
-        
+                      
 % search for every part in every car
 for car = 1 : CARS
     % compute file path for part sizes file of current car
@@ -39,7 +39,7 @@ for car = 1 : CARS
             if any(ismissing(maxParts{:, parts(part)})) || ...
                maxParts{3, parts(part)} < sizes{lapNum, parts(part)}
 
-                % rewrite minimum table with new data
+                % rewrite maximum table with new data
                 tmp = sizes{lapNum, parts(part)};
                 maxParts{:, parts(part)} = [car; lap; tmp];
             end
