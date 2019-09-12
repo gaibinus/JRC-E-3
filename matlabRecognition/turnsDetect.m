@@ -44,7 +44,7 @@ data.NegTH = nan(size(data.Turn, 1), 1);
 % process lap by lap
 for lap = 1 : size(laps, 1)
     % compute first and last data line of current lap
-    lapSt = laps.Start(lap) * FREQ;
+    lapSt = laps.Start(lap) * FREQ + 1;
     lapEn = laps.End(lap) * FREQ;
     
     % create copy of values
@@ -104,6 +104,9 @@ for lap = 1 : size(laps, 1)
     % remove last right turn before end of lap ~ last 10 s
     lapBrake = (laps{lap, 'End'} - 10) * FREQ;
     data.Turn(lapBrake:lapEn) = 0;
+    
+    % force first value to be zero
+    data.Turn(lapSt) = 0;
 end
 
 % normalize data

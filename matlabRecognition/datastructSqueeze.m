@@ -13,13 +13,14 @@ CARS = size(config,1);
 %% FIND THE LONGEST PARTS
 
 % name of parts
-parts = {'Start' 'StartTurn' 'FastFirstBump' 'PreRound' 'RoundOne'...
-         'SecondBump' 'Curve' 'WindowOne' 'CrossOne' 'VisitBump'...
-         'CrossTwo' 'WindowTwo' 'RoundTwo' 'WindowThree'};
+parts = {'Start', 'StartTurn', 'FastFirstBump', 'PreRound', 'RoundOne', ...
+         'SecondBump', 'RightCurve', 'WindowOne', 'CrossOne', ...
+         'VisitBump', 'CrossTwo', 'WindowTwo', 'LeftCurve', ...
+         'WindowThree', 'RoundTwo', 'WindowFour'};
  
 % create table for maximum of erery part
 maxParts = [table(['Car'; 'Lap'; 'Max'], 'VariableNames', {'Info'}), ...
-                          array2table(NaN(3, 14), 'VariableNames', parts)];
+              array2table(NaN(3, size(parts, 2)), 'VariableNames', parts)];
                       
 % search for every part in every car
 for car = 1 : CARS
@@ -30,7 +31,7 @@ for car = 1 : CARS
     % open part sizes file as table
     sizes = readtable(pathSizes);
     
-    for part = 1 : 14
+    for part = 1 : size(parts, 2)
         for lap = 1 : 20
             % compute lap number according to experiment config file
             lapNum = config{car, sprintf('Lap%d', lap)};
@@ -52,7 +53,7 @@ end
 
 % create data cell array CARS X {LAPS x PARTS}
 data = repmat({[array2table((1:20)', 'VariableNames', {'LapNo'}),...
-               cell2table(cell(20,14), 'VariableNames', parts)]}, 1, CARS);
+   cell2table(cell(20,size(parts, 2)), 'VariableNames', parts)]}, 1, CARS);
 
 for car = 1 : CARS
     % compute file path for part times file of current car
@@ -81,7 +82,7 @@ for car = 1 : CARS
         % open current lap
         lapData = readtable(patchLap);
 
-        for part = 1 : 14
+        for part = 1 : size(parts, 2)
             % compute resampling frequency
             freq = (resampleRate * maxParts{3, parts(part)}) / ...
                                                 sizes{lapNum, parts(part)};
@@ -96,7 +97,7 @@ for car = 1 : CARS
            
             % inform user about progress
             fprintf('SQUEEZED: car: %d/%d; lap: %d/%d; part: %d/%d\n', ...
-                                             car, CARS, lap, 20, part, 14); 
+                                 car, CARS, lap, 20, part, size(parts, 2)); 
         end
     end
 end

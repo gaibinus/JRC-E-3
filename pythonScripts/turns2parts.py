@@ -61,14 +61,14 @@ def bumpers2laps(pathTurns, pathLaps, pathPartsTimes, pathPartsSizes):
     lap = list(map(float, next(readerLaps)))
 
     # loop thru whole bumper file
-    for bump in readerBump:
+    for turn in readerBump:
         # retype row from string to float
-        bump = list(map(float, bump))
+        turn = list(map(float, turn))
 
         # check if we are inside current lap and change occurred
-        if lap[1] <= bump[0] <= lap[2] and bump[5] != lastBump:
+        if lap[1] <= turn[0] <= lap[2] and turn[5] != lastBump:
             # update last bump
-            lastBump = bump[5]
+            lastBump = turn[5]
 
             # move cursor to right
             cursor += 1
@@ -83,15 +83,18 @@ def bumpers2laps(pathTurns, pathLaps, pathPartsTimes, pathPartsSizes):
                 continue
 
             # check for cursor overflow
-            if cursor > len(header) - 1: outputHandler("Cursor overflew at time: " + str(bump[0]), han.err)
+            if cursor > len(header) - 1: outputHandler("Cursor overflew at time: " + str(turn[0]), han.err)
 
             # write current time to current cursor
-            data[cursor] = round(float(bump[0] - lap[1]), 2)
+            data[cursor] = round(float(turn[0] - lap[1]), 2)
 
         # check if we just ended current lap
-        if bump[0] == lap[2]:
+        if turn[0] == lap[2]:
             # check if data contains 'None'
-            if -1 in data: outputHandler("Corrupted data detected at time: " + str(bump[0]), han.err)
+            if -1 in data: outputHandler("Corrupted data detected at time: " + str(turn[0]), han.err)
+
+            # check if data starts with zero
+            if data[1] != 0: outputHandler("Corrupted data detected at time: " + str(turn[0]), han.err)
 
             # write data to CSV time file
             writerTimes.writerow(data)

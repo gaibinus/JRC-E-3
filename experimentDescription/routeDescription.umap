@@ -1,0 +1,835 @@
+{
+  "type": "umap",
+  "uri": "https://umap.openstreetmap.fr/en/map/routedescription_364267",
+  "properties": {
+    "easing": false,
+    "tilelayersControl": null,
+    "measureControl": null,
+    "embedControl": null,
+    "editinosmControl": null,
+    "fullscreenControl": null,
+    "locateControl": null,
+    "searchControl": null,
+    "datalayersControl": null,
+    "zoomControl": null,
+    "showLabel": false,
+    "slideshow": {
+      "active": false,
+      "autoplay": false
+    },
+    "captionBar": false,
+    "limitBounds": {
+      "south": null,
+      "west": null,
+      "north": null,
+      "east": null
+    },
+    "tilelayer": {
+      "minZoom": 0,
+      "maxZoom": 19,
+      "attribution": "map data © [[http://osm.org/copyright|OpenStreetMap contributors]] under ODbL ",
+      "url_template": "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "name": "OpenStreetMap",
+      "tms": false
+    },
+    "licence": "",
+    "description": "",
+    "name": "routeDescription",
+    "onLoadPanel": "none",
+    "displayPopupFooter": false,
+    "miniMap": false,
+    "moreControl": false,
+    "scaleControl": true,
+    "scrollWheelZoom": true,
+    "zoom": 17
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      8.629707098007204,
+      45.810431666603954
+    ]
+  },
+  "layers": [
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "B01"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.627199,
+              45.811832
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "B02",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.627569,
+              45.811845
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "B03"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.628583,
+              45.811883
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "B04",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.632676,
+              45.808842
+            ]
+          }
+        }
+      ],
+      "_umap_options": {
+        "displayOnLoad": true,
+        "browsable": true,
+        "name": "bumpers.gpx",
+        "remoteData": {},
+        "iconClass": "Circle",
+        "labelDirection": "top",
+        "showLabel": true,
+        "id": 991763,
+        "color": "Red"
+      }
+    },
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP01"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624356,
+              45.811688
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP02"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.627934,
+              45.81186
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP03",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.628326,
+              45.811871
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP04"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.63005,
+              45.811939
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP05"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.634758,
+              45.810456
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP06",
+            "_umap_options": {
+              "labelDirection": "right"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.634999,
+              45.810415
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP07",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.632397,
+              45.80857
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP08",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.629771,
+              45.809502
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "OP09",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624753,
+              45.809366
+            ]
+          }
+        }
+      ],
+      "_umap_options": {
+        "displayOnLoad": true,
+        "browsable": true,
+        "name": "orientationPoints.gpx",
+        "remoteData": {},
+        "color": "Green",
+        "iconClass": "Circle",
+        "labelDirection": "top",
+        "showLabel": true,
+        "labelInteractive": false,
+        "popupContentTemplate": "",
+        "popupTemplate": "Default",
+        "id": 991761
+      }
+    },
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF01"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624836,
+              45.811738
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF02"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.625662,
+              45.81177
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF03"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.629318,
+              45.81191
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF04"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.630949,
+              45.811854
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF05"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.631939,
+              45.811497
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF06",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.632282,
+              45.81137
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF07"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.633671,
+              45.810852
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF08",
+            "_umap_options": {
+              "labelDirection": "right"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.63384,
+              45.809824
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF09",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.63362,
+              45.809669
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF10",
+            "_umap_options": {
+              "labelDirection": "right"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.632875,
+              45.809037
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF11",
+            "_umap_options": {
+              "labelDirection": "right"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.632596,
+              45.808762
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF12",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.632424,
+              45.808598
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF13",
+            "_umap_options": {
+              "labelDirection": "top"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.62934,
+              45.809534
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF14",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.629195,
+              45.809536
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF15",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.628149,
+              45.809502
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF16",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.62718,
+              45.809459
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF17"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624984,
+              45.809372
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF18",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624501,
+              45.809559
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF19",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624461,
+              45.810123
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF20",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624399,
+              45.811034
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "RF21",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.624372,
+              45.811398
+            ]
+          }
+        }
+      ],
+      "_umap_options": {
+        "displayOnLoad": true,
+        "browsable": true,
+        "name": "roadFeatures.gpx",
+        "remoteData": {
+          "proxy": false
+        },
+        "iconClass": "Circle",
+        "type": "Default",
+        "cluster": {},
+        "heat": {},
+        "showLabel": true,
+        "labelDirection": "top",
+        "labelInteractive": false,
+        "id": 991762,
+        "color": "Blue"
+      }
+    },
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "_umap_options": {
+              "fill": false,
+              "opacity": "0.5",
+              "weight": "10",
+              "color": "Yellow"
+            },
+            "name": "route"
+          },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  8.624351,
+                  45.81172
+                ],
+                [
+                  8.628047,
+                  45.811862
+                ],
+                [
+                  8.628066,
+                  45.811821
+                ],
+                [
+                  8.628109,
+                  45.811803
+                ],
+                [
+                  8.628154,
+                  45.811803
+                ],
+                [
+                  8.628197,
+                  45.811829
+                ],
+                [
+                  8.628218,
+                  45.811866
+                ],
+                [
+                  8.630292,
+                  45.81195
+                ],
+                [
+                  8.6306,
+                  45.811925
+                ],
+                [
+                  8.630885,
+                  45.811873
+                ],
+                [
+                  8.631139,
+                  45.811795
+                ],
+                [
+                  8.632894,
+                  45.811142
+                ],
+                [
+                  8.633795,
+                  45.810806
+                ],
+                [
+                  8.634181,
+                  45.810663
+                ],
+                [
+                  8.634755,
+                  45.810456
+                ],
+                [
+                  8.635021,
+                  45.810417
+                ],
+                [
+                  8.634798,
+                  45.810318
+                ],
+                [
+                  8.634575,
+                  45.810222
+                ],
+                [
+                  8.634023,
+                  45.809947
+                ],
+                [
+                  8.633567,
+                  45.809635
+                ],
+                [
+                  8.63321,
+                  45.809368
+                ],
+                [
+                  8.632387,
+                  45.808551
+                ],
+                [
+                  8.631453,
+                  45.808899
+                ],
+                [
+                  8.630938,
+                  45.809086
+                ],
+                [
+                  8.63041,
+                  45.809284
+                ],
+                [
+                  8.630179,
+                  45.809366
+                ],
+                [
+                  8.630056,
+                  45.809418
+                ],
+                [
+                  8.629938,
+                  45.809463
+                ],
+                [
+                  8.629766,
+                  45.809504
+                ],
+                [
+                  8.629519,
+                  45.809534
+                ],
+                [
+                  8.629028,
+                  45.809536
+                ],
+                [
+                  8.62831,
+                  45.80951
+                ],
+                [
+                  8.627231,
+                  45.809461
+                ],
+                [
+                  8.627127,
+                  45.809456
+                ],
+                [
+                  8.626303,
+                  45.809424
+                ],
+                [
+                  8.6253,
+                  45.809383
+                ],
+                [
+                  8.624686,
+                  45.809364
+                ],
+                [
+                  8.624681,
+                  45.809405
+                ],
+                [
+                  8.624654,
+                  45.80945
+                ],
+                [
+                  8.624603,
+                  45.809488
+                ],
+                [
+                  8.62456,
+                  45.809501
+                ],
+                [
+                  8.624509,
+                  45.809506
+                ],
+                [
+                  8.624458,
+                  45.810131
+                ],
+                [
+                  8.624418,
+                  45.810783
+                ],
+                [
+                  8.624381,
+                  45.811236
+                ],
+                [
+                  8.624351,
+                  45.81172
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "_umap_options": {
+        "displayOnLoad": true,
+        "browsable": true,
+        "name": "route",
+        "remoteData": {},
+        "showLabel": false,
+        "labelDirection": "top",
+        "id": 991760,
+        "weight": "1"
+      }
+    }
+  ]
+}
