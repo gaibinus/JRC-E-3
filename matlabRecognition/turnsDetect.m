@@ -47,11 +47,13 @@ for lap = 1 : size(laps, 1)
     lapSt = laps.Start(lap) * FREQ;
     lapEn = laps.End(lap) * FREQ;
     
+    % create copy of values
+    lapVals = data.Turn(lapSt:lapEn);
+    
     % treshold for left and right turn, treshold for roundabout
     lapMed = median(data.Turn(lapSt:lapEn));
-    signStd = sign(data.Turn(lapSt:lapEn));
-    posTH = lapMed + std(data{lapSt:lapEn, 'Turn'}(signStd == 1));
-    negTH = lapMed + std(data{lapSt:lapEn, 'Turn'}(signStd == -1)) * -1/2;
+    posTH = lapMed + std(data{lapSt:lapEn, 'Turn'}) * 1/4;
+    negTH = posTH * -1;
     rouTH = max(data.Turn(lapSt:lapEn)) - posTH;
     
     % write computed treshold to CSV file
@@ -59,28 +61,46 @@ for lap = 1 : size(laps, 1)
     data.NegTH(lapSt : lapEn) = negTH;
     
     % clear background noise based on treshold
-    ind = negTH < data.Turn(lapSt:lapEn) & data.Turn(lapSt:lapEn) < posTH;
+    ind = negTH < lapVals & lapVals < posTH;
     data{lapSt:lapEn, 'Turn'}(ind) = 0;
+    data{lapSt:lapEn, 'Turn'}(~ind) = 1;
     
-    % label everything expect detected turns
-    label = bwlabel(data.Turn(lapSt:lapEn) ~= 0);
+    % label every turn
+    label = bwlabel(data.Turn(lapSt:lapEn));
     
-    % go thru all of the labeled groups
+    % remove ROUNDABOUT: go thru all of the labeled groups
     for group = 1 : max(label)
         % check if current group contains roundabout
-        if max(data{lapSt:lapEn, 'Turn'}(ismember(label, group))) >= rouTH
-            data{lapSt:lapEn, 'Turn'}(ismember(label, group)) = 0;
-        end
-        
-        % remove turn if is shorter then 1 s
-        if nnz(label == group) <= FREQ
+        if max(lapVals(ismember(label, group))) >= rouTH
             data{lapSt:lapEn, 'Turn'}(ismember(label, group)) = 0;
         end
     end
-    
-    % if value is not 0 then it is turn
-    data{lapSt:lapEn, 'Turn'}(data.Turn(lapSt:lapEn) ~= 0) = 1; 
-       
+     
+    % check for area between value and treshold for TURNS
+    label = bwlabel(data.Turn(lapSt:lapEn));
+    for group = 1 : max(label)
+        
+        % compute area in current group for LEFT turn
+        if sum(lapVals(ismember(label, group))) > lapMed
+            area = sum(abs(lapVals(ismember(label, group)) - posTH));
+            
+            % remove turn if area is too small
+            if area < nnz(label == group) * posTH
+                data{lapSt:lapEn, 'Turn'}(ismember(label, group)) = 0;
+            end
+                 
+        % compute area in current group for RIGHT turn
+        else
+            area = sum(abs(lapVals(ismember(label, group)) - negTH));
+        
+            % remove turn if area is too small
+            if area < abs(nnz(label == group) * negTH)
+                data{lapSt:lapEn, 'Turn'}(ismember(label, group)) = 0;
+            end
+         end
+        
+    end
+     
     % remove last right turn before end of lap ~ last 10 s
     lapBrake = (laps{lap, 'End'} - 10) * FREQ;
     data.Turn(lapBrake:lapEn) = 0;
