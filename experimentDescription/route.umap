@@ -1,6 +1,6 @@
 {
   "type": "umap",
-  "uri": "https://umap.openstreetmap.fr/en/map/routedescription_364267",
+  "uri": "https://umap.openstreetmap.fr/en/map/routedescription_364578",
   "properties": {
     "easing": false,
     "tilelayersControl": null,
@@ -19,18 +19,18 @@
     },
     "captionBar": false,
     "limitBounds": {
-      "south": null,
+      "east": null,
       "west": null,
       "north": null,
-      "east": null
+      "south": null
     },
     "tilelayer": {
-      "minZoom": 0,
-      "maxZoom": 19,
-      "attribution": "map data © [[http://osm.org/copyright|OpenStreetMap contributors]] under ODbL ",
-      "url_template": "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "tms": false,
       "name": "OpenStreetMap",
-      "tms": false
+      "maxZoom": 19,
+      "minZoom": 0,
+      "attribution": "map data © [[http://osm.org/copyright|OpenStreetMap contributors]] under ODbL ",
+      "url_template": "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     },
     "licence": "",
     "description": "",
@@ -47,84 +47,10 @@
     "type": "Point",
     "coordinates": [
       8.629707098007204,
-      45.810431666603954
+      45.8101549662421
     ]
   },
   "layers": [
-    {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "properties": {
-            "name": "B01"
-          },
-          "geometry": {
-            "type": "Point",
-            "coordinates": [
-              8.627199,
-              45.811832
-            ]
-          }
-        },
-        {
-          "type": "Feature",
-          "properties": {
-            "name": "B02",
-            "_umap_options": {
-              "labelDirection": "bottom"
-            }
-          },
-          "geometry": {
-            "type": "Point",
-            "coordinates": [
-              8.627569,
-              45.811845
-            ]
-          }
-        },
-        {
-          "type": "Feature",
-          "properties": {
-            "name": "B03"
-          },
-          "geometry": {
-            "type": "Point",
-            "coordinates": [
-              8.628583,
-              45.811883
-            ]
-          }
-        },
-        {
-          "type": "Feature",
-          "properties": {
-            "name": "B04",
-            "_umap_options": {
-              "labelDirection": "left"
-            }
-          },
-          "geometry": {
-            "type": "Point",
-            "coordinates": [
-              8.632676,
-              45.808842
-            ]
-          }
-        }
-      ],
-      "_umap_options": {
-        "displayOnLoad": true,
-        "browsable": true,
-        "name": "bumpers.gpx",
-        "remoteData": {},
-        "iconClass": "Circle",
-        "labelDirection": "top",
-        "showLabel": true,
-        "id": 991763,
-        "color": "Red"
-      }
-    },
     {
       "type": "FeatureCollection",
       "features": [
@@ -178,8 +104,8 @@
           "geometry": {
             "type": "Point",
             "coordinates": [
-              8.63005,
-              45.811939
+              8.630584,
+              45.811929
             ]
           }
         },
@@ -239,8 +165,8 @@
           "geometry": {
             "type": "Point",
             "coordinates": [
-              8.629771,
-              45.809502
+              8.629691,
+              45.809516
             ]
           }
         },
@@ -264,7 +190,7 @@
       "_umap_options": {
         "displayOnLoad": true,
         "browsable": true,
-        "name": "orientationPoints.gpx",
+        "name": "orientationPoints",
         "remoteData": {},
         "color": "Green",
         "iconClass": "Circle",
@@ -273,7 +199,81 @@
         "labelInteractive": false,
         "popupContentTemplate": "",
         "popupTemplate": "Default",
-        "id": 991761
+        "id": 992533
+      }
+    },
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "SB01"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.627199,
+              45.811832
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "SB02",
+            "_umap_options": {
+              "labelDirection": "bottom"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.627569,
+              45.811845
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "SB03"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.628583,
+              45.811883
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "name": "SB04",
+            "_umap_options": {
+              "labelDirection": "left"
+            }
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              8.632676,
+              45.808842
+            ]
+          }
+        }
+      ],
+      "_umap_options": {
+        "displayOnLoad": true,
+        "browsable": true,
+        "name": "speedBumps",
+        "remoteData": {},
+        "iconClass": "Circle",
+        "labelDirection": "top",
+        "showLabel": true,
+        "id": 991763,
+        "color": "Red"
       }
     },
     {
@@ -598,7 +598,7 @@
       "_umap_options": {
         "displayOnLoad": true,
         "browsable": true,
-        "name": "roadFeatures.gpx",
+        "name": "roadFeatures",
         "remoteData": {
           "proxy": false
         },
@@ -609,7 +609,7 @@
         "showLabel": true,
         "labelDirection": "top",
         "labelInteractive": false,
-        "id": 991762,
+        "id": 992534,
         "color": "Blue"
       }
     },

@@ -1,0 +1,35 @@
+Name , Description                                                      , GPS Lat. , GPS Lon.   
+    OP01 , the lap start: the crossroad on via Francia and via Lussemburgo      ,45.811688,8.624356
+    OP02 , enter of the roundabout on via Lussemburgo and via Germania      ,45.81186,8.627934
+    OP03 , exit of the roundabout on via Lussemburgo and via Germania       ,45.811871,8.628326
+    OP04 , right long curve on via Lussemburgo                              ,45.811929,8.630584
+    OP05 , enter of the crossroad on via Lussemburgo and via Germania       ,45.810456,8.634758
+    OP06 , crossroad on via Lussemburgo and via Germania                    ,45.810415,8.634999
+    OP07 , crossroad on via Germania and via Gran Bretagna                  ,45.80857,8.632397
+    OP08 , left long curve on via Gran Bretagna                             ,45.809515,8.629691
+    OP09 , roundabout on via Gran Bretagna and via Francia                  ,45.809366,8.624753
+    SB01 , sequence of ten  rumble strips in the right driving lane         ,45.811832,8.627199
+    SB02 , speed bump before the roundabout OP02                            ,45.811845,8.627569
+    SB03 , speed bump after the roundabout OP03                             ,45.811883,8.628583
+    SB04 , speed bump in front of the Visitor's center                      ,45.808842,8.632676
+    RF01 , small road fix only on the right part of the driving lane        ,45.811738,8.624836
+    RF02 , road patch through both driving lanes                            ,45.81177,8.625662
+    RF03 , road patch through both driving lanes with manhole on the right  ,45.81191,8.629318
+    RF04 , small road fix only in the center of the road                    ,45.811854,8.630949
+    RF05 , long road patch through both driving lanes                       ,45.811497,8.631939
+    RF06 , small road fix only in the center of the road                    ,45.81137,8.632282
+    RF07 , road patch through both driving lanes                            ,45.810852,8.633671
+    RF08 , joint of asphalt carpets on right side with damaged surface      ,45.809824,8.63384
+    RF09 , damaged surface of asphalt on the right side of the road         ,45.809669,8.63362
+    RF10 , joint asphalt carpets on right side of the road                  ,45.809037,8.632875
+    RF11 , road patch through both driving lanes with pedestrian crossing   ,45.808762,8.632596
+    RF12 , road patch through both driving lanes                            ,45.808598,8.632424
+    RF13 , road patch through both driving lanes                            ,45.809534,8.62934
+    RF14 , double road patch through both driving lanes close each other    ,45.809536,8.629195
+    RF15 , long road patch through both driving lanes                       ,45.809502,8.628149
+    RF16 , joint asphalt carpets through both driving lanes                 ,45.809459,8.62718
+    RF17 , double road patch through both driving lanes close each other    ,45.809372,8.624984
+    RF18 , road patch through both driving lanes                            ,45.809559,8.624501
+    RF19 , road patch through both driving lanes                            ,45.810123,8.624461
+    RF20 , road patch through both driving lanes                            ,45.811034,8.624399
+    RF21 , road patch through both driving lanes with damaged surface       ,45.811398,8.624372
