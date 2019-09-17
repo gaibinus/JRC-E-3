@@ -35,7 +35,7 @@ data = readtable(pathIn);
 % create quaternion rotation array
 quat = [quat quatI quatJ quatK];
 
-% rotate every vector from data by quaternion
+% rotate every vector from ACC by quaternion
 dataComputed = ...
     quatrotate(quat, [data{:,'AccX'} data{:,'AccY'} data{:,'AccZ'}]);
 
@@ -46,6 +46,24 @@ dataComputed = ...
 data{:,'AccX'} = dataComputed(:,1);
 data{:,'AccY'} = dataComputed(:,2);
 data{:,'AccZ'} = dataComputed(:,3);
+
+% rotate every vector from GYR by quaternion
+dataComputed = ...
+    quatrotate(quat, [data{:,'GyrX'} data{:,'GyrY'} data{:,'GyrZ'}]);
+
+% rewrite data in table
+data{:,'GyrX'} = dataComputed(:,1);
+data{:,'GyrY'} = dataComputed(:,2);
+data{:,'GyrZ'} = dataComputed(:,3);
+
+% rotate every vector from MAG by quaternion
+dataComputed = ...
+    quatrotate(quat, [data{:,'MagX'} data{:,'MagY'} data{:,'MagZ'}]);
+
+% rewrite data in table
+data{:,'MagX'} = dataComputed(:,1);
+data{:,'MagY'} = dataComputed(:,2);
+data{:,'MagZ'} = dataComputed(:,3);
 
 % write table to CSV
 writetable(data, pathOut);

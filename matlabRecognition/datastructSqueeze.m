@@ -113,7 +113,7 @@ pathSave = strcat(pathJRC, '\experimentStructures\', configName, '_', ...
 fprintf('INFO: saving data to:\n%s\n', pathSave);
 
 % save data to disc
-save(pathSave, 'data');
+save(pathSave, 'data','-v7.3');
 
 % if okay, return true
 ret = true;
