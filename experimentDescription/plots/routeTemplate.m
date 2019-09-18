@@ -10,7 +10,7 @@ figure1.Color = [1 1 1];
 colormap(hsv);
 
 % plot map
-imshow('C:\Users\geibfil\Desktop\JRC-E-3\experimentDescription\route.jpg')
+imshow('C:\Users\geibfil\Desktop\JRC-E-3\experimentDescription\route.jpg');
 
 %% CREATE LEGEND
 

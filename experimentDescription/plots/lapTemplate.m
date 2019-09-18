@@ -228,7 +228,6 @@ data = table2timetable(data(:,2:end),'RowTimes',time);
 plot = stackedplot(data);
 plot.DisplayVariables = {'Bound' {'Conv' 'PosTH' 'NegTH'} 'Turn' 'Acc'};
 
-plot.Title = 'Lap Parts Template';
 plot.FontSize = 12;
 plot.DisplayLabels = {'Bound' 'VeloZ' 'Parts' 'AccZ'};
 

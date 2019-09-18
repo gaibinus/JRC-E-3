@@ -102,6 +102,31 @@ for car = 1 : CARS
     end
 end
 
+%% FIX PERIODIC REMAINS
+
+for part = 1 : size(parts, 2)
+   minimum = NaN;
+   
+   % find actual minimum
+   for car = 1 : CARS
+       for lap = 1 : 20
+            tmp = size(data{car}.(char(parts(part))){lap}, 1);
+            if isnan(minimum) || minimum > tmp
+                minimum = tmp;
+            end
+       end
+   end
+   
+   % reformat to minimum
+   for car = 1 : CARS
+       for lap = 1 : 20
+            tmp = size(data{car}.(char(parts(part))){lap}, 1);
+            if minimum ~= tmp
+                data{car}.(char(parts(part))){lap}(minimum+1 : end,:) = [];
+            end
+       end
+   end
+end
 
 %% SAVE CREATED STRUCTURE
 
